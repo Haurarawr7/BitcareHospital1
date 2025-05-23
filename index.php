@@ -6,3 +6,5 @@ $result = mysqli_query($koneksi, $query);
 
 
 ?>
+
+<h1>akb ar</h1>
