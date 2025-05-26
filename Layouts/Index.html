@@ -1,0 +1,173 @@
+
+/* Kode Interface Main */
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>BitCare Hospital Website</title>
+    <style>
+        /* Import Google Fonts */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap');
+
+        /* Reset and base styles */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Poppins', sans-serif; background: linear-gradient(135deg, #333446 0%, #2575fc 100%); color: #fff; line-height: 1.6; min-height: 100vh; display: flex; flex-direction: column; }
+        a { color: inherit; text-decoration: none; }
+
+        /* Container */
+        .container { max-width: 1200px; width: 90%; margin: 0 auto; }
+
+        /* Header */
+        header { padding: 2vh 0; display: flex; justify-content: space-between; align-items: center; position: relative; }
+        header h1 { font-weight: 600; font-size: 4vh; letter-spacing: 2px; text-transform: uppercase; }
+        nav { display: flex; align-items: center; }
+        nav a { margin-left: 2vh; font-weight: 500; transition: color 0.3s ease; }
+        nav a:hover { color: #ffdd57; }
+
+        /* Hamburger Menu */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+        }
+        .line {
+            height: 3px;
+            width: 25px;
+            background-color: #ffdd57;
+            margin: 3px 0;
+            transition: 0.3s;
+        }
+
+        /* Button Styles */
+        .btn {
+            background: #ffdd57;
+            border: none;
+            color: #222;
+            font-weight: 600;
+            font-size: 2vh; /* Changed from rem to vh */
+            padding: 1vh 3vh; /* Changed from rem to vh */
+            border-radius: 20px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(255, 221, 87, 0.4);
+            transition: background 0.3s ease, box-shadow 0.3s ease;
+            margin-left: 1vh; /* Space between buttons */
+        }
+        .btn:hover {
+            background: #ffc107;
+            box-shadow: 0 6px 15px rgba(255, 193, 7, 0.65);
+        }
+
+        /* Hero Section */
+        .hero { flex: 1; display: flex; flex-direction: column; justify-content: center; text-align: center; padding: 8vh 1rem; position: relative; }
+        .hero h2 { font-size: 6vh; margin-bottom: 1rem; font-weight: 600; text-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+        .hero p { font-size: 3vh; margin-bottom: 2.5rem; max-width: 600px; margin-left: auto; margin-right: auto; text-shadow: 0 1px 6px rgba(0,0,0,0.3); }
+        .btn-primary { background: #ffdd57; border: none; color: #222; font-weight: 600; font-size: 3vh; padding: 1.5vh 5vh; border-radius: 40px; cursor: pointer; box-shadow: 0 8px 15px rgba(255,221,87,0.4); transition: background 0.3s ease, box-shadow 0.3s ease; user-select: none; }
+        .btn-primary:hover { background: #ffc107; box-shadow: 0 12px 26px rgba(255,193,7,0.65); }
+
+        /* About Section */
+        .about { background: #fff; color: #222; border-radius: 20px; padding: 4vh 1rem; margin-bottom: 4vh; }
+        .about-content { display: flex; align-items: flex-start; }
+        .about h2 { margin-left: 1rem; margin-bottom: 1rem; }
+        .about p { max-width: 800px; margin: 0 auto; line-height: 1.5; margin-left: 1rem; }
+        .about .icon { font-size: 10vh; margin-right: 1rem; }
+
+        /* Features Section */
+        .features { background: #fff; color: #222; border-radius: 20px 20px 0 0; padding: 4vh 1rem; }
+        .features .container { display: flex; flex-wrap: wrap; gap: 2rem; justify-content: center; }
+        .feature-card { background: #f9f9f9; border-radius: 20px; flex: 1 1 250px; padding: 2rem; box-shadow: 0 8px 20px rgba(101, 93, 173, 0.15); transition: transform 0.3s ease; cursor: default; display: flex; flex-direction: column; align-items: center; text-align: center; }
+        .feature-card:hover { transform: translateY(-10px); }
+        .feature-icon { font-size: 3rem; color: #6a11cb; margin-bottom: 1.5rem; }
+        .feature-title { font-weight: 600; font-size: 1.4rem; margin-bottom: 0.7rem; }
+        .feature-desc { font-weight: 300; font-size: 1rem; color: #555; line-height: 1.5; }
+
+        /* Footer */
+        footer { background: #222; color: #ccc; text-align: center; padding: 1.5rem 1rem; font-size: 0.9rem; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav a { display: none; } /* Hide links */
+            .hamburger { display: flex; } /* Show hamburger */
+            .nav-active { display: flex; flex-direction: column; position: absolute; top: 60px; right: 0; background: #333446; width: 100%; padding: 1rem; }
+            .hero h2 { font-size: 4vh; }
+            .features .container { flex-direction: column; align-items: center; }
+            .feature-card { max-width: 320px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="container">
+        <h1>BitCare Hospital</h1>
+        <nav>
+            <a href="#about">Tentang</a>
+            <a href="#features">Fasilitas</a>
+            <a href="#contact">Hubungi Kami</a>
+            <button class="btn" onclick="window.location.href='Sign-up'">Daftar</button>
+            <button class="btn" onclick="window.location.href='Sign-in'">Masuk</button>
+            <div class="hamburger" onclick="toggleMenu()">
+                <div class="line"></div>
+                <div class="line"></div>
+                <div class="line"></div>
+            </div>
+        </nav>
+    </header>
+
+    <section class="hero container" role="banner">
+        <h2>BitCare Hospital - Your Health is No. 1</h2>
+        <p>Pilihan Rumah Sakit modern yang memanfaatkan teknologi untuk meningkatkan pelayanan kesehatan</p>
+        <button class="btn-primary" onclick="alert('Thank you for clicking!')">Get Started</button>
+    </section>
+
+    <section id="about" class="about" aria-label="Tentang">
+        <div class="container">
+            <div class="about-content">
+                <span class="icon">🏥</span>
+                <div>
+                    <h2>Tentang Kami</h2>
+                    <p>BitCare Hospital adalah sebuah Rumah Sakit inovatif yang dirancang dengan mentransformasi pelayanan kesehatan melalui integrasi teknologi informasi yang mendalam. 
+                    Nama "BitCare" sendiri berasal dari kata "Bit" (unit dasar informasi dalam komputasi) dan "Care" (perawatan), merefleksikan dedikasi kami untuk memberikan pelayanan kesehatan yang presisi, mendalam, dan sepenuhnya didukung oleh solusi digital mutakhir.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="features" class="features" aria-label="Features">
+        <div class="container">
+            <div>
+                <h1> Fasilitas </h1>
+            </div>
+            <article class="feature-card" tabindex="0">
+                <div class="feature-icon">⚡</div>
+                <h3 class="feature-title">Cepat dan Mudah Dijangkau</h3>
+                <p class="feature-desc">Kami mengitegritaskan komponen-komponen dalam rumah sakit dengan teknologi 
+                    sehingga, memungkinkan peningkatan kecepatan pelayanan yang diperoleh pasien</p>
+            </article>
+            <article class="feature-card" tabindex="0">
+                <div class="feature-icon">🎨</div>
+                <h3 class="feature-title">Beautiful Design</h3>
+                <p class="feature-desc">Modern, clean, and visually captivating design to impress your audience.</p>
+            </article>
+            <article class="feature-card" tabindex="0">
+                <div class="feature-icon">🔒</div>
+                <h3 class="feature-title">Secure</h3>
+                <p class="feature-desc">Built with best practices to keep your site safe and trusted.</p>
+            </article>
+        </div>
+    </section>
+
+    <footer id="contact">
+        &copy; 2024 BitCare Hospital. All rights reserved. | <a href="mailto:contact@bitcarehospital.com" style="color:#ffdd57;">contact@bitcarehospital.com</a>
+    </footer>
+
+    <script>
+        function toggleMenu() {
+            const navLinks = document.querySelectorAll('nav a');
+            navLinks.forEach(link => {
+                link.style.display = link.style.display === 'block' ? 'none' : 'block';
+            });
+        }
+    </script>
+</body>
+</html>
