@@ -1,9 +1,9 @@
 <?php
 
 $host = "localhost";
-$user = "root";
-$password = "";
-$database = "BitcareHospital";
+$user = "root"; // Default user untuk XAMPP
+$password = ""; // Default password untuk user root di XAMPP
+$database = "BitcareHospital"; // Nama database yang telah Anda buat
 
 $koneksi = mysqli_connect($host, $user, $password, $database);
 
