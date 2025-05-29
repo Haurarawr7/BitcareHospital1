@@ -1,5 +1,3 @@
-DATA ADMINISTRASI
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -290,10 +288,10 @@ DATA ADMINISTRASI
         const noAntrianInput = document.getElementById('noAntrian');
         const originalNoAntrianInput = document.getElementById('originalNoAntrian');
         const submitButtonAdministrasi = document.getElementById('submitButtonAdministrasi');
-        
+
         // GANTI DENGAN URL API BACKEND ANDA
         const API_URL_ADMINISTRASI = 'api/administrasi.php';
-        
+
         async function fetchAdministrasi() {
             administrasiTableBody.innerHTML = '<tr><td colspan="7" class="loading-message">Memuat data administrasi... ⏳</td></tr>';
             try {
@@ -302,9 +300,9 @@ DATA ADMINISTRASI
                     throw new Error(`HTTP error! status: ${response.status}, ${await response.text()}`);
                 }
                 const daftarAdm = await response.json();
-            
+
                 administrasiTableBody.innerHTML = '';
-            
+
                 if (daftarAdm && daftarAdm.length > 0) {
                     daftarAdm.forEach(adm => {
                         const row = administrasiTableBody.insertRow();
@@ -325,27 +323,27 @@ DATA ADMINISTRASI
                 } else {
                     administrasiTableBody.innerHTML = '<tr><td colspan="7" class="empty-message">Belum ada data administrasi. 🤷</td></tr>';
                 }
-            
+
             } catch (error) {
                 console.error('Error fetching administrasi:', error);
                 administrasiTableBody.innerHTML = `<tr><td colspan="7" class="empty-message">Gagal memuat data: ${error.message}. Pastikan backend aktif. 😥</td></tr>`;
             }
         }
-    
+
         function openModalAdministrasi(dataAdm = null) {
             administrasiForm.reset();
             noAntrianInput.readOnly = false;
             originalNoAntrianInput.value = '';
-        
+
             if (dataAdm) {
                 modalTitleAdministrasi.textContent = '✏ Edit Data Administrasi';
                 submitButtonAdministrasi.textContent = 'Update';
-            
+
                 noAntrianInput.value = dataAdm.no_antrian || '';
                 // Jika No Antrian (PK) tidak boleh diubah, uncomment:
                 // noAntrianInput.readOnly = true;
                 originalNoAntrianInput.value = dataAdm.no_antrian || '';
-            
+
                 document.getElementById('tanggalAdm').value = dataAdm.tanggal ? dataAdm.tanggal.split('T')[0] : '';
                 document.getElementById('idPasienAdm').value = dataAdm.id_pasien || '';
                 document.getElementById('idDokterAdm').value = dataAdm.id_dokter || '';
@@ -359,32 +357,32 @@ DATA ADMINISTRASI
             administrasiModal.style.display = 'block';
             // Jika menggunakan dropdown untuk FK, panggil fungsi fetch data FK di sini.
         }
-    
+
         function closeModalAdministrasi() {
             administrasiModal.style.display = 'none';
         }
-    
+
         window.onclick = function(event) {
             if (event.target == administrasiModal) {
                 closeModalAdministrasi();
             }
         }
-    
+
         administrasiForm.addEventListener('submit', async function(event) {
             event.preventDefault();
-        
+
             const formData = new FormData(administrasiForm);
             const data = Object.fromEntries(formData.entries());
             const currentOriginalNoAntrian = originalNoAntrianInput.value;
-        
+
             let url = API_URL_ADMINISTRASI;
             let method = 'POST';
-        
+
             if (currentOriginalNoAntrian) {
                 method = 'PUT';
                 // data.original_no_antrian = currentOriginalNoAntrian; // Jika PK bisa diubah
             }
-        
+
             try {
                 const response = await fetch(url, {
                     method: method,
@@ -393,22 +391,22 @@ DATA ADMINISTRASI
                     },
                     body: JSON.stringify(data),
                 });
-            
+
                 if (!response.ok) {
                     const errorData = await response.json().catch(() => ({ message: response.statusText }));
                     throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
                 }
-            
+
                 closeModalAdministrasi();
                 fetchAdministrasi();
                 alert(currentOriginalNoAntrian ? 'Data administrasi berhasil diupdate! 👍' : 'Data administrasi berhasil ditambahkan! 🎉');
-            
+
             } catch (error) {
                 console.error('Error submitting form:', error);
                 alert(`Gagal menyimpan data: ${error.message} 😔`);
             }
         });
-    
+
         async function editAdministrasi(noAntrian, event) {
             event.stopPropagation();
             try {
@@ -418,19 +416,19 @@ DATA ADMINISTRASI
                     throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
                 }
                 const dataAdm = await response.json();
-            
+
                 if (dataAdm) {
                     openModalAdministrasi(Array.isArray(dataAdm) ? dataAdm[0] : dataAdm);
                 } else {
                     alert('Data administrasi tidak ditemukan!');
                 }
-            
+
             } catch (error) {
                 console.error('Error fetching administrasi data for edit:', error);
                 alert(`Gagal mengambil data administrasi untuk diedit: ${error.message}`);
             }
         }
-    
+
         async function deleteAdministrasi(noAntrian) {
             if (confirm(`Apakah Anda yakin ingin menghapus data administrasi dengan Nomor Antrian ${noAntrian}? 🚮`)) {
                 try {
@@ -441,15 +439,15 @@ DATA ADMINISTRASI
                         },
                         body: JSON.stringify({ no_antrian: noAntrian }),
                     });
-                
+
                     if (!response.ok) {
                         const errorData = await response.json().catch(() => ({ message: response.statusText }));
                         throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
                     }
-                
+
                     alert(`Data administrasi dengan Nomor Antrian ${noAntrian} berhasil dihapus.`);
                     fetchAdministrasi();
-                
+
                 } catch (error) {
                     console.error('Error deleting administrasi:', error);
                     alert(`Gagal menghapus data: ${error.message}`);
