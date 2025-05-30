@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         mysqli_query($koneksi, $query);
     } elseif ($action == 'delete') {
         $no_antrian = $_POST["no_antrian"];
-        $query = "DELETE FROM pasien WHERE no_antrian=$no_antrian";
+        $query = "DELETE FROM pasien WHERE no_antrian='$no_antrian'";
         mysqli_query($koneksi, $query);
     }
 }
@@ -109,8 +109,20 @@ include 'layouts/header.php';
     }
     .modal { 
         display: none; 
-        position: fixed; z-index: 1; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4); padding-top: 60px; }
-    .modal-content { background-color: #fefefe; margin: 5% auto; padding: 20px; border: 1px solid #888; width: 80%; max-width: 500px; border-radius: 8px; }
+        position: fixed; 
+        z-index: 1; 
+        left: 0; 
+        top: 0; 
+        width: 100%; 
+        height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4); padding-top: 60px; }
+    .modal-content { 
+        background-color: #fefefe;
+        margin: 5% auto; 
+        padding: 20px; 
+        border: 1px solid #888; 
+        width: 80%; 
+        max-width: 500px; 
+        border-radius: 8px; }
     .close-btn { color: #aaa; float: right; font-size: 28px; font-weight: bold; }
     .close-btn:hover, .close-btn:focus { color: black; text-decoration: none; cursor: pointer; }
     .form-group { margin-bottom: 15px; }
@@ -164,13 +176,14 @@ include 'layouts/header.php';
                     <td><?= $pasien->no_antrian?></td>
                     <td>
                         <button class="btn btn-warning btn-sm" onclick="toggleEditForm(<?= $pasien->id ?>)">Edit</button>
-                        <button class="btn btn-danger btn-sm" onclick="confirmDelete(<?= $pasien->id ?>)">Hapus</button>
+                        <button class="btn btn-danger btn-sm" onclick="openDeleteModal(<?= $pasien->id ?>)">Hapus</button>
                     </td>
                 </tr>
             <?php } ?>
         </tbody>
     </table>
 </section>
+
 
 <!-- Modal for adding/editing patient data -->
 <div id="patientModal" class="modal">
@@ -180,6 +193,7 @@ include 'layouts/header.php';
         <form id="patientForm" method="POST">
             <input type="hidden" name="action" id="action" value="insert">
             <input type="hidden" name="id" id="patientIdInput" value="">
+            <input type="hidden" name="no_antrian" id="no_antrianInput" value="">
             
             <div class="form-group">
                 <label for="id">ID Pasien</label>
@@ -222,17 +236,40 @@ include 'layouts/header.php';
     </div>
 </div>
 
+<!-- Modal for confirming delete -->
+<div id="deleteModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeDeleteModal()">&times;</span>
+        <h2>Konfirmasi Hapus</h2>
+        <p>Masukkan No Antrian untuk menghapus data pasien:</p>
+        <form id="deleteForm" method="POST">
+            <input type="hidden" name="action" value="delete">
+            <div class="form-group">
+                <label for="no_antrian_delete">No Antrian</label>
+                <input type="number" name="no_antrian" id="no_antrian_delete" required>
+            </div>
+            <button type="submit">Hapus</button>
+            <button type="button" onclick="closeDeleteModal()">Batal</button>
+        </form>
+    </div>
+</div>
+
 <script>
     function openModal(patientData = null) {
         document.getElementById('patientForm').reset();
         document.getElementById('patientIdInput').value = '';
+        document.getElementById('no_antrianInput').value = '';
 
         if (patientData) {
             document.getElementById('action').value = 'edit';
             document.getElementById('patientIdInput').value = patientData.id;
             document.getElementById('nama').value = patientData.nama_pasien;
-            document.getElementById('umur').value = patientData.umur;
+            document.getElementById('tanggal_lahir').value = patientData.tanggal_lahir;
+            document.getElementById('no_telepon').value = patientData.no_telepon;
+            document.getElementById('jenis_kelamin').value = patientData.jenis_kelamin;
+            document.getElementById('gol_darah').value = patientData.gol_darah;
             document.getElementById('alamat').value = patientData.alamat;
+            document.getElementById('no_antrian').value = patientData.no_antrian;
         } else {
             document.getElementById('action').value = 'insert';
         }
@@ -243,32 +280,18 @@ include 'layouts/header.php';
         document.getElementById('patientModal').style.display = 'none';
     }
 
-    function toggleEditForm(id, nama, tanggal_lahir, no_telepon, jenis_kelamin, gol_darah, alamat, no_antrian) {
-    document.getElementById('patientForm').reset();
-    document.getElementById('patientIdInput').value = id;
-
-    document.getElementById('action').value = 'edit';
-    document.getElementById('id').value = id; // Set ID
-    document.getElementById('nama').value = nama; // Set Nama
-    document.getElementById('tanggal_lahir').value = tanggal_lahir; // Set Tanggal Lahir
-    document.getElementById('no_telepon').value = no_telepon; // Set Nomor Telepon
-    document.getElementById('jenis_kelamin').value = jenis_kelamin; // Set Jenis Kelamin
-    document.getElementById('gol_darah').value = gol_darah; // Set Golongan Darah
-    document.getElementById('alamat').value = alamat; // Set Alamat
-    document.getElementById('no_antrian').value = no_antrian; // Set No Antrian
-
-    document.getElementById('patientModal').style.display = 'block';
-}
-
-
-    function confirmDelete(id) {
-    if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
-        document.getElementById('action').value = 'delete'; // Set action to delete
-        document.getElementById('patientIdInput').value = no_antrian; // Set ID pasien yang akan dihapus
-        document.getElementById('patientForm').submit(); // Submit the form
+    function openDeleteModal(no_antrian) {
+        document.getElementById('no_antrian_delete').value = no_antrian; // Set the no_antrian to the input
+        document.getElementById('deleteModal').style.display = 'block';
     }
-}
 
+    function closeDeleteModal() {
+        document.getElementById('deleteModal').style.display = 'none';
+    }
+
+    function toggleEditForm(id, nama, tanggal_lahir, no_telepon, jenis_kelamin, gol_darah, alamat, no_antrian) {
+        openModal({ id, nama_pasien: nama, tanggal_lahir, no_telepon, jenis_kelamin, gol_darah, alamat, no_antrian });
+    }
 </script>
 
 <?php include 'layouts/footer.php'; ?>
