@@ -31,8 +31,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $query = "UPDATE pasien SET nama_pasien='$nama', tanggal_lahir='$tanggal_lahir', no_telepon='$no_telepon', jenis_kelamin ='$jenis_kelamin', gol_darah='$gol_darah', alamat='$alamat' WHERE id=$id";
         mysqli_query($koneksi, $query);
     } elseif ($action == 'delete') {
-        $id = $_POST["id"]; // Menggunakan ID pasien untuk penghapusan
-        $query = "DELETE FROM pasien WHERE id='$id'";
+        $no_antrian = $_POST["no_antrian"];
+        $query = "DELETE FROM pasien WHERE no_antrian='$no_antrian'";
         mysqli_query($koneksi, $query);
     }
 }
@@ -176,13 +176,14 @@ include 'layouts/header.php';
                     <td><?= $pasien->no_antrian?></td>
                     <td>
                         <button class="btn btn-warning btn-sm" onclick="toggleEditForm(<?= $pasien->id ?>)">Edit</button>
-                        <button class="btn btn-danger btn-sm" onclick="confirmDelete(<?= $pasien->id ?>)">Hapus</button>
+                        <button class="btn btn-danger btn-sm" onclick="openDeleteModal(<?= $pasien->id ?>)">Hapus</button>
                     </td>
                 </tr>
             <?php } ?>
         </tbody>
     </table>
 </section>
+
 
 <!-- Modal for adding/editing patient data -->
 <div id="patientModal" class="modal">
@@ -192,6 +193,7 @@ include 'layouts/header.php';
         <form id="patientForm" method="POST">
             <input type="hidden" name="action" id="action" value="insert">
             <input type="hidden" name="id" id="patientIdInput" value="">
+            <input type="hidden" name="no_antrian" id="no_antrianInput" value="">
             
             <div class="form-group">
                 <label for="id">ID Pasien</label>
@@ -234,18 +236,17 @@ include 'layouts/header.php';
     </div>
 </div>
 
-
 <!-- Modal for confirming delete -->
 <div id="deleteModal" class="modal">
     <div class="modal-content">
         <span class="close-btn" onclick="closeDeleteModal()">&times;</span>
         <h2>Konfirmasi Hapus</h2>
-        <p>Masukkan ID Pasien untuk menghapus data:</p>
+        <p>Masukkan No Antrian untuk menghapus data pasien:</p>
         <form id="deleteForm" method="POST">
             <input type="hidden" name="action" value="delete">
             <div class="form-group">
-                <label for="id_delete">ID Pasien</label>
-                <input type="number" name="id" id="id_delete" required>
+                <label for="no_antrian_delete">No Antrian</label>
+                <input type="number" name="no_antrian" id="no_antrian_delete" required>
             </div>
             <button type="submit">Hapus</button>
             <button type="button" onclick="closeDeleteModal()">Batal</button>
@@ -279,8 +280,8 @@ include 'layouts/header.php';
         document.getElementById('patientModal').style.display = 'none';
     }
 
-    function openDeleteModal(id) {
-        document.getElementById('id_delete').value = id; // Set the id to the input
+    function openDeleteModal(no_antrian) {
+        document.getElementById('no_antrian_delete').value = no_antrian; // Set the no_antrian to the input
         document.getElementById('deleteModal').style.display = 'block';
     }
 
