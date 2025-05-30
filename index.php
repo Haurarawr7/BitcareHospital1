@@ -16,7 +16,7 @@
       font-family: 'Poppins', sans-serif;
       display: flex;
       min-height: 100vh;
-      background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+      background: linear-gradient(135deg, #333446 0%, #2575fc 100%);
       color: #fff;
     }
 
@@ -84,63 +84,11 @@
       }
     }
 
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 1.5rem;
-      width: 100%;
-      max-width: 900px;
-    }
-
-    .card {
-      background: rgba(255, 255, 255, 0.2);
-      backdrop-filter: blur(10px);
-      border-radius: 16px;
+    .content {
+      flex: 1;
       padding: 2rem;
-      box-shadow: 0 8px 16px rgba(0,0,0,0.3);
-      cursor: pointer;
-      transition: transform 0.3s ease, background 0.3s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 600;
-      font-size: 1.2rem;
       color: #fff;
-      user-select: none;
       text-align: center;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 16px;
-      transition: transform 0.3s ease;
-      transform: scale(0);
-      z-index: 0;
-    }
-
-    .card:hover::before {
-      transform: scale(1);
-    }
-
-    .card:hover {
-      background: rgba(255, 255, 255, 0.3);
-      transform: translateY(-8px);
-      box-shadow: 0 12px 24px rgba(0,0,0,0.4);
-    }
-
-    @media (max-width: 400px) {
-      .card {
-        padding: 1.5rem;
-        font-size: 1rem;
-      }
     }
   </style>
 </head>
@@ -153,25 +101,17 @@
     <div class="menu-item">Transaksi</div>
     <div class="menu-item">Ruangan</div>
     <div class="menu-item">Staff</div>
-    <div class="menu-item">Pasien</div>
+    <div class="menu-item" onclick="window.location.href='pasien.php'">Pasien</div>
     <div class="menu-item">Perawat</div>
     <div class="menu-item">Dokter</div>
   </div>
   <div class="main-content">
     <header>
-      <h1>Admin Dashboard</h1>
+      <h1>Selamat datang di Administrasi Bitcare Hospital</h1>
     </header>
-    <main class="grid" role="list" aria-label="Admin Sections">
-      <div class="card" role="listitem" tabindex="0">Tindakan medis</div>
-      <div class="card" role="listitem" tabindex="0">Rekam medis</div>
-      <div class="card" role="listitem" tabindex="0">Obat</div>
-      <div class="card" role="listitem" tabindex="0">Transaksi</div>
-      <div class="card" role="listitem" tabindex="0">Ruangan</div>
-      <div class="card" role="listitem" tabindex="0">Staff</div>
-      <div class="menu-item"><a href="data_pasien.php" style="color: inherit; text-decoration: none;">Data Pasien</a></div>
-      <div class="card" role="listitem" tabindex="0">Perawat</div>
-      <div class="card" role="listitem" tabindex="0">Dokter</div>
-    </main>
+    <div class="content">
+      <p>Jadikan Administrasi Bitcare sebagai pusat kendali operasional Anda. Di sini, Anda akan menemukan semua yang dibutuhkan untuk mengelola data pasien, jadwal, dan operasional harian dengan akurat dan real-time. Dapatkan wawasan yang mendalam dan kendali penuh atas klinik Anda, memastikan setiap keputusan didasari informasi yang tepat.</p>
+    </div>
   </div>
 </body>
 </html>

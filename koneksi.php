@@ -3,7 +3,7 @@
 $host = "localhost";
 $user = "root"; // Default user untuk XAMPP
 $password = ""; // Default password untuk user root di XAMPP
-$database = "BitcareHospital"; // Nama database yang telah Anda buat
+$database = "bitcarehospital"; // Nama database yang telah Anda buat
 
 $koneksi = mysqli_connect($host, $user, $password, $database);
 
@@ -13,6 +13,6 @@ if(!$koneksi){
     exit;
 }
 else{
-    echo "Koneksi Berhasil";
+    echo"Koneksi Berhasil";
 }
 ?>
