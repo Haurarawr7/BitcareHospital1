@@ -6,38 +6,35 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $action = $_POST['action'] ?? '';
 
     if ($action == 'insert') {
-        $id = $_POST["id"];
-        $nama = $_POST["nama"];
-        $tanggal_lahir = $_POST["tanggal_lahir"];
-        $no_telepon = $_POST["no_telepon"];
-        $jenis_kelamin = $_POST["jenis_kelamin"];
-        $gol_darah = $_POST["gol_darah"];
-        $alamat = $_POST["alamat"];
-        $no_antrian = $_POST["no_antrian"];
+        $kode_obat = $_POST["kode_obat"];
+        $nama_obat = $_POST["nama_obat"];
+        $dosis = $_POST["dosis"];
+        $tanggal_produksi = $_POST["tanggal_produksi"];
+        $stok = $_POST["stok"];
+        $harga = $_POST["harga"];
     
-        $query = "INSERT INTO pasien (id, nama_pasien, tanggal_lahir, no_telepon, jenis_kelamin, gol_darah, alamat, no_antrian) 
-            VALUES ('$id', '$nama', '$tanggal_lahir', '$no_telepon', '$jenis_kelamin', '$gol_darah', '$alamat', '$no_antrian')";
+        $query = "INSERT INTO obat (kode_obat, nama_obat, dosis, tanggal_produksi, stok, harga) 
+            VALUES ('$kode_obat', '$nama_obat', '$dosis', '$tanggal_produksi', '$stok', '$harga')";
         mysqli_query($koneksi, $query);
-        }
-     elseif ($action == 'edit') {
-        $id = $_POST["id"];
-        $nama = $_POST["nama"];
-        $tanggal_lahir = $_POST["tanggal_lahir"];
-        $no_telepon = $_POST["no_telepon"];
-        $jenis_kelamin = $_POST["jenis_kelamin"];
-        $gol_darah = $_POST["gol_darah"];
-        $alamat = $_POST["alamat"];
-        $no_antrian = $_POST["no_antrian"];
-        $query = "UPDATE pasien SET nama_pasien='$nama', tanggal_lahir='$tanggal_lahir', no_telepon='$no_telepon', jenis_kelamin ='$jenis_kelamin', gol_darah='$gol_darah', alamat='$alamat' WHERE id=$id";
+    }
+    elseif ($action == 'edit') {
+        $kode_obat = $_POST["kode_obat"];
+        $nama_obat = $_POST["nama_obat"];
+        $dosis = $_POST["dosis"];
+        $tanggal_produksi = $_POST["tanggal_produksi"];
+        $stok = $_POST["stok"];
+        $harga = $_POST["harga"];
+        $query = "UPDATE obat SET nama_obat='$nama_obat', dosis='$dosis', tanggal_produksi='$tanggal_produksi', stok='$stok', harga='$harga' WHERE kode_obat='$kode_obat'";
         mysqli_query($koneksi, $query);
     } elseif ($action == 'delete') {
-        $no_antrian = $_POST["no_antrian"];
-        $query = "DELETE FROM pasien WHERE no_antrian='$no_antrian'";
+        $kode_obat = $_POST["kode_obat"];
+        $query = "DELETE FROM obat WHERE kode_obat='$kode_obat'";
         mysqli_query($koneksi, $query);
     }
 }
-// Fetch all patients
-$query = 'SELECT * FROM pasien;'; 
+
+// Fetch all medicines
+$query = 'SELECT * FROM obat;'; 
 $result = mysqli_query($koneksi, $query); 
 
 include 'layouts/header.php'; 
@@ -167,37 +164,33 @@ include 'layouts/header.php';
 
 <section class="p-4 ml-5 mr-5 w-75">
     <div class="d-flex flex-row justify-content-between">
-        <h2>Data Pasien</h2>
+        <h2>Data Obat</h2>
         <button onclick="openModal()">+Tambah</button>
     </div>
     <table class="table table-light mt-3">
         <thead>
             <tr>
-                <th scope="col">ID</th>
-                <th scope="col">Nama</th>
-                <th scope="col">Tanggal Lahir</th>
-                <th scope="col">Nomor Telepon</th>
-                <th scope="col">Jenis Kelamin</th>
-                <th scope="col">Golongan Darah</th>
-                <th scope="col">Alamat</th>
-                <th scope="col">No Antrian</th>
+                <th scope="col">Kode Obat</th>
+                <th scope="col">Nama Obat</th>
+                <th scope="col">Dosis</th>
+                <th scope="col">Tanggal Produksi</th>
+                <th scope="col">Stok</th>
+                <th scope="col">Harga (Rp)</th>
                 <th scope="col">Aksi</th>
             </tr>
         </thead>
         <tbody>
-            <?php while ($pasien = mysqli_fetch_object($result)) { ?>
+            <?php while ($obat = mysqli_fetch_object($result)) { ?>
                 <tr>
-                    <td><?= $pasien->id ?></td>
-                    <td><?= $pasien->nama_pasien ?></td>
-                    <td><?= $pasien->tanggal_lahir ?></td>
-                    <td><?= $pasien->no_telepon?></td>
-                    <td><?= $pasien->jenis_kelamin?></td>
-                    <td><?= $pasien->gol_darah?></td>
-                    <td><?= $pasien->alamat ?></td>
-                    <td><?= $pasien->no_antrian?></td>
+                    <td><?= $obat->kode_obat ?></td>
+                    <td><?= $obat->nama_obat ?></td>
+                    <td><?= $obat->dosis ?></td>
+                    <td><?= $obat->tanggal_produksi ?></td>
+                    <td><?= $obat->stok ?></td>
+                    <td><?= $obat->harga ?></td>
                     <td>
-                        <button class="btn btn-warning btn-sm" onclick="toggleEditForm(<?= $pasien->id ?>)">Edit</button>
-                        <button class="btn btn-danger btn-sm" onclick="openDeleteModal(<?= $pasien->id ?>)">Hapus</button>
+                        <button class="btn btn-warning btn-sm" onclick="toggleEditForm('<?= $obat->kode_obat ?>')">Edit</button>
+                        <button class="btn btn-danger btn-sm" onclick="openDeleteModal('<?= $obat->kode_obat ?>')">Hapus</button>
                     </td>
                 </tr>
             <?php } ?>
@@ -206,50 +199,34 @@ include 'layouts/header.php';
 </section>
 
 
-<!-- Modal for adding/editing patient data -->
-<div id="patientModal" class="modal">
+<!-- Modal for adding/editing medicine data -->
+<div id="obatModal" class="modal">
     <div class="modal-content">
         <span class="close-btn" onclick="closeModal()">&times;</span>
-        <h2 id="modalTitle">Tambah Data Pasien</h2>
-        <form id="patientForm" method="POST">
+        <h2 id="modalTitle">Tambah Data Obat</h2>
+        <form id="obatForm" method="POST">
             <input type="hidden" name="action" id="action" value="insert">
-            <input type="hidden" name="id" id="patientIdInput" value="">
-            <input type="hidden" name="no_antrian" id="no_antrianInput" value="">
+            <input type="hidden" name="kode_obat" id="kodeObatInput" value="">
             
             <div class="form-group">
-                <label for="id">ID Pasien</label>
-                <input type="number" name="id" id="id" required>
+                <label for="nama_obat">Nama Obat</label>
+                <input type="text" name="nama_obat" id="nama_obat" required>
             </div>
             <div class="form-group">
-                <label for="nama">Nama Pasien</label>
-                <input type="text" name="nama" id="nama" required>
+                <label for="dosis">Dosis</label>
+                <input type="text" name="dosis" id="dosis" required>
             </div>
             <div class="form-group">
-                <label for="tanggal_lahir">Tanggal Lahir</label>
-                <input type="date" name="tanggal_lahir" id="tanggal_lahir" required>
+                <label for="tanggal_produksi">Tanggal Produksi</label>
+                <input type="date" name="tanggal_produksi" id="tanggal_produksi" required>
             </div>
             <div class="form-group">
-                <label for="no_telepon">Nomor Telepon</label>
-                <input type="text" name="no_telepon" id="no_telepon" required>
+                <label for="stok">Stok</label>
+                <input type="number" name="stok" id="stok" required>
             </div>
             <div class="form-group">
-                <label for="jenis_kelamin">Jenis Kelamin</label>
-                <select name="jenis_kelamin" id="jenis_kelamin" required>
-                    <option value="Laki-laki">Laki-laki</option>
-                    <option value="Perempuan">Perempuan</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="gol_darah">Golongan Darah</label>
-                <input type="text" name="gol_darah" id="gol_darah" required>
-            </div>
-            <div class="form-group">
-                <label for="alamat">Alamat Pasien</label>
-                <input type="text" name="alamat" id="alamat" required>
-            </div>
-            <div class="form-group">
-                <label for="no_antrian">No Antrian</label>
-                <input type="number" name="no_antrian" id="no_antrian" required>
+                <label for="harga">Harga (Rp)</label>
+                <input type="number" name="harga" id="harga" required>
             </div>
             <button type="submit">Simpan</button>
             <button type="button" onclick="closeModal()">Batal</button>
@@ -262,12 +239,12 @@ include 'layouts/header.php';
     <div class="modal-content">
         <span class="close-btn" onclick="closeDeleteModal()">&times;</span>
         <h2>Konfirmasi Hapus</h2>
-        <p>Masukkan No Antrian untuk menghapus data pasien:</p>
+        <p>Masukkan Kode Obat untuk menghapus data obat:</p>
         <form id="deleteForm" method="POST">
             <input type="hidden" name="action" value="delete">
             <div class="form-group">
-                <label for="no_antrian_delete">No Antrian</label>
-                <input type="number" name="no_antrian" id="no_antrian_delete" required>
+                <label for="kode_obat_delete">Kode Obat</label>
+                <input type="text" name="kode_obat" id="kode_obat_delete" required>
             </div>
             <button type="submit">Hapus</button>
             <button type="button" onclick="closeDeleteModal()">Batal</button>
@@ -276,33 +253,30 @@ include 'layouts/header.php';
 </div>
 
 <script>
-    function openModal(patientData = null) {
-        document.getElementById('patientForm').reset();
-        document.getElementById('patientIdInput').value = '';
-        document.getElementById('no_antrianInput').value = '';
+    function openModal(obatData = null) {
+        document.getElementById('obatForm').reset();
+        document.getElementById('kodeObatInput').value = '';
 
-        if (patientData) {
+        if (obatData) {
             document.getElementById('action').value = 'edit';
-            document.getElementById('patientIdInput').value = patientData.id;
-            document.getElementById('nama').value = patientData.nama_pasien;
-            document.getElementById('tanggal_lahir').value = patientData.tanggal_lahir;
-            document.getElementById('no_telepon').value = patientData.no_telepon;
-            document.getElementById('jenis_kelamin').value = patientData.jenis_kelamin;
-            document.getElementById('gol_darah').value = patientData.gol_darah;
-            document.getElementById('alamat').value = patientData.alamat;
-            document.getElementById('no_antrian').value = patientData.no_antrian;
+            document.getElementById('kodeObatInput').value = obatData.kode_obat;
+            document.getElementById('nama_obat').value = obatData.nama_obat;
+            document.getElementById('dosis').value = obatData.dosis;
+            document.getElementById('tanggal_produksi').value = obatData.tanggal_produksi;
+            document.getElementById('stok').value = obatData.stok;
+            document.getElementById('harga').value = obatData.harga;
         } else {
             document.getElementById('action').value = 'insert';
         }
-        document.getElementById('patientModal').style.display = 'block';
+        document.getElementById('obatModal').style.display = 'block';
     }
 
     function closeModal() {
-        document.getElementById('patientModal').style.display = 'none';
+        document.getElementById('obatModal').style.display = 'none';
     }
 
-    function openDeleteModal(no_antrian) {
-        document.getElementById('no_antrian_delete').value = no_antrian; // Set the no_antrian to the input
+    function openDeleteModal(kode_obat) {
+        document.getElementById('kode_obat_delete').value = kode_obat; // Set the kode_obat to the input
         document.getElementById('deleteModal').style.display = 'block';
     }
 
@@ -310,8 +284,9 @@ include 'layouts/header.php';
         document.getElementById('deleteModal').style.display = 'none';
     }
 
-    function toggleEditForm(id, nama, tanggal_lahir, no_telepon, jenis_kelamin, gol_darah, alamat, no_antrian) {
-        openModal({ id, nama_pasien: nama, tanggal_lahir, no_telepon, jenis_kelamin, gol_darah, alamat, no_antrian });
+    function toggleEditForm(kode_obat) {
+
+        openModal({ kode_obat: kode_obat, nama_obat: 'Dummy', dosis: '500mg', tanggal_produksi: '2023-01-01', stok: 10, harga: 15000 });
     }
 </script>
 

@@ -13,6 +13,6 @@ if(!$koneksi){
     exit;
 }
 else{
-    echo"Koneksi Berhasil";
+    //echo"Koneksi Berhasil";
 }
 ?>

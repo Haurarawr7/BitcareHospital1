@@ -97,12 +97,12 @@
     <h2>Menu</h2>
     <div class="menu-item">Tindakan medis</div>
     <div class="menu-item">Rekam medis</div>
-    <div class="menu-item">Obat</div>
+    <div class="menu-item" onclick="window.location.href='obat.php'">Obat</div>
     <div class="menu-item">Transaksi</div>
     <div class="menu-item">Ruangan</div>
     <div class="menu-item">Staff</div>
     <div class="menu-item" onclick="window.location.href='pasien.php'">Pasien</div>
-    <div class="menu-item">Perawat</div>
+    <div class="menu-item" onclick="window.location.href='perawat.php'">Perawat</div>
     <div class="menu-item">Dokter</div>
   </div>
   <div class="main-content">
