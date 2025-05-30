@@ -168,7 +168,7 @@
       <div class="card" role="listitem" tabindex="0">Transaksi</div>
       <div class="card" role="listitem" tabindex="0">Ruangan</div>
       <div class="card" role="listitem" tabindex="0">Staff</div>
-      <div class="card" role="listitem" tabindex="0">Pasien</div>
+      <div class="menu-item"><a href="data_pasien.php" style="color: inherit; text-decoration: none;">Data Pasien</a></div>
       <div class="card" role="listitem" tabindex="0">Perawat</div>
       <div class="card" role="listitem" tabindex="0">Dokter</div>
     </main>
