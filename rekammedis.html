@@ -6,18 +6,17 @@
     <title>Data Rekam Medis</title>
     <style>
         body {
-            font-family: 'Inter', sans-serif; /* Font modern */
+            font-family: 'Inter', sans-serif;
             margin: 20px;
-            background-color: #f7f9fc; /* Latar belakang netral */
+            background-color: #f7f9fc;
             color: #333a45;
             line-height: 1.6;
         }
 
         h1 {
-            color: #3a7bd5; /* Biru gradasi */
+            color: #3a7bd5;
             text-align: center;
             margin-bottom: 35px;
-            font-weight: 600;
         }
 
         table {
@@ -26,31 +25,21 @@
             margin-bottom: 25px;
             background-color: #fff;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-            border-radius: 10px;
-            overflow: hidden;
         }
 
         th, td {
             border-bottom: 1px solid #e9ecef;
-            padding: 15px 18px;
+            padding: 15px;
             text-align: left;
         }
 
         th {
-            background: linear-gradient(to right, #3a7bd5, #00d2ff); /* Gradasi biru untuk header */
+            background: #3a7bd5;
             color: white;
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 13px;
-            letter-spacing: 0.5px;
         }
 
         tr:nth-child(even) {
             background-color: #fbfcfd;
-        }
-
-        tr:hover {
-            background-color: #f1f7ff; /* Highlight biru sangat muda */
         }
 
         .actions button {
@@ -59,51 +48,17 @@
             border: none;
             border-radius: 7px;
             cursor: pointer;
-            font-size: 13px;
-            font-weight: 500;
-            transition: all 0.25s ease-in-out;
-        }
-        .actions button:active {
-            transform: scale(0.96);
-        }
-
-        .actions .edit-btn {
-            background-color: #ffc107; /* Kuning */
-            color: #333;
-        }
-        .actions .edit-btn:hover {
-            background-color: #e0a800;
-            box-shadow: 0 2px 8px rgba(255, 193, 7, 0.3);
-        }
-
-        .actions .delete-btn {
-            background-color: #dc3545; /* Merah */
-            color: white;
-        }
-        .actions .delete-btn:hover {
-            background-color: #c82333;
-            box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
         }
 
         .add-btn {
-            background: linear-gradient(to right, #11998e, #38ef7d); /* Gradasi hijau */
+            background: linear-gradient(to right, #38ef7d, #11998e); /* Gradasi hijau */
             color: white;
             padding: 12px 22px;
             border: none;
             border-radius: 7px;
             cursor: pointer;
-            font-size: 15px;
-            font-weight: 600;
-            margin-bottom: 25px;
             display: block;
-            margin-left: auto;
-            margin-right: auto;
-            transition: all 0.25s ease-in-out;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
-        .add-btn:hover {
-            opacity: 0.9;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+            margin: 0 auto 25px;
         }
 
         .modal {
@@ -114,35 +69,24 @@
             top: 0;
             width: 100%;
             height: 100%;
-            overflow: auto;
-            background-color: rgba(30, 40, 50, 0.6); /* Overlay lebih gelap */
+            background-color: rgba(30, 40, 50, 0.6);
             padding-top: 40px;
-            backdrop-filter: blur(3px); /* Efek blur di background */
+            justify-content: center; /* Centering */
+            align-items: center; /* Centering */
+            display: flex; /* Flexbox for centering */
         }
 
         .modal-content {
             background-color: #fff;
-            margin: 5% auto 12% auto;
-            padding: 30px 40px;
-            border: none;
+            padding: 30px;
             width: 90%;
-            max-width: 650px; /* Modal lebih lebar untuk field riwayat */
+            max-width: 650px;
             border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
 
         .close-btn {
-            color: #adb5bd;
             float: right;
             font-size: 32px;
-            font-weight: bold;
-            line-height: 0.7;
-        }
-
-        .close-btn:hover,
-        .close-btn:focus {
-            color: #6c757d;
-            text-decoration: none;
             cursor: pointer;
         }
 
@@ -153,78 +97,31 @@
         .form-group label {
             display: block;
             margin-bottom: 9px;
-            font-weight: 600;
-            color: #495057;
-            font-size: 14.5px;
         }
 
-        .form-group input[type="text"],
-        .form-group input[type="date"],
-        .form-group textarea {
+        .form-group input, .form-group textarea {
             width: 100%;
-            padding: 12px 16px;
+            padding: 12px;
             border: 1px solid #ced4da;
             border-radius: 8px;
-            box-sizing: border-box;
-            font-size: 15px;
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
-        }
-        .form-group textarea {
-            resize: vertical;
-            min-height: 120px; /* Tinggi minimal untuk riwayat */
-        }
-
-        .form-group input:focus,
-        .form-group textarea:focus {
-            border-color: #3a7bd5;
-            outline: none;
-            box-shadow: 0 0 0 3.5px rgba(58, 123, 213, 0.18);
         }
 
         .form-group button[type="submit"] {
-            background: linear-gradient(to right, #3a7bd5, #00d2ff);
+            background: #3a7bd5;
             color: white;
-            padding: 14px 25px;
+            padding: 14px;
             border: none;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 16px;
-            font-weight: 600;
             width: 100%;
-            transition: all 0.25s ease-in-out;
-        }
-        .form-group button[type="submit"]:hover {
-            opacity: 0.9;
-            box-shadow: 0 4px 12px rgba(58, 123, 213, 0.25);
-        }
-        .loading-message, .empty-message {
-            text-align: center;
-            font-style: italic;
-            color: #6c757d;
-            padding: 25px;
-            font-size: 15px;
-        }
-        /* Untuk placeholder di textarea */
-        ::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
-            color: #adb5bd;
-            opacity: 1; /* Firefox */
-        }
-        :-ms-input-placeholder { /* Internet Explorer 10-11 */
-            color: #adb5bd;
-        }
-        ::-ms-input-placeholder { /* Microsoft Edge */
-            color: #adb5bd;
         }
     </style>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
-    <h1><svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-file-earmark-medical-fill" viewBox="0 0 16 16" style="vertical-align: -6px; margin-right: 12px;">
-        <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M7.053 6.953c.125-.125.299-.188.474-.188s.349.063.474.188L10 8.979l2.004-2.004a.67.67 0 0 1 .948 0 .67.67 0 0 1 0 .948L10.948 10l2.004 2.004a.67.67 0 0 1 0 .948a.67.67 0 0 1-.948 0L10 10.948l-2.004 2.004a.67.67 0 0 1-.948 0a.67.67 0 0 1 0-.948L9.052 10 7.049 7.901a.67.67 0 0 1-.004-.948"/>
-      </svg>Data Rekam Medis</h1>
+    <h1>Data Rekam Medis</h1>
 
-    <button class="add-btn" onclick="openModalRekamMedis()">➕ Tambah Rekam Medis</button>
+    <button class="add-btn" onclick="openModal()">➕ Tambah Rekam Medis</button>
 
     <table>
         <thead>
@@ -237,47 +134,36 @@
                 <th>Aksi</th>
             </tr>
         </thead>
-        <tbody id="rekamMedisTableBody">
-            </tbody>
+        <tbody id="rekamMedisTableBody"></tbody>
     </table>
 
     <div id="rekamMedisModal" class="modal">
         <div class="modal-content">
-            <span class="close-btn" onclick="closeModalRekamMedis()">&times;</span>
-            <h2 id="modalTitleRekamMedis" style="color: #3a7bd5; margin-bottom: 28px; font-weight: 500;">Tambah Data Rekam Medis</h2>
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <h2 id="modalTitle">Tambah Data Rekam Medis</h2>
             <form id="rekamMedisForm">
-
                 <div class="form-group">
                     <label for="noRekamMedis">Nomor Rekam Medis:</label>
                     <input type="text" id="noRekamMedis" name="no_rekam_medis" required>
                 </div>
-
                 <div class="form-group">
                     <label for="tanggalRekamMedis">Tanggal Rekam Medis:</label>
                     <input type="date" id="tanggalRekamMedis" name="tanggal_rekam_medis" required>
                 </div>
-
                 <div class="form-group">
                     <label for="idPasienRm">ID Pasien:</label>
                     <input type="text" id="idPasienRm" name="id_pasien" required>
-                    <small style="font-size: 12.5px; color: #6c757d; display: block; margin-top: 4px;">Idealnya dropdown dari data Pasien.</small>
                 </div>
-
                 <div class="form-group">
                     <label for="riwayatRekamMedis">Riwayat Penyakit/Keluhan:</label>
-                    <textarea id="riwayatRekamMedis" name="riwayat" rows="4" required placeholder="Jelaskan keluhan utama, riwayat penyakit sebelumnya, alergi, dll."></textarea>
+                    <textarea id="riwayatRekamMedis" name="riwayat" rows="4" required></textarea>
                 </div>
-
                 <div class="form-group">
                     <label for="idDokterRm">ID Dokter:</label>
                     <input type="text" id="idDokterRm" name="id_dokter" required>
-                    <small style="font-size: 12.5px; color: #6c757d; display: block; margin-top: 4px;">Idealnya dropdown dari data Dokter/Staf.</small>
                 </div>
-
-                <input type="hidden" id="originalNoRekamMedis" name="originalNoRekamMedis">
-
                 <div class="form-group">
-                    <button type="submit" id="submitButtonRekamMedis">Simpan</button>
+                    <button type="submit">Simpan</button>
                 </div>
             </form>
         </div>
@@ -286,172 +172,85 @@
     <script>
         const rekamMedisTableBody = document.getElementById('rekamMedisTableBody');
         const rekamMedisModal = document.getElementById('rekamMedisModal');
-        const modalTitleRekamMedis = document.getElementById('modalTitleRekamMedis');
         const rekamMedisForm = document.getElementById('rekamMedisForm');
-        const noRekamMedisInput = document.getElementById('noRekamMedis');
-        const originalNoRekamMedisInput = document.getElementById('originalNoRekamMedis');
-        const submitButtonRekamMedis = document.getElementById('submitButtonRekamMedis');
 
-        // GANTI DENGAN URL API BACKEND ANDA
         const API_URL_REKAM_MEDIS = 'api/rekam_medis.php';
 
         async function fetchRekamMedis() {
-            rekamMedisTableBody.innerHTML = '<tr><td colspan="6" class="loading-message">Memuat data rekam medis... ⏳</td></tr>';
+            rekamMedisTableBody.innerHTML = '<tr><td colspan="6">Memuat data...</td></tr>';
             try {
                 const response = await fetch(API_URL_REKAM_MEDIS);
-                if (!response.ok) {
-                    throw new Error(HTTP error! status: ${response.status}, ${await response.text()});
-                }
-                const daftarRekamMedis = await response.json();
-
-                rekamMedisTableBody.innerHTML = '';
-
-                if (daftarRekamMedis && daftarRekamMedis.length > 0) {
-                    daftarRekamMedis.forEach(rm => {
-                        const row = rekamMedisTableBody.insertRow();
-                        // Sesuaikan nama properti (rm.no_rekam_medis, dll.) dengan respons API Anda.
-                        row.innerHTML = `
-                            <td>${rm.no_rekam_medis || 'N/A'}</td>
-                            <td>${rm.tanggal_rekam_medis ? new Date(rm.tanggal_rekam_medis).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' }) : 'N/A'}</td>
-                            <td>${rm.id_pasien || 'N/A'}</td>
-                            <td style="white-space: pre-wrap; max-width: 300px; overflow-wrap: break-word;">${(rm.riwayat || '-').replace(/\n/g, '<br>')}</td>
-                            <td>${rm.id_dokter || 'N/A'}</td>
-                            <td class="actions">
-                                <button class="edit-btn" onclick="editRekamMedis('${rm.no_rekam_medis}', event)">✏️ Edit</button>
-                                <button class="delete-btn" onclick="deleteRekamMedis('${rm.no_rekam_medis}')">🗑️ Hapus</button>
-                            </td>
-                        `;
-                    });
-                } else {
-                    rekamMedisTableBody.innerHTML = '<tr><td colspan="6" class="empty-message">Belum ada data rekam medis. 🤷</td></tr>';
-                }
-
+                const data = await response.json();
+                rekamMedisTableBody.innerHTML = data.map(rm => `
+                    <tr>
+                        <td>${rm.no_rekam_medis}</td>
+                        <td>${new Date(rm.tanggal_rekam_medis).toLocaleDateString('id-ID')}</td>
+                        <td>${rm.id_pasien}</td>
+                        <td>${rm.riwayat}</td>
+                        <td>${rm.id_dokter}</td>
+                        <td>
+                            <button onclick="editRekamMedis('${rm.no_rekam_medis}')">Edit</button>
+                            <button onclick="deleteRekamMedis('${rm.no_rekam_medis}')">Hapus</button>
+                        </td>
+                    </tr>
+                `).join('') || '<tr><td colspan="6">Belum ada data.</td></tr>';
             } catch (error) {
-                console.error('Error fetching rekam medis:', error);
-                rekamMedisTableBody.innerHTML = <tr><td colspan="6" class="empty-message">Gagal memuat data: ${error.message}. Pastikan backend aktif. 😥</td></tr>;
+                console.error('Error fetching data:', error);
+                rekamMedisTableBody.innerHTML = '<tr><td colspan="6">Gagal memuat data.</td></tr>';
             }
         }
 
-        function openModalRekamMedis(dataRm = null) {
-            rekamMedisForm.reset();
-            noRekamMedisInput.readOnly = false;
-            originalNoRekamMedisInput.value = '';
-
-            if (dataRm) {
-                modalTitleRekamMedis.textContent = '✏️ Edit Data Rekam Medis';
-                submitButtonRekamMedis.textContent = 'Update';
-
-                noRekamMedisInput.value = dataRm.no_rekam_medis || '';
-                // Jika No Rekam Medis (PK) tidak boleh diubah, uncomment:
-                // noRekamMedisInput.readOnly = true;
-                originalNoRekamMedisInput.value = dataRm.no_rekam_medis || '';
-
-                document.getElementById('tanggalRekamMedis').value = dataRm.tanggal_rekam_medis ? dataRm.tanggal_rekam_medis.split('T')[0] : '';
-                document.getElementById('idPasienRm').value = dataRm.id_pasien || '';
-                document.getElementById('riwayatRekamMedis').value = dataRm.riwayat || '';
-                document.getElementById('idDokterRm').value = dataRm.id_dokter || '';
-            } else {
-                modalTitleRekamMedis.textContent = '➕ Tambah Data Rekam Medis';
-                submitButtonRekamMedis.textContent = 'Simpan';
-                // Jika No Rekam Medis auto-generated, field ini bisa di-disable/hide.
-            }
-            rekamMedisModal.style.display = 'block';
-            // Jika menggunakan dropdown untuk FK, panggil fungsi fetch data FK di sini.
+        function openModal() {
+            rekamMedisModal.style.display = 'flex'; // Use flex to center the modal
         }
 
-        function closeModalRekamMedis() {
+        function closeModal() {
             rekamMedisModal.style.display = 'none';
         }
 
-        window.onclick = function(event) {
-            if (event.target == rekamMedisModal) {
-                closeModalRekamMedis();
-            }
-        }
-
-        rekamMedisForm.addEventListener('submit', async function(event) {
+        rekamMedisForm.addEventListener('submit', async (event) => {
             event.preventDefault();
-
             const formData = new FormData(rekamMedisForm);
             const data = Object.fromEntries(formData.entries());
-            const currentOriginalNoRm = originalNoRekamMedisInput.value;
-
-            let url = API_URL_REKAM_MEDIS;
-            let method = 'POST';
-
-            if (currentOriginalNoRm) {
-                method = 'PUT';
-                // data.original_no_rekam_medis = currentOriginalNoRm; // Jika PK bisa diubah
-            }
 
             try {
-                const response = await fetch(url, {
-                    method: method,
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                const response = await fetch(API_URL_REKAM_MEDIS, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data),
                 });
-
-                if (!response.ok) {
-                    const errorData = await response.json().catch(() => ({ message: response.statusText }));
-                    throw new Error(errorData.message || HTTP error! status: ${response.status});
+                if (response.ok) {
+                    closeModal();
+                    fetchRekamMedis();
+                } else {
+                    alert('Gagal menyimpan data.');
                 }
-
-                closeModalRekamMedis();
-                fetchRekamMedis();
-                alert(currentOriginalNoRm ? 'Data rekam medis berhasil diupdate! 👍' : 'Data rekam medis berhasil ditambahkan! 🎉');
-
             } catch (error) {
-                console.error('Error submitting form:', error);
-                alert(Gagal menyimpan data: ${error.message} 😔);
+                console.error('Error saving data:', error);
+                alert('Gagal menyimpan data.');
             }
         });
 
-        async function editRekamMedis(noRm, event) {
-            event.stopPropagation();
-            try {
-                const response = await fetch(${API_URL_REKAM_MEDIS}?no_rekam_medis=${noRm});
-                if (!response.ok) {
-                    const errorData = await response.json().catch(() => ({ message: response.statusText }));
-                    throw new Error(errorData.message || HTTP error! status: ${response.status});
-                }
-                const dataRm = await response.json();
-
-                if (dataRm) {
-                    openModalRekamMedis(Array.isArray(dataRm) ? dataRm[0] : dataRm);
-                } else {
-                    alert('Data rekam medis tidak ditemukan!');
-                }
-
-            } catch (error) {
-                console.error('Error fetching rekam medis data for edit:', error);
-                alert(Gagal mengambil data rekam medis untuk diedit: ${error.message});
-            }
+        async function editRekamMedis(noRm) {
+            // Implementasi edit
         }
 
         async function deleteRekamMedis(noRm) {
-            if (confirm(Apakah Anda yakin ingin menghapus rekam medis dengan Nomor ${noRm}? 🚮)) {
+            if (confirm(`Hapus rekam medis dengan Nomor ${noRm}?`)) {
                 try {
                     const response = await fetch(API_URL_REKAM_MEDIS, {
                         method: 'DELETE',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
+                        headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ no_rekam_medis: noRm }),
                     });
-
-                    if (!response.ok) {
-                        const errorData = await response.json().catch(() => ({ message: response.statusText }));
-                        throw new Error(errorData.message || HTTP error! status: ${response.status});
+                    if (response.ok) {
+                        fetchRekamMedis();
+                    } else {
+                        alert('Gagal menghapus data.');
                     }
-
-                    alert(Rekam medis dengan Nomor ${noRm} berhasil dihapus.);
-                    fetchRekamMedis();
-
                 } catch (error) {
-                    console.error('Error deleting rekam medis:', error);
-                    alert(Gagal menghapus data: ${error.message});
+                    console.error('Error deleting data:', error);
+                    alert('Gagal menghapus data.');
                 }
             }
         }
