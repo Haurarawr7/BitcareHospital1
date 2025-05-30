@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Administrasi</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif; /* Font yang modern dan mudah dibaca */
+            margin: 20px;
+            background-color: #f0f4f8; /* Latar belakang biru muda yang sangat lembut */
+            color: #333d49; /* Warna teks utama lebih gelap untuk kontras */
+            line-height: 1.6;
+        }
+
+        h1 {
+            color: #1e88e5; /* Biru yang lebih kaya */
+            text-align: center;
+            margin-bottom: 40px; /* Jarak bawah lebih besar */
+            font-weight: 500; /* Sedikit lebih tebal dari normal */
+            letter-spacing: -0.3px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+            background-color: #fff;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08); /* Bayangan lebih halus */
+            border-radius: 12px; /* Border radius lebih besar */
+            overflow: hidden;
+        }
+
+        th, td {
+            border-bottom: 1px solid #e0e6ed; /* Border yang lebih lembut */
+            padding: 18px 22px; /* Padding sel yang lebih nyaman */
+            text-align: left;
+            vertical-align: middle;
+        }
+
+        th {
+            background-color: #1e88e5; /* Header biru yang serasi dengan judul */
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 12px; /* Ukuran font header yang lebih kecil dan rapi */
+            letter-spacing: 0.7px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f7f9fc; /* Warna baris genap yang halus */
+        }
+
+        tr:hover {
+            background-color: #e3f2fd; /* Highlight biru yang sangat lembut saat hover */
+        }
+
+        .actions button {
+            margin-right: 8px;
+            padding: 10px 16px; /* Tombol aksi sedikit lebih besar */
+            border: none;
+            border-radius: 8px; /* Border radius tombol lebih besar */
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s ease-in-out;
+        }
+        .actions button:active {
+            transform: translateY(1px) scale(0.97);
+        }
+
+        .actions .edit-btn {
+            background-color: #ffb300; /* Oranye amber */
+            color: #fff;
+        }
+        .actions .edit-btn:hover {
+            background-color: #ffa000;
+            box-shadow: 0 2px 8px rgba(255, 176, 0, 0.3);
+        }
+
+        .actions .delete-btn {
+            background-color: #e53935; /* Merah yang lebih cerah */
+            color: white;
+        }
+        .actions .delete-btn:hover {
+            background-color: #d32f2f;
+            box-shadow: 0 2px 8px rgba(229, 57, 53, 0.3);
+        }
+
+        .add-btn {
+            background-color: #43a047; /* Hijau yang lebih kaya */
+            color: white;
+            padding: 13px 26px; /* Tombol tambah lebih menonjol */
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 30px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 4px 14px rgba(67, 160, 71, 0.25);
+        }
+        .add-btn:hover {
+            background-color: #388e3c;
+            box-shadow: 0 6px 16px rgba(67, 160, 71, 0.3);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1070; /* Z-index lebih tinggi */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(10, 20, 30, 0.7); /* Overlay lebih gelap dan modern */
+            padding-top: 30px; /* Padding atas modal */
+            backdrop-filter: blur(5px); /* Efek blur lebih intens */
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 3% auto 8% auto; /* Penyesuaian margin modal */
+            padding: 40px 50px; /* Padding konten modal lebih besar */
+            border: none;
+            width: 90%;
+            max-width: 620px; /* Lebar modal sedikit lebih besar */
+            border-radius: 16px; /* Border radius modal sangat besar */
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15); /* Bayangan modal lebih dramatis */
+        }
+
+        .close-btn {
+            color: #cccccc; /* Warna tombol close yang sangat lembut */
+            float: right;
+            font-size: 38px; /* Tombol close lebih besar */
+            font-weight: bold;
+            line-height: 0.5;
+        }
+
+        .close-btn:hover,
+        .close-btn:focus {
+            color: #999999; /* Warna hover tombol close lebih gelap */
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .form-group {
+            margin-bottom: 28px; /* Jarak antar form group lebih besar */
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 12px; /* Jarak label ke input lebih besar */
+            font-weight: 600;
+            color: #555e69; /* Warna label yang lebih lembut */
+            font-size: 14px;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="date"],
+        .form-group input[type="time"] {
+            width: 100%;
+            padding: 14px 18px; /* Padding input lebih besar */
+            border: 1px solid #d0d9e3; /* Border input yang lebih lembut */
+            border-radius: 10px; /* Border radius input lebih besar */
+            box-sizing: border-box;
+            font-size: 15px;
+            transition: border-color 0.25s ease, box-shadow 0.25s ease;
+        }
+
+        .form-group input:focus {
+            border-color: #1e88e5; /* Warna border fokus */
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(30, 136, 229, 0.15); /* Bayangan fokus lebih menonjol */
+        }
+
+        .form-group button[type="submit"] {
+            background-color: #1e88e5;
+            color: white;
+            padding: 15px 30px; /* Tombol submit lebih besar */
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            width: 100%;
+            transition: all 0.25s ease-in-out;
+        }
+        .form-group button[type="submit"]:hover {
+            background-color: #1575c8;
+            box-shadow: 0 5px 15px rgba(30, 136, 229, 0.25);
+        }
+        .loading-message, .empty-message {
+            text-align: center;
+            font-style: italic;
+            color: #6c757d;
+            padding: 35px; /* Padding pesan lebih besar */
+            font-size: 15.5px;
+        }
+        ::placeholder {
+            color: #b0bec5; /* Warna placeholder yang lebih lembut */
+            opacity: 1;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <h1><svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-calendar-check-fill" viewBox="0 0 16 16" style="vertical-align: -6px; margin-right: 12px;">
+        <path d="M4 .5a.5.5 0 0 0-1 0V1H2a2 2 0 0 0-2 2v1h16V3a2 2 0 0 0-2-2h-1V.5a.5.5 0 0 0-1 0V1H4zM16 14V5H0v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2m-5.146-5.146-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L7.5 10.793l2.646-2.647a.5.5 0 0 1 .708.708"/>
+      </svg>Data Administrasi</h1>
+
+    <button class="add-btn" onclick="openModalAdministrasi()">➕ Tambah Data Administrasi</button>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Nomor Antrian</th>
+                <th>Tanggal</th>
+                <th>ID Pasien</th>
+                <th>ID Dokter</th>
+                <th>Nomor Ruangan</th>
+                <th>Jam Operasi</th>
+                <th>Aksi</th>
+            </tr>
+        </thead>
+        <tbody id="administrasiTableBody">
+            </tbody>
+    </table>
+
+    <div id="administrasiModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModalAdministrasi()">&times;</span>
+            <h2 id="modalTitleAdministrasi" style="color: #1e88e5; margin-bottom: 35px; font-weight: 500;">Tambah Data Administrasi</h2>
+            <form id="administrasiForm">
+
+                <div class="form-group">
+                    <label for="noAntrian">Nomor Antrian:</label>
+                    <input type="text" id="noAntrian" name="no_antrian" required placeholder="Contoh: A001">
+                </div>
+
+                <div class="form-group">
+                    <label for="tanggalAdm">Tanggal:</label>
+                    <input type="date" id="tanggalAdm" name="tanggal" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="idPasienAdm">ID Pasien:</label>
+                    <input type="text" id="idPasienAdm" name="id_pasien" required placeholder="Masukkan ID Pasien">
+                    <small style="font-size: 12.5px; color: #6c757d; display: block; margin-top: 5px;">Idealnya dropdown dari data Pasien.</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="idDokterAdm">ID Dokter:</label>
+                    <input type="text" id="idDokterAdm" name="id_dokter" required placeholder="Masukkan ID Dokter">
+                    <small style="font-size: 12.5px; color: #6c757d; display: block; margin-top: 5px;">Idealnya dropdown dari data Dokter/Staf.</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="noRuanganAdm">Nomor Ruangan:</label>
+                    <input type="text" id="noRuanganAdm" name="no_ruangan" required placeholder="Masukkan Nomor Ruangan">
+                    <small style="font-size: 12.5px; color: #6c757d; display: block; margin-top: 5px;">Idealnya dropdown dari data Ruangan.</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="jamOperasi">Jam Operasi/Janji Temu:</label>
+                    <input type="time" id="jamOperasi" name="jam_operasi" required>
+                </div>
+
+                <input type="hidden" id="originalNoAntrian" name="originalNoAntrian">
+
+                <div class="form-group">
+                    <button type="submit" id="submitButtonAdministrasi">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const administrasiTableBody = document.getElementById('administrasiTableBody');
+        const administrasiModal = document.getElementById('administrasiModal');
+        const modalTitleAdministrasi = document.getElementById('modalTitleAdministrasi');
+        const administrasiForm = document.getElementById('administrasiForm');
+        const noAntrianInput = document.getElementById('noAntrian');
+        const originalNoAntrianInput = document.getElementById('originalNoAntrian');
+        const submitButtonAdministrasi = document.getElementById('submitButtonAdministrasi');
+
+        // GANTI DENGAN URL API BACKEND ANDA
+        const API_URL_ADMINISTRASI = 'api/administrasi.php';
+
+        async function fetchAdministrasi() {
+            administrasiTableBody.innerHTML = '<tr><td colspan="7" class="loading-message">Memuat data administrasi... ⏳</td></tr>';
+            try {
+                const response = await fetch(API_URL_ADMINISTRASI);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}, ${await response.text()}`);
+                }
+                const daftarAdm = await response.json();
+
+                administrasiTableBody.innerHTML = '';
+
+                if (daftarAdm && daftarAdm.length > 0) {
+                    daftarAdm.forEach(adm => {
+                        const row = administrasiTableBody.insertRow();
+                        // Sesuaikan nama properti (adm.no_antrian, dll.) dengan respons API Anda.
+                        row.innerHTML = `
+                            <td>${adm.no_antrian || 'N/A'}</td>
+                            <td>${adm.tanggal ? new Date(adm.tanggal).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' }) : 'N/A'}</td>
+                            <td>${adm.id_pasien || 'N/A'}</td>
+                            <td>${adm.id_dokter || 'N/A'}</td>
+                            <td>${adm.no_ruangan || 'N/A'}</td>
+                            <td>${adm.jam_operasi || 'N/A'}</td>
+                            <td class="actions">
+                                <button class="edit-btn" onclick="editAdministrasi('${adm.no_antrian}', event)">✏ Edit</button>
+                                <button class="delete-btn" onclick="deleteAdministrasi('${adm.no_antrian}')">🗑 Hapus</button>
+                            </td>
+                        `;
+                    });
+                } else {
+                    administrasiTableBody.innerHTML = '<tr><td colspan="7" class="empty-message">Belum ada data administrasi. 🤷</td></tr>';
+                }
+
+            } catch (error) {
+                console.error('Error fetching administrasi:', error);
+                administrasiTableBody.innerHTML = `<tr><td colspan="7" class="empty-message">Gagal memuat data: ${error.message}. Pastikan backend aktif. 😥</td></tr>`;
+            }
+        }
+
+        function openModalAdministrasi(dataAdm = null) {
+            administrasiForm.reset();
+            noAntrianInput.readOnly = false;
+            originalNoAntrianInput.value = '';
+
+            if (dataAdm) {
+                modalTitleAdministrasi.textContent = '✏ Edit Data Administrasi';
+                submitButtonAdministrasi.textContent = 'Update';
+
+                noAntrianInput.value = dataAdm.no_antrian || '';
+                // Jika No Antrian (PK) tidak boleh diubah, uncomment:
+                // noAntrianInput.readOnly = true;
+                originalNoAntrianInput.value = dataAdm.no_antrian || '';
+
+                document.getElementById('tanggalAdm').value = dataAdm.tanggal ? dataAdm.tanggal.split('T')[0] : '';
+                document.getElementById('idPasienAdm').value = dataAdm.id_pasien || '';
+                document.getElementById('idDokterAdm').value = dataAdm.id_dokter || '';
+                document.getElementById('noRuanganAdm').value = dataAdm.no_ruangan || '';
+                document.getElementById('jamOperasi').value = dataAdm.jam_operasi || '';
+            } else {
+                modalTitleAdministrasi.textContent = '➕ Tambah Data Administrasi';
+                submitButtonAdministrasi.textContent = 'Simpan';
+                // Jika No Antrian auto-generated, field ini bisa di-disable/hide.
+            }
+            administrasiModal.style.display = 'block';
+            // Jika menggunakan dropdown untuk FK, panggil fungsi fetch data FK di sini.
+        }
+
+        function closeModalAdministrasi() {
+            administrasiModal.style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            if (event.target == administrasiModal) {
+                closeModalAdministrasi();
+            }
+        }
+
+        administrasiForm.addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const formData = new FormData(administrasiForm);
+            const data = Object.fromEntries(formData.entries());
+            const currentOriginalNoAntrian = originalNoAntrianInput.value;
+
+            let url = API_URL_ADMINISTRASI;
+            let method = 'POST';
+
+            if (currentOriginalNoAntrian) {
+                method = 'PUT';
+                // data.original_no_antrian = currentOriginalNoAntrian; // Jika PK bisa diubah
+            }
+
+            try {
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({ message: response.statusText }));
+                    throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+                }
+
+                closeModalAdministrasi();
+                fetchAdministrasi();
+                alert(currentOriginalNoAntrian ? 'Data administrasi berhasil diupdate! 👍' : 'Data administrasi berhasil ditambahkan! 🎉');
+
+            } catch (error) {
+                console.error('Error submitting form:', error);
+                alert(`Gagal menyimpan data: ${error.message} 😔`);
+            }
+        });
+
+        async function editAdministrasi(noAntrian, event) {
+            event.stopPropagation();
+            try {
+                const response = await fetch(`${API_URL_ADMINISTRASI}?no_antrian=${noAntrian}`);
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({ message: response.statusText }));
+                    throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+                }
+                const dataAdm = await response.json();
+
+                if (dataAdm) {
+                    openModalAdministrasi(Array.isArray(dataAdm) ? dataAdm[0] : dataAdm);
+                } else {
+                    alert('Data administrasi tidak ditemukan!');
+                }
+
+            } catch (error) {
+                console.error('Error fetching administrasi data for edit:', error);
+                alert(`Gagal mengambil data administrasi untuk diedit: ${error.message}`);
+            }
+        }
+
+        async function deleteAdministrasi(noAntrian) {
+            if (confirm(`Apakah Anda yakin ingin menghapus data administrasi dengan Nomor Antrian ${noAntrian}? 🚮`)) {
+                try {
+                    const response = await fetch(API_URL_ADMINISTRASI, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ no_antrian: noAntrian }),
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json().catch(() => ({ message: response.statusText }));
+                        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+                    }
+
+                    alert(`Data administrasi dengan Nomor Antrian ${noAntrian} berhasil dihapus.`);
+                    fetchAdministrasi();
+
+                } catch (error) {
+                    console.error('Error deleting administrasi:', error);
+                    alert(`Gagal menghapus data: ${error.message}`);
+                }
+            }
+        }
+        document.addEventListener('DOMContentLoaded', fetchAdministrasi);
+    </script>
+
+
+</body>
+</html>

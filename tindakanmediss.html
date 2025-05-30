@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Tindakan Medis</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif; /* Font yang bersih dan modern */
+            margin: 20px;
+            background-color: #f8f9fa; /* Latar belakang sedikit off-white */
+            color: #343a40; /* Warna teks utama gelap */
+            line-height: 1.65;
+        }
+
+        h1 {
+            color: #007bff; /* Biru primer Bootstrap */
+            text-align: center;
+            margin-bottom: 35px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 25px;
+            background-color: #fff;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.07); /* Bayangan lebih jelas */
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th, td {
+            border-bottom: 1px solid #dee2e6; /* Border abu-abu standar */
+            padding: 16px 20px; /* Padding lebih besar */
+            text-align: left;
+            vertical-align: middle; /* Teks di tengah vertikal */
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
+            font-weight: 600; /* Header lebih tebal */
+            text-transform: uppercase;
+            font-size: 12.5px; /* Ukuran font header sedikit lebih kecil */
+            letter-spacing: 0.6px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #fcfdff; /* Warna baris genap sangat halus */
+        }
+
+        tr:hover {
+            background-color: #eef7ff; /* Highlight biru sangat muda */
+        }
+
+        .actions button {
+            margin-right: 8px;
+            padding: 9px 15px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13.5px;
+            font-weight: 500;
+            transition: all 0.2s ease-in-out;
+        }
+        .actions button:active {
+            transform: translateY(1px) scale(0.97);
+        }
+
+        .actions .edit-btn {
+            background-color: #ffc107; /* Kuning standar */
+            color: #212529; /* Teks gelap untuk kontras */
+        }
+        .actions .edit-btn:hover {
+            background-color: #e0a800;
+            box-shadow: 0 2px 7px rgba(255, 193, 7, 0.35);
+        }
+
+        .actions .delete-btn {
+            background-color: #dc3545; /* Merah standar */
+            color: white;
+        }
+        .actions .delete-btn:hover {
+            background-color: #c82333;
+            box-shadow: 0 2px 7px rgba(220, 53, 69, 0.35);
+        }
+
+        .add-btn {
+            background-color: #28a745; /* Hijau standar */
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 15.5px;
+            font-weight: 600;
+            margin-bottom: 30px; /* Margin bawah lebih besar */
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.2);
+        }
+        .add-btn:hover {
+            background-color: #218838;
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1060; /* Di atas elemen lain, termasuk navbar jika ada */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(20, 30, 40, 0.65); /* Overlay lebih gelap */
+            padding-top: 40px;
+            backdrop-filter: blur(4px); /* Efek blur lebih kuat */
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 4% auto 10% auto; /* Margin atas lebih kecil */
+            padding: 35px 45px; /* Padding modal lebih besar */
+            border: none;
+            width: 90%;
+            max-width: 600px;
+            border-radius: 12px; /* Border radius modal lebih besar */
+            box-shadow: 0 12px 35px rgba(0,0,0,0.12); /* Bayangan modal lebih jelas */
+        }
+
+        .close-btn {
+            color: #b0b0b0; /* Warna tombol close lebih netral */
+            float: right;
+            font-size: 34px;
+            font-weight: bold;
+            line-height: 0.6; /* Line height agar pas */
+        }
+
+        .close-btn:hover,
+        .close-btn:focus {
+            color: #707070;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .form-group {
+            margin-bottom: 25px; /* Jarak antar form group */
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px; /* Jarak label ke input */
+            font-weight: 600; /* Label lebih tebal */
+            color: #495057;
+            font-size: 14.5px;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="date"],
+        .form-group textarea { /* Termasuk textarea untuk jenis tindakan jika diperlukan panjang */
+            width: 100%;
+            padding: 13px 17px; /* Padding input lebih besar */
+            border: 1px solid #ced4da;
+            border-radius: 8px; /* Border radius input */
+            box-sizing: border-box;
+            font-size: 15px;
+            transition: border-color 0.25s ease, box-shadow 0.25s ease;
+        }
+         .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-color: #007bff;
+            outline: none;
+            box-shadow: 0 0 0 3.5px rgba(0, 123, 255, 0.2); /* Bayangan fokus lebih halus */
+        }
+
+        .form-group button[type="submit"] {
+            background-color: #007bff;
+            color: white;
+            padding: 14px 28px; /* Tombol submit lebih besar */
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            width: 100%;
+            transition: all 0.25s ease-in-out;
+        }
+        .form-group button[type="submit"]:hover {
+            background-color: #0069d9;
+            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.25);
+        }
+        .loading-message, .empty-message {
+            text-align: center;
+            font-style: italic;
+            color: #6c757d;
+            padding: 30px; /* Padding pesan lebih besar */
+            font-size: 15.5px;
+        }
+        ::placeholder {
+            color: #adb5bd;
+            opacity: 1;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <h1><svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-clipboard2-pulse-fill" viewBox="0 0 16 16" style="vertical-align: -6px; margin-right: 12px;">
+        <path d="M10.053 8.336a.5.5 0 0 0-.906.053L8.219 11.85l-1.262-2.524a.5.5 0 0 0-.906-.054L4.5 11.5H3.75a.75.75 0 0 0 0 1.5h1.334a.5.5 0 0 0 .474-.334L6.25 10.5l1.262 2.524a.5.5 0 0 0 .906.054L9.947 9.664a.5.5 0 0 0 .906-.053L11.75 8h.5a.75.75 0 0 0 0-1.5h-1.293z"/>
+        <path d="M6.002 2.5a1.5 1.5 0 0 1 1.5-1.5h1.558a1.5 1.5 0 0 1 1.443 1.054l.379 1.138a.5.5 0 0 0 .439.333h2.178a.5.5 0 0 0 .439-.333l.379-1.138A1.5 1.5 0 0 1 14.942 1h1.558a1.5 1.5 0 0 1 1.5 1.5v11a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 3.5 13.5V12h12.5a.5.5 0 0 0 0-1H3.5v-2h12.5a.5.5 0 0 0 0-1H3.5V6h12.5a.5.5 0 0 0 0-1H3.5V2.5zM4.942 1A.5.5 0 0 0 4.5 1.5v11a.5.5 0 0 0 .5.5h11a.5.5 0 0 0 .5-.5v-11a.5.5 0 0 0-.5-.5zM6.002 1a.5.5 0 0 0-.443.254L5.18 2.392a1.5 1.5 0 0 0-1.317 1H2.5a.5.5 0 0 1 0-1h1.362a.5.5 0 0 1 .439-.333l.379-1.138A1.5 1.5 0 0 1 6.002 1"/>
+      </svg>Data Tindakan Medis</h1>
+
+    <button class="add-btn" onclick="openModalTindakanMedis()">➕ Tambah Tindakan Medis</button>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Nomor Tindakan</th>
+                <th>Jenis Tindakan</th>
+                <th>Tanggal</th>
+                <th>ID Dokter</th>
+                <th>No. Rekam Medis</th>
+                <th>Aksi</th>
+            </tr>
+        </thead>
+        <tbody id="tindakanMedisTableBody">
+            </tbody>
+    </table>
+
+    <div id="tindakanMedisModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModalTindakanMedis()">&times;</span>
+            <h2 id="modalTitleTindakanMedis" style="color: #007bff; margin-bottom: 30px; font-weight: 500;">Tambah Data Tindakan Medis</h2>
+            <form id="tindakanMedisForm">
+
+                <div class="form-group">
+                    <label for="noTindakan">Nomor Tindakan:</label>
+                    <input type="text" id="noTindakan" name="no_tindakan" required placeholder="Contoh: TM001">
+                </div>
+
+                <div class="form-group">
+                    <label for="jenisTindakan">Jenis Tindakan:</label>
+                    <textarea id="jenisTindakan" name="jenis_tindakan" rows="3" required placeholder="Deskripsikan jenis tindakan yang dilakukan"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="tanggalTindakan">Tanggal Tindakan:</label>
+                    <input type="date" id="tanggalTindakan" name="tanggal_tindakan" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="idDokterTm">ID Dokter:</label>
+                    <input type="text" id="idDokterTm" name="id_dokter" required placeholder="Masukkan ID Dokter yang menangani">
+                    <small style="font-size: 12.5px; color: #6c757d; display: block; margin-top: 4px;">Idealnya dropdown dari data Dokter/Staf.</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="noRekamMedisTm">Nomor Rekam Medis:</label>
+                    <input type="text" id="noRekamMedisTm" name="no_rekam_medis" required placeholder="Masukkan Nomor Rekam Medis pasien">
+                    <small style="font-size: 12.5px; color: #6c757d; display: block; margin-top: 4px;">Idealnya dropdown dari data Rekam Medis.</small>
+                </div>
+
+                <input type="hidden" id="originalNoTindakan" name="originalNoTindakan">
+
+                <div class="form-group">
+                    <button type="submit" id="submitButtonTindakanMedis">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const tindakanMedisTableBody = document.getElementById('tindakanMedisTableBody');
+        const tindakanMedisModal = document.getElementById('tindakanMedisModal');
+        const modalTitleTindakanMedis = document.getElementById('modalTitleTindakanMedis');
+        const tindakanMedisForm = document.getElementById('tindakanMedisForm');
+        const noTindakanInput = document.getElementById('noTindakan');
+        const originalNoTindakanInput = document.getElementById('originalNoTindakan');
+        const submitButtonTindakanMedis = document.getElementById('submitButtonTindakanMedis');
+
+        // GANTI DENGAN URL API BACKEND ANDA
+        const API_URL_TINDAKAN_MEDIS = 'api/tindakan_medis.php';
+
+        async function fetchTindakanMedis() {
+            tindakanMedisTableBody.innerHTML = '<tr><td colspan="6" class="loading-message">Memuat data tindakan medis... ⏳</td></tr>';
+            try {
+                const response = await fetch(API_URL_TINDAKAN_MEDIS);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}, ${await response.text()}`);
+                }
+                const daftarTindakan = await response.json();
+
+                tindakanMedisTableBody.innerHTML = '';
+
+                if (daftarTindakan && daftarTindakan.length > 0) {
+                    daftarTindakan.forEach(tm => {
+                        const row = tindakanMedisTableBody.insertRow();
+                        // Sesuaikan nama properti (tm.no_tindakan, dll.) dengan respons API Anda.
+                        row.innerHTML = `
+                            <td>${tm.no_tindakan || 'N/A'}</td>
+                            <td style="white-space: pre-wrap; max-width: 300px; overflow-wrap: break-word;">${(tm.jenis_tindakan || '-').replace(/\n/g, '<br>')}</td>
+                            <td>${tm.tanggal_tindakan ? new Date(tm.tanggal_tindakan).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' }) : 'N/A'}</td>
+                            <td>${tm.id_dokter || 'N/A'}</td>
+                            <td>${tm.no_rekam_medis || 'N/A'}</td>
+                            <td class="actions">
+                                <button class="edit-btn" onclick="editTindakanMedis('${tm.no_tindakan}', event)">✏ Edit</button>
+                                <button class="delete-btn" onclick="deleteTindakanMedis('${tm.no_tindakan}')">🗑 Hapus</button>
+                            </td>
+                        `;
+                    });
+                } else {
+                    tindakanMedisTableBody.innerHTML = '<tr><td colspan="6" class="empty-message">Belum ada data tindakan medis. 🤷</td></tr>';
+                }
+
+            } catch (error) {
+                console.error('Error fetching tindakan medis:', error);
+                tindakanMedisTableBody.innerHTML = `<tr><td colspan="6" class="empty-message">Gagal memuat data: ${error.message}. Pastikan backend aktif. 😥</td></tr>`;
+            }
+        }
+
+        function openModalTindakanMedis(dataTm = null) {
+            tindakanMedisForm.reset();
+            noTindakanInput.readOnly = false;
+            originalNoTindakanInput.value = '';
+
+            if (dataTm) {
+                modalTitleTindakanMedis.textContent = '✏ Edit Data Tindakan Medis';
+                submitButtonTindakanMedis.textContent = 'Update';
+
+                noTindakanInput.value = dataTm.no_tindakan || '';
+                // Jika No Tindakan (PK) tidak boleh diubah, uncomment:
+                // noTindakanInput.readOnly = true;
+                originalNoTindakanInput.value = dataTm.no_tindakan || '';
+
+                document.getElementById('jenisTindakan').value = dataTm.jenis_tindakan || '';
+                document.getElementById('tanggalTindakan').value = dataTm.tanggal_tindakan ? dataTm.tanggal_tindakan.split('T')[0] : '';
+                document.getElementById('idDokterTm').value = dataTm.id_dokter || '';
+                document.getElementById('noRekamMedisTm').value = dataTm.no_rekam_medis || '';
+            } else {
+                modalTitleTindakanMedis.textContent = '➕ Tambah Data Tindakan Medis';
+                submitButtonTindakanMedis.textContent = 'Simpan';
+                // Jika No Tindakan auto-generated, field ini bisa di-disable/hide.
+            }
+            tindakanMedisModal.style.display = 'block';
+            // Jika menggunakan dropdown untuk FK, panggil fungsi fetch data FK di sini.
+        }
+
+        function closeModalTindakanMedis() {
+            tindakanMedisModal.style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            if (event.target == tindakanMedisModal) {
+                closeModalTindakanMedis();
+            }
+        }
+
+        tindakanMedisForm.addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const formData = new FormData(tindakanMedisForm);
+            const data = Object.fromEntries(formData.entries());
+            const currentOriginalNoTm = originalNoTindakanInput.value;
+
+            let url = API_URL_TINDAKAN_MEDIS;
+            let method = 'POST';
+
+            if (currentOriginalNoTm) {
+                method = 'PUT';
+                // data.original_no_tindakan = currentOriginalNoTm; // Jika PK bisa diubah
+            }
+
+            try {
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({ message: response.statusText }));
+                    throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+                }
+
+                closeModalTindakanMedis();
+                fetchTindakanMedis();
+                alert(currentOriginalNoTm ? 'Data tindakan medis berhasil diupdate! 👍' : 'Data tindakan medis berhasil ditambahkan! 🎉');
+
+            } catch (error) {
+                console.error('Error submitting form:', error);
+                alert(`Gagal menyimpan data: ${error.message} 😔`);
+            }
+        });
+
+        async function editTindakanMedis(noTm, event) {
+            event.stopPropagation();
+            try {
+                const response = await fetch(`${API_URL_TINDAKAN_MEDIS}?no_tindakan=${noTm}`);
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({ message: response.statusText }));
+                    throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+                }
+                const dataTm = await response.json();
+
+                if (dataTm) {
+                    openModalTindakanMedis(Array.isArray(dataTm) ? dataTm[0] : dataTm);
+                } else {
+                    alert('Data tindakan medis tidak ditemukan!');
+                }
+
+            } catch (error) {
+                console.error('Error fetching tindakan medis data for edit:', error);
+                alert(`Gagal mengambil data tindakan medis untuk diedit: ${error.message}`);
+            }
+        }
+
+        async function deleteTindakanMedis(noTm) {
+            if (confirm(`Apakah Anda yakin ingin menghapus tindakan medis dengan Nomor ${noTm}? 🚮`)) {
+                try {
+                    const response = await fetch(API_URL_TINDAKAN_MEDIS, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ no_tindakan: noTm }),
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json().catch(() => ({ message: response.statusText }));
+                        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+                    }
+
+                    alert(`Tindakan medis dengan Nomor ${noTm} berhasil dihapus.`);
+                    fetchTindakanMedis();
+
+                } catch (error) {
+                    console.error('Error deleting tindakan medis:', error);
+                    alert(`Gagal menghapus data: ${error.message}`);
+                }
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', fetchTindakanMedis);
+    </script>
+
+</body>
+</html>

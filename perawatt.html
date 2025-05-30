@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Perawat</title>
+    <style>
+        body {
+            font-family: 'Nunito Sans', sans-serif; /* Font yang bersih dan modern */
+            margin: 20px;
+            background-color: #f4f7f6; /* Latar belakang hijau pucat yang lembut */
+            color: #3c4858; /* Warna teks utama gelap */
+            line-height: 1.65;
+        }
+
+        h1 {
+            color: #00897b; /* Teal yang lebih gelap dan profesional */
+            text-align: center;
+            margin-bottom: 40px;
+            font-weight: 700; /* Lebih tebal */
+            letter-spacing: -0.2px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+            background-color: #fff;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.07);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        th, td {
+            border-bottom: 1px solid #e8ecef; /* Border yang lebih halus */
+            padding: 18px 22px;
+            text-align: left;
+            vertical-align: middle;
+        }
+
+        th {
+            background-color: #00897b;
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 0.7px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8fbfb; /* Warna baris genap sangat lembut */
+        }
+
+        tr:hover {
+            background-color: #e0f2f1; /* Highlight teal sangat lembut saat hover */
+        }
+
+        .actions button {
+            margin-right: 8px;
+            padding: 10px 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600; /* Tombol aksi lebih tebal */
+            transition: all 0.2s ease-in-out;
+        }
+
+        .actions button:active {
+            transform: translateY(1px) scale(0.97);
+        }
+
+        .actions .edit-btn {
+            background-color: #ffb300; /* Oranye amber */
+            color: #fff;
+        }
+
+        .actions .edit-btn:hover {
+            background-color: #ffa000;
+            box-shadow: 0 2px 8px rgba(255, 176, 0, 0.3);
+        }
+
+        .actions .delete-btn {
+            background-color: #e53935; /* Merah yang lebih cerah */
+            color: white;
+        }
+
+        .actions .delete-btn:hover {
+            background-color: #d32f2f;
+            box-shadow: 0 2px 8px rgba(229, 57, 53, 0.3);
+        }
+
+        .add-btn {
+            background-color: #00796b; /* Teal yang lebih dalam untuk tombol tambah */
+            color: white;
+            padding: 13px 26px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 700; /* Tombol tambah lebih tebal */
+            margin-bottom: 30px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 4px 14px rgba(0, 121, 107, 0.25);
+        }
+
+        .add-btn:hover {
+            background-color: #00695c;
+            box-shadow: 0 6px 16px rgba(0, 121, 107, 0.3);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1090; /* Z-index lebih tinggi */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(15, 25, 35, 0.75); /* Overlay lebih gelap */
+            padding-top: 30px;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 3% auto 8% auto;
+            padding: 40px 50px;
+            border: none;
+            width: 90%;
+            max-width: 600px; /* Lebar modal standar */
+            border-radius: 16px;
+            box-shadow: 0 16px 45px rgba(0,0,0,0.18);
+        }
+
+        .close-btn {
+            color: #d0d0d0; /* Tombol close lebih netral */
+            float: right;
+            font-size: 38px;
+            font-weight: bold;
+            line-height: 0.5;
+        }
+
+        .close-btn:hover,
+        .close-btn:focus {
+            color: #a0a0a0;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .form-group {
+            margin-bottom: 28px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 12px;
+            font-weight: 600;
+            color: #52606d; /* Warna label sedikit lebih gelap */
+            font-size: 14px;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="tel"] {
+            width: 100%;
+            padding: 14px 18px;
+            border: 1px solid #d8dde3; /* Border input */
+            border-radius: 10px;
+            box-sizing: border-box;
+            font-size: 15px;
+            transition: border-color 0.25s ease, box-shadow 0.25s ease;
+        }
+
+        .form-group input:focus {
+            border-color: #00897b; /* Warna border fokus teal */
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(0, 137, 123, 0.15);
+        }
+
+        .form-group button[type="submit"] {
+            background-color: #00897b;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 700; /* Tombol simpan lebih tebal */
+            width: 100%;
+            transition: all 0.25s ease-in-out;
+        }
+
+        .form-group button[type="submit"]:hover {
+            background-color: #00796b;
+            box-shadow: 0 5px 15px rgba(0, 137, 123, 0.25);
+        }
+
+        .loading-message, .empty-message {
+            text-align: center;
+            font-style: italic;
+            color: #78909c;
+            padding: 35px;
+            font-size: 15.5px;
+        }
+
+        ::placeholder {
+            color: #b0bec5;
+            opacity: 1;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <h1><svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-person-plus-fill" viewBox="0 0 16 16" style="vertical-align: -6px; margin-right: 12px;">
+        <path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
+        <path fill-rule="evenodd" d="M13.5 5a.5.5 0 0 1 .5.5V7h1.5a.5.5 0 0 1 0 1H14v1.5a.5.5 0 0 1-1 0V8h-1.5a.5.5 0 0 1 0-1H13V5.5a.5.5 0 0 1 .5-.5"/>
+      </svg>Data Perawat</h1>
+
+    <button class="add-btn" onclick="openModalPerawat()">➕ Tambah Data Perawat</button>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID Perawat</th>
+                <th>Nama</th>
+                <th>ID Pasien</th> <!-- Menghilangkan tulisan "FK" -->
+                <th>Nomor Telepon</th>
+                <th>Spesialisasi</th>
+                <th>Aksi</th>
+            </tr>
+        </thead>
+        <tbody id="perawatTableBody">
+        </tbody>
+    </table>
+
+    <div id="perawatModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModalPerawat()">&times;</span>
+            <h2 id="modalTitlePerawat" style="color: #00897b; margin-bottom: 35px; font-weight: 600;">Tambah Data Perawat</h2>
+            <form id="perawatForm">
+
+                <div class="form-group">
+                    <label for="idPerawat">ID Perawat:</label>
+                    <input type="text" id="idPerawat" name="id_perawat" required placeholder="Contoh: PRW001">
+                </div>
+
+                <div class="form-group">
+                    <label for="namaPerawat">Nama Perawat:</label>
+                    <input type="text" id="namaPerawat" name="nama" required placeholder="Masukkan nama lengkap perawat">
+                </div>
+
+                <div class="form-group">
+                    <label for="idPasienPerawat">ID Pasien:</label> <!-- Menghilangkan tulisan "FK" -->
+                    <input type="text" id="idPasienPerawat" name="id_pasien" required placeholder="ID Pasien yang dirawat">
+                    <small style="font-size: 12.5px; color: #78909c; display: block; margin-top: 5px;">Idealnya dropdown dari data Pasien.</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="teleponPerawat">Nomor Telepon:</label>
+                    <input type="tel" id="teleponPerawat" name="nomor_telepon" placeholder="Contoh: 081234567890">
+                </div>
+
+                <div class="form-group">
+                    <label for="spesialisasiPerawat">Spesialisasi:</label>
+                    <input type="text" id="spesialisasiPerawat" name="spesialisasi" placeholder="Contoh: Perawat Anak, IGD, dll.">
+                </div>
+
+                <input type="hidden" id="originalIdPerawat" name="originalIdPerawat">
+
+                <div class="form-group">
+                    <button type="submit" id="submitButtonPerawat">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const perawatTableBody = document.getElementById('perawatTableBody');
+        const perawatModal = document.getElementById('perawatModal');
+        const modalTitlePerawat = document.getElementById('modalTitlePerawat');
+        const perawatForm = document.getElementById('perawatForm');
+        const idPerawatInput = document.getElementById('idPerawat');
+        const originalIdPerawatInput = document.getElementById('originalIdPerawat');
+        const submitButtonPerawat = document.getElementById('submitButtonPerawat');
+
+        // GANTI DENGAN URL API BACKEND ANDA
+        const API_URL_PERAWAT = 'api/perawat.php';
+
+        async function fetchPerawat() {
+            perawatTableBody.innerHTML = '<tr><td colspan="6" class="loading-message">Memuat data perawat... ⏳</td></tr>';
+            try {
+                const response = await fetch(API_URL_PERAWAT);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}, ${await response.text()}`);
+                }
+                const daftarPerawat = await response.json();
+
+                perawatTableBody.innerHTML = '';
+
+                if (daftarPerawat && daftarPerawat.length > 0) {
+                    daftarPerawat.forEach(prw => {
+                        const row = perawatTableBody.insertRow();
+                        // Sesuaikan nama properti (prw.id_perawat, dll.) dengan respons API Anda.
+                        row.innerHTML = `
+                            <td>${prw.id_perawat || 'N/A'}</td>
+                            <td>${prw.nama || 'N/A'}</td>
+                            <td>${prw.id_pasien || 'N/A'}</td>
+                            <td>${prw.nomor_telepon || '-'}</td>
+                            <td>${prw.spesialisasi || '-'}</td>
+                            <td class="actions">
+                                <button class="edit-btn" onclick="editPerawat('${prw.id_perawat}', event)">✏ Edit</button>
+                                <button class="delete-btn" onclick="deletePerawat('${prw.id_perawat}')">🗑 Hapus</button>
+                            </td>
+                        `;
+                    });
+                } else {
+                    perawatTableBody.innerHTML = '<tr><td colspan="6" class="empty-message">Belum ada data perawat. 🤷</td></tr>';
+                }
+
+            } catch (error) {
+                console.error('Error fetching perawat:', error);
+                perawatTableBody.innerHTML = `<tr><td colspan="6" class="empty-message">Gagal memuat data: ${error.message}. Pastikan backend aktif. 😥</td></tr>`;
+            }
+        }
+
+        function openModalPerawat(dataPerawat = null) {
+            perawatForm.reset();
+            idPerawatInput.readOnly = false;
+            originalIdPerawatInput.value = '';
+
+            if (dataPerawat) {
+                modalTitlePerawat.textContent = '✏ Edit Data Perawat';
+                submitButtonPerawat.textContent = 'Update';
+
+                idPerawatInput.value = dataPerawat.id_perawat || '';
+                // Jika ID Perawat (PK) tidak boleh diubah, uncomment:
+                // idPerawatInput.readOnly = true;
+                originalIdPerawatInput.value = dataPerawat.id_perawat || '';
+
+                document.getElementById('namaPerawat').value = dataPerawat.nama || '';
+                document.getElementById('idPasienPerawat').value = dataPerawat.id_pasien || '';
+                document.getElementById('teleponPerawat').value = dataPerawat.nomor_telepon || '';
+                document.getElementById('spesialisasiPerawat').value = dataPerawat.spesialisasi || '';
+            } else {
+                modalTitlePerawat.textContent = '➕ Tambah Data Perawat';
+                submitButtonPerawat.textContent = 'Simpan';
+                // Jika ID Perawat auto-generated, field ini bisa di-disable/hide.
+            }
+            perawatModal.style.display = 'block';
+            // Jika menggunakan dropdown untuk FK, panggil fungsi fetch data FK di sini.
+        }
+
+        function closeModalPerawat() {
+            perawatModal.style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            if (event.target == perawatModal) {
+                closeModalPerawat();
+            }
+        }
+
+        perawatForm.addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const formData = new FormData(perawatForm);
+            const data = Object.fromEntries(formData.entries());
+            const currentOriginalIdPerawat = originalIdPerawatInput.value;
+
+            let url = API_URL_PERAWAT;
+            let method = 'POST';
+
+            if (currentOriginalIdPerawat) {
+                method = 'PUT';
+                // data.original_id_perawat = currentOriginalIdPerawat; // Jika PK bisa diubah
+            }
+
+            try {
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({ message: response.statusText }));
+                    throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+                }
+
+                closeModalPerawat();
+                fetchPerawat();
+                alert(currentOriginalIdPerawat ? 'Data perawat berhasil diupdate! 👍' : 'Data perawat berhasil ditambahkan! 🎉');
+
+            } catch (error) {
+                console.error('Error submitting form:', error);
+                alert(`Gagal menyimpan data: ${error.message} 😔`);
+            }
+        });
+
+        async function editPerawat(idPerawat, event) {
+            event.stopPropagation();
+            try {
+                const response = await fetch(`${API_URL_PERAWAT}?id_perawat=${idPerawat}`);
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({ message: response.statusText }));
+                    throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+                }
+                const dataPerawat = await response.json();
+
+                if (dataPerawat) {
+                    openModalPerawat(Array.isArray(dataPerawat) ? dataPerawat[0] : dataPerawat);
+                } else {
+                    alert('Data perawat tidak ditemukan!');
+                }
+
+            } catch (error) {
+                console.error('Error fetching perawat data for edit:', error);
+                alert(`Gagal mengambil data perawat untuk diedit: ${error.message}`);
+            }
+        }
+
+        async function deletePerawat(idPerawat) {
+            if (confirm(`Apakah Anda yakin ingin menghapus perawat dengan ID ${idPerawat}? 🚮`)) {
+                try {
+                    const response = await fetch(API_URL_PERAWAT, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ id_perawat: idPerawat }),
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json().catch(() => ({ message: response.statusText }));
+                        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+                    }
+
+                    alert(`Perawat dengan ID ${idPerawat} berhasil dihapus.`);
+                    fetchPerawat();
+
+                } catch (error) {
+                    console.error('Error deleting perawat:', error);
+                    alert(`Gagal menghapus data: ${error.message}`);
+                }
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', fetchPerawat);
+    </script>
+</body>
+</html>
+        
