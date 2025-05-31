@@ -7,23 +7,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($action == 'insert') {
         $id_perawat = $_POST["id_perawat"];
-        $nama = $_POST["nama"];
+        $nama_perawat = $_POST["nama_perawat"];
         $id_pasien = $_POST["id_pasien"];
-        $nomor_telepon = $_POST["nomor_telepon"];
+        $no_telepon = $_POST["no_telepon"];
         $spesialisasi = $_POST["spesialisasi"];
     
-        $query = "INSERT INTO perawat (id_perawat, nama, id_pasien, nomor_telepon, spesialisasi) 
-            VALUES ('$id_perawat', '$nama', '$id_pasien', '$nomor_telepon', '$spesialisasi')";
+        $query = "INSERT INTO perawat (id_perawat, nama_perawat, id_pasien, no_telepon, spesialisasi) 
+            VALUES ('$id_perawat', '$nama_perawat', '$id_pasien', '$no_telepon', '$spesialisasi')";
         mysqli_query($koneksi, $query);
     }
     elseif ($action == 'edit') {
         $id_perawat = $_POST["id_perawat"];
-        $nama = $_POST["nama"];
+        $nama_perawat = $_POST["nama_perawat"];
         $id_pasien = $_POST["id_pasien"];
-        $nomor_telepon = $_POST["nomor_telepon"];
+        $no_telepon = $_POST["no_telepon"];
         $spesialisasi = $_POST["spesialisasi"];
         
-        $query = "UPDATE perawat SET nama='$nama', id_pasien='$id_pasien', nomor_telepon='$nomor_telepon', spesialisasi='$spesialisasi' WHERE id_perawat='$id_perawat'";
+        $query = "UPDATE perawat SET nama_perawat='$nama_perawat', id_pasien='$id_pasien', no_telepon='$no_telepon', spesialisasi='$spesialisasi' WHERE id_perawat='$id_perawat'";
         mysqli_query($koneksi, $query);
     } elseif ($action == 'delete') {
         $id_perawat = $_POST["id_perawat"];
@@ -182,9 +182,9 @@ include 'layouts/header.php';
             <?php while ($perawat = mysqli_fetch_object($result)) { ?>
                 <tr>
                     <td><?= $perawat->id_perawat ?></td>
-                    <td><?= $perawat->nama ?></td>
+                    <td><?= $perawat->nama_perawat ?></td>
                     <td><?= $perawat->id_pasien ?></td>
-                    <td><?= $perawat->nomor_telepon ?></td>
+                    <td><?= $perawat->no_telepon ?></td>
                     <td><?= $perawat->spesialisasi ?></td>
                     <td>
                         <button class="btn btn-warning btn-sm" onclick="toggleEditForm('<?= $perawat->id_perawat ?>')">Edit</button>
@@ -207,16 +207,16 @@ include 'layouts/header.php';
             <input type="hidden" name="id_perawat" id="idPerawatInput" value="">
             
             <div class="form-group">
-                <label for="nama">Nama Perawat</label>
-                <input type="text" name="nama" id="namaPerawat" required>
+                <label for="nama_perawat">Nama Perawat</label>
+                <input type="text" name="nama_perawat" id="namaPerawat" required>
             </div>
             <div class="form-group">
                 <label for="id_pasien">ID Pasien</label>
                 <input type="text" name="id_pasien" id="idPasienPerawat" required>
             </div>
             <div class="form-group">
-                <label for="nomor_telepon">Nomor Telepon</label>
-                <input type="tel" name="nomor_telepon" id="teleponPerawat" required>
+                <label for="no_telepon">Nomor Telepon</label>
+                <input type="tel" name="no_telepon" id="teleponPerawat" required>
             </div>
             <div class="form-group">
                 <label for="spesialisasi">Spesialisasi</label>
@@ -254,9 +254,9 @@ include 'layouts/header.php';
         if (dataPerawat) {
             document.getElementById('action').value = 'edit';
             document.getElementById('idPerawatInput').value = dataPerawat.id_perawat;
-            document.getElementById('namaPerawat').value = dataPerawat.nama;
+            document.getElementById('namaPerawat').value = dataPerawat.nama_perawat;
             document.getElementById('idPasienPerawat').value = dataPerawat.id_pasien;
-            document.getElementById('teleponPerawat').value = dataPerawat.nomor_telepon;
+            document.getElementById('teleponPerawat').value = dataPerawat.no_telepon;
             document.getElementById('spesialisasiPerawat').value = dataPerawat.spesialisasi;
         } else {
             document.getElementById('action').value = 'insert';
@@ -280,7 +280,7 @@ include 'layouts/header.php';
     function toggleEditForm(id_perawat) {
         // Fetch the data for the selected nurse and open the formulir
         // This function should be implemented to fetch data from the server
-        openModalPerawat({ id_perawat: id_perawat, nama: 'isi disini', id_pasien: 'isi disini', nomor_telepon: 'isi disini', spesialisasi: 'isi disini' });
+        openModalPerawat({ id_perawat: id_perawat, nama_perawat: 'isi disini', id_pasien: 'isi disini', no_telepon: 'isi disini', spesialisasi: 'isi disini' });
     }
 </script>
 

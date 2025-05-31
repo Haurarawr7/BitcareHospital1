@@ -7,34 +7,33 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($action == 'insert') {
         $no_tindakan = $_POST["no_tindakan"];
-        $jenis_tindakan = $_POST["jenis_tindakan"];
-        $tanggal = $_POST["tanggal"];
+        $tanggal_tindakan = $_POST["tanggal_tindakan"];
         $id_dokter = $_POST["id_dokter"];
         $no_rekammedis = $_POST["no_rekammedis"];
-        
-        $query = "INSERT INTO tindakanmedis (no_tindakanmedis, tanggal, id_dokter, no_rekammedis) 
-            VALUES ('$no_tindakanmedis', '$tanggal', '$id_dokter', '$no_rekammedis')";
+        $jenis_tindakan = $_POST["jenis_tindakan"];
+
+        $query = "INSERT INTO tindakanmedis (no_tindakan, tanggal_tindakan, id_dokter, no_rekammedis, jenis_tindakan) 
+            VALUES ('$no_tindakan', '$tanggal_tindakan', '$id_dokter', '$no_rekammedis', '$jenis_tindakan')";
         mysqli_query($koneksi, $query);
-        }
-     elseif ($action == 'edit') {
-        $id = $_POST["id"];
-        $nama = $_POST["nama"];
-        $tanggal_lahir = $_POST["tanggal_lahir"];
-        $no_telepon = $_POST["no_telepon"];
-        $jenis_kelamin = $_POST["jenis_kelamin"];
-        $gol_darah = $_POST["gol_darah"];
-        $alamat = $_POST["alamat"];
-        $no_antrian = $_POST["no_antrian"];
-        $query = "UPDATE pasien SET nama_pasien='$nama', tanggal_lahir='$tanggal_lahir', no_telepon='$no_telepon', jenis_kelamin ='$jenis_kelamin', gol_darah='$gol_darah', alamat='$alamat' WHERE id=$id";
+    }
+    elseif ($action == 'edit') {
+        $no_tindakan = $_POST["no_tindakan"];
+        $tanggal_tindakan = $_POST["tanggal_tindakan"];
+        $id_dokter = $_POST["id_dokter"];
+        $no_rekammedis = $_POST["no_rekammedis"];
+        $jenis_tindakan = $_POST["jenis_tindakan"];
+
+        $query = "UPDATE tindakanmedis SET tanggal_tindakan='$tanggal_tindakan', id_dokter='$id_dokter', no_rekammedis='$no_rekammedis', jenis_tindakan='$jenis_tindakan' WHERE no_tindakan='$no_tindakan'";
         mysqli_query($koneksi, $query);
     } elseif ($action == 'delete') {
-        $no_antrian = $_POST["no_antrian"];
-        $query = "DELETE FROM pasien WHERE no_antrian='$no_antrian'";
+        $no_tindakan = $_POST["no_tindakan"];
+        $query = "DELETE FROM tindakanmedis WHERE no_tindakan='$no_tindakan'";
         mysqli_query($koneksi, $query);
     }
 }
-// Fetch all patients
-$query = 'SELECT * FROM pasien;'; 
+
+// Fetch all medical actions
+$query = 'SELECT * FROM tindakanmedis;'; 
 $result = mysqli_query($koneksi, $query); 
 
 include 'layouts/header.php'; 
@@ -104,7 +103,7 @@ include 'layouts/header.php';
             transform: translateY(0); 
         } 
     }
-    .formulir { 
+    .modal { 
         display: none; 
         position: fixed; 
         z-index: 1; 
@@ -112,7 +111,7 @@ include 'layouts/header.php';
         top: 0; 
         width: 100%; 
         height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4); padding-top: 60px; }
-    .formulir-content { 
+    .modal-content { 
         color : black;
         background-color: #fefefe;
         margin: 5% auto; 
@@ -145,7 +144,6 @@ include 'layouts/header.php';
         border: 1px solid #ccc; 
         border-radius: 4px; 
     }
-
 </style>
 
 <body>
@@ -163,39 +161,34 @@ include 'layouts/header.php';
     <div class="menu-item" onclick="window.location.href='dokter.php'">Dokter</div>
   </div>
 
-<section class="p-4 ml-5 mr-5 w-75">
-    <div class="d-flex flex-row justify-content-between">
-        <h2>Data Pasien</h2>
-        <button onclick="openModal()">+Tambah</button>
-    </div>
-    <table class="table table-light mt-3">
+<section class="main-content">
+    <header>
+        <h1>📋 Data Tindakan Medis</h1>
+    </header>
+    <button class="add-btn" onclick="openModalTindakan()">➕ Tambah Data Tindakan Medis</button>
+
+    <table>
         <thead>
             <tr>
-                <th scope="col">ID</th>
-                <th scope="col">Nama</th>
-                <th scope="col">Tanggal Lahir</th>
-                <th scope="col">Nomor Telepon</th>
-                <th scope="col">Jenis Kelamin</th>
-                <th scope="col">Golongan Darah</th>
-                <th scope="col">Alamat</th>
-                <th scope="col">No Antrian</th>
-                <th scope="col">Aksi</th>
+                <th>No Tindakan</th>
+                <th>Tanggal Tindakan</th>
+                <th>ID Dokter</th>
+                <th>No Rekam Medis</th>
+                <th>Jenis Tindakan</th>
+                <th>Aksi</th>
             </tr>
         </thead>
-        <tbody>
-            <?php while ($pasien = mysqli_fetch_object($result)) { ?>
+        <tbody id="tindakanTableBody">
+            <?php while ($tindakan = mysqli_fetch_object($result)) { ?>
                 <tr>
-                    <td><?= $pasien->id ?></td>
-                    <td><?= $pasien->nama_pasien ?></td>
-                    <td><?= $pasien->tanggal_lahir ?></td>
-                    <td><?= $pasien->no_telepon?></td>
-                    <td><?= $pasien->jenis_kelamin?></td>
-                    <td><?= $pasien->gol_darah?></td>
-                    <td><?= $pasien->alamat ?></td>
-                    <td><?= $pasien->no_antrian?></td>
+                    <td><?= $tindakan->no_tindakan ?></td>
+                    <td><?= $tindakan->tanggal_tindakan ?></td>
+                    <td><?= $tindakan->id_dokter ?></td>
+                    <td><?= $tindakan->no_rekammedis ?></td>
+                    <td><?= $tindakan->jenis_tindakan ?></td>
                     <td>
-                        <button class="btn btn-warning btn-sm" onclick="toggleEditForm(<?= $pasien->id ?>)">Edit</button>
-                        <button class="btn btn-danger btn-sm" onclick="openDeleteModal(<?= $pasien->id ?>)">Hapus</button>
+                        <button class="btn btn-warning btn-sm" onclick="toggleEditForm('<?= $tindakan->no_tindakan ?>')">Edit</button>
+                        <button class="btn btn-danger btn-sm" onclick="openDeleteModal('<?= $tindakan->no_tindakan ?>')">Hapus</button>
                     </td>
                 </tr>
             <?php } ?>
@@ -203,69 +196,52 @@ include 'layouts/header.php';
     </table>
 </section>
 
-
-<!-- Modal for adding/editing patient data -->
-<div id="patientModal" class="formulir">
-    <div class="formulir-content">
-        <span class="close-btn" onclick="closeModal()">&times;</span>
-        <h2 id="modalTitle">Tambah Data Pasien</h2>
-        <form id="patientForm" method="POST">
+<!-- Modal for adding/editing medical action data -->
+<div id="tindakanModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeModalTindakan()">&times;</span>
+        <h2 id="modalTitleTindakan">Tambah Data Tindakan Medis</h2>
+        <form id="tindakanForm" method="POST">
             <input type="hidden" name="action" id="action" value="insert">
-            <input type="hidden" name="id" id="patientIdInput" value="">
-            <input type="hidden" name="no_antrian" id="no_antrianInput" value="">
+            <input type="hidden" name="no_tindakan" id="noTindakanInput" value="">
             
             <div class="form-group">
-                <label for="id">ID Pasien</label>
-                <input type="number" name="id" id="id" required>
+                <label for="noTindakan">No Tindakan:</label>
+                <input type="text" name="no_tindakan" id="noTindakan" required>
             </div>
             <div class="form-group">
-                <label for="nama">Nama Pasien</label>
-                <input type="text" name="nama" id="nama" required>
+                <label for="tanggalTindakan">Tanggal Tindakan:</label>
+                <input type="date" name="tanggal_tindakan" id="tanggalTindakan" required>
             </div>
             <div class="form-group">
-                <label for="tanggal_lahir">Tanggal Lahir</label>
-                <input type="date" name="tanggal_lahir" id="tanggal_lahir" required>
+                <label for="idDokter">ID Dokter:</label>
+                <input type="text" name="id_dokter" id="idDokter" required>
             </div>
             <div class="form-group">
-                <label for="no_telepon">Nomor Telepon</label>
-                <input type="text" name="no_telepon" id="no_telepon" required>
+                <label for="noRekamMedis">No Rekam Medis:</label>
+                <input type="text" name="no_rekammedis" id="noRekamMedis" required>
             </div>
             <div class="form-group">
-                <label for="jenis_kelamin">Jenis Kelamin</label>
-                <select name="jenis_kelamin" id="jenis_kelamin" required>
-                    <option value="Laki-laki">Laki-laki</option>
-                    <option value="Perempuan">Perempuan</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="gol_darah">Golongan Darah</label>
-                <input type="text" name="gol_darah" id="gol_darah" required>
-            </div>
-            <div class="form-group">
-                <label for="alamat">Alamat Pasien</label>
-                <input type="text" name="alamat" id="alamat" required>
-            </div>
-            <div class="form-group">
-                <label for="no_antrian">No Antrian</label>
-                <input type="number" name="no_antrian" id="no_antrian" required>
+                <label for="jenisTindakan">Jenis Tindakan:</label>
+                <input type="text" name="jenis_tindakan" id="jenisTindakan" required>
             </div>
             <button type="submit">Simpan</button>
-            <button type="button" onclick="closeModal()">Batal</button>
+            <button type="button" onclick="closeModalTindakan()">Batal</button>
         </form>
     </div>
 </div>
 
 <!-- Modal for confirming delete -->
-<div id="deleteModal" class="formulir">
-    <div class="formulir-content">
+<div id="deleteModal" class="modal">
+    <div class="modal-content">
         <span class="close-btn" onclick="closeDeleteModal()">&times;</span>
         <h2>Konfirmasi Hapus</h2>
-        <p>Masukkan No Antrian untuk menghapus data pasien:</p>
+        <p>Masukkan No Tindakan untuk menghapus data:</p>
         <form id="deleteForm" method="POST">
             <input type="hidden" name="action" value="delete">
             <div class="form-group">
-                <label for="no_antrian_delete">No Antrian</label>
-                <input type="number" name="no_antrian" id="no_antrian_delete" required>
+                <label for="no_tindakan_delete">No Tindakan</label>
+                <input type="text" name="no_tindakan" id="no_tindakan_delete" required>
             </div>
             <button type="submit">Hapus</button>
             <button type="button" onclick="closeDeleteModal()">Batal</button>
@@ -274,33 +250,30 @@ include 'layouts/header.php';
 </div>
 
 <script>
-    function openModal(patientData = null) {
-        document.getElementById('patientForm').reset();
-        document.getElementById('patientIdInput').value = '';
-        document.getElementById('no_antrianInput').value = '';
+    function openModalTindakan(dataTindakan = null) {
+        document.getElementById('tindakanForm').reset();
+        document.getElementById('noTindakanInput').value = '';
 
-        if (patientData) {
+        if (dataTindakan) {
             document.getElementById('action').value = 'edit';
-            document.getElementById('patientIdInput').value = patientData.id;
-            document.getElementById('nama').value = patientData.nama_pasien;
-            document.getElementById('tanggal_lahir').value = patientData.tanggal_lahir;
-            document.getElementById('no_telepon').value = patientData.no_telepon;
-            document.getElementById('jenis_kelamin').value = patientData.jenis_kelamin;
-            document.getElementById('gol_darah').value = patientData.gol_darah;
-            document.getElementById('alamat').value = patientData.alamat;
-            document.getElementById('no_antrian').value = patientData.no_antrian;
+            document.getElementById('noTindakanInput').value = dataTindakan.no_tindakan;
+            document.getElementById('noTindakan').value = dataTindakan.no_tindakan;
+            document.getElementById('tanggalTindakan').value = dataTindakan.tanggal_tindakan;
+            document.getElementById('idDokter').value = dataTindakan.id_dokter;
+            document.getElementById('noRekamMedis').value = dataTindakan.no_rekammedis;
+            document.getElementById('jenisTindakan').value = dataTindakan.jenis_tindakan;
         } else {
             document.getElementById('action').value = 'insert';
         }
-        document.getElementById('patientModal').style.display = 'block';
+        document.getElementById('tindakanModal').style.display = 'block';
     }
 
-    function closeModal() {
-        document.getElementById('patientModal').style.display = 'none';
+    function closeModalTindakan() {
+        document.getElementById('tindakanModal').style.display = 'none';
     }
 
-    function openDeleteModal(no_antrian) {
-        document.getElementById('no_antrian_delete').value = no_antrian; // Set the no_antrian to the input
+    function openDeleteModal(no_tindakan) {
+        document.getElementById('no_tindakan_delete').value = no_tindakan; // Set the no_tindakan to the input
         document.getElementById('deleteModal').style.display = 'block';
     }
 
@@ -308,8 +281,9 @@ include 'layouts/header.php';
         document.getElementById('deleteModal').style.display = 'none';
     }
 
-    function toggleEditForm(id, nama, tanggal_lahir, no_telepon, jenis_kelamin, gol_darah, alamat, no_antrian) {
-        openModal({ id, nama_pasien: nama, tanggal_lahir, no_telepon, jenis_kelamin, gol_darah, alamat, no_antrian });
+    function toggleEditForm(no_tindakan) {
+        // Fetch the data for the selected medical action and open the modal
+        openModalTindakan({ no_tindakan: no_tindakan, tanggal_tindakan: 'Dummy', id_dokter: 'Dummy', no_rekammedis: 'Dummy', jenis_tindakan: 'Dummy' });
     }
 </script>
 
