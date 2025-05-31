@@ -12,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $no_rekam_medis = $_POST["no_rekam_medis"];
         $jenis_tindakan = $_POST["jenis_tindakan"];
 
-        $query = "INSERT INTO tindakanmedis (no_tindakan, tanggal_tindakan, id_dokter, no_rekam_medis, jenis_tindakan) 
+        $query = "INSERT INTO tindakan_medis (no_tindakan, tanggal_tindakan, id_dokter, no_rekam_medis, jenis_tindakan) 
             VALUES ('$no_tindakan', '$tanggal_tindakan', '$id_dokter', '$no_rekam_medis', '$jenis_tindakan')";
         mysqli_query($koneksi, $query);
     }
@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $no_rekam_medis = $_POST["no_rekam_medis"];
         $jenis_tindakan = $_POST["jenis_tindakan"];
 
-        $query = "UPDATE tindakanmedis SET tanggal_tindakan='$tanggal_tindakan', id_dokter='$id_dokter', no_rekam_medis='$no_rekam_medis', jenis_tindakan='$jenis_tindakan' WHERE no_tindakan='$no_tindakan'";
+        $query = "UPDATE tindakan_medis SET tanggal_tindakan='$tanggal_tindakan', id_dokter='$id_dokter', no_rekam_medis='$no_rekam_medis', jenis_tindakan='$jenis_tindakan' WHERE no_tindakan='$no_tindakan'";
         mysqli_query($koneksi, $query);
     } elseif ($action == 'delete') {
         $no_rekam_medis = $_POST["no_rekam_medis"];
@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 // Fetch all medical actions
-$query = 'SELECT * FROM tindakanmedis;'; 
+$query = 'SELECT * FROM tindakan_medis;'; 
 $result = mysqli_query($koneksi, $query); 
 
 include 'layouts/header.php'; 
@@ -151,7 +151,7 @@ include 'layouts/header.php';
   <div class="sidebar">
     <h2>Menu</h2>
     <div class="menu-item" onclick="window.location.href='pelayanan.php'">Pelayanan</div>
-    <div class="menu-item" onclick="window.location.href='tindakanmedis.php'">Tindakan medis</div>
+    <div class="menu-item" onclick="window.location.href='tindakan_medis.php'">Tindakan medis</div>
     <div class="menu-item" onclick="window.location.href='rekammedis.php'">Rekam medis</div>
     <div class="menu-item" onclick="window.location.href='obat.php'">Obat</div>
     <div class="menu-item" onclick="window.location.href='transaksi.php'">Transaksi</div>
