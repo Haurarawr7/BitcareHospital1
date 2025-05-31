@@ -177,7 +177,7 @@ include 'layouts/header.php';
                 <th scope="col">Aksi</th>
             </tr>
         </thead>
-        <tbody id="ruanganTableBody">
+        <tbody id="staffableBody">
             <?php while ($staff = mysqli_fetch_object($result)) { ?>
                 <tr>
                     <td><?= $staff->id_staff ?></td>

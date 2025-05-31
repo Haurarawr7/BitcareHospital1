@@ -166,23 +166,21 @@ include 'layouts/header.php';
     <div class="menu-item" onclick="window.location.href='dokter.php'">Dokter</div>
   </div>
 
-<section class="main-content">
-    <header>
-        <h1>📋 Data Transaksi</h1>
-    </header>
-    <button class="add-btn" onclick="openModalTransaksi()">➕ Tambah Data Transaksi</button>
-
-    <table>
+<section class="p-4 ml-5 mr-5 w-75">
+    <div class="d-flex flex-row justify-content-between">
+        <h2>Data Staff</h2>
+        <button onclick="openModal()">+Tambah</button>
+    </div>
+    <table class="table table-light mt-3">
         <thead>
             <tr>
-                <th>Kode Transaksi</th>
-                <th>Tanggal</th>
-                <th>No Ruang</th>
-                <th>ID Pasien</th>
-                <th>Jenis Transaksi</th>
-                <th>Total Harga (Rp)</th>
-                <th>Asuransi</th>
-                <th>Aksi</th>
+                <th scope="col">No Transaksi</th>
+                <th scope="col">Tanggal Transaksi</th>
+                <th scope="col">No Ruangan</th>
+                <th scope="col">Id_pasien</th>
+                <th scope="col">Jenis Transaksi</th>
+                <th scope="col">Total harga</th>
+                <th scope="col">Aksi</th>
             </tr>
         </thead>
         <tbody id="transaksiTableBody">
