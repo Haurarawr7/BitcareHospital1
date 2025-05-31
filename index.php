@@ -100,7 +100,7 @@
     <div class="menu-item" onclick="window.location.href='rekammedis.php'">Rekam medis</div>
     <div class="menu-item" onclick="window.location.href='obat.php'">Obat</div>
     <div class="menu-item" onclick="window.location.href='transaksi.php'">Transaksi</div>
-    <div class="menu-item" onclick="window.location.href='urangan.php'">Ruangan</div>
+    <div class="menu-item" onclick="window.location.href='ruangan.php'">Ruangan</div>
     <div class="menu-item" onclick="window.location.href='staff.php'">Staff</div>
     <div class="menu-item" onclick="window.location.href='pasien.php'">Pasien</div>
     <div class="menu-item" onclick="window.location.href='perawat.php'">Perawat</div>

@@ -33,6 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         mysqli_query($koneksi, $query);
     }
 }
+
 // Fetch all patients
 $query = 'SELECT * FROM pelayanan;'; 
 $result = mysqli_query($koneksi, $query); 
@@ -156,7 +157,7 @@ include 'layouts/header.php';
     <div class="menu-item" onclick="window.location.href='rekammedis.php'">Rekam medis</div>
     <div class="menu-item" onclick="window.location.href='obat.php'">Obat</div>
     <div class="menu-item" onclick="window.location.href='transaksi.php'">Transaksi</div>
-    <div class="menu-item" onclick="window.location.href='urangan.php'">Ruangan</div>
+    <div class="menu-item" onclick="window.location.href='ruangan.php'">Ruangan</div>
     <div class="menu-item" onclick="window.location.href='staff.php'">Staff</div>
     <div class="menu-item" onclick="window.location.href='pasien.php'">Pasien</div>
     <div class="menu-item" onclick="window.location.href='perawat.php'">Perawat</div>
@@ -165,7 +166,7 @@ include 'layouts/header.php';
 
 <section class="p-4 ml-5 mr-5 w-75">
     <div class="d-flex flex-row justify-content-between">
-        <h2>Data Pasien</h2>
+        <h2>Data Pelayanan</h2>
         <button onclick="openModal()">+Tambah</button>
     </div>
     <table class="table table-light mt-3">
@@ -181,7 +182,7 @@ include 'layouts/header.php';
             </tr>
         </thead>
         <tbody>
-            <?php while ($pasien = mysqli_fetch_object($result)) { ?>
+            <?php while ($pelayanan = mysqli_fetch_object($result)) { ?>
                 <tr>
                     <td><?= $pelayanan->no_antrian ?></td>
                     <td><?= $pelayanan->no_ruang ?></td>
@@ -192,8 +193,8 @@ include 'layouts/header.php';
                     
                     
                     <td>
-                        <button class="btn btn-warning btn-sm" onclick="toggleEditForm(<?= $pasien->id ?>)">Edit</button>
-                        <button class="btn btn-danger btn-sm" onclick="openDeleteModal(<?= $pasien->id ?>)">Hapus</button>
+                        <button class="btn btn-warning btn-sm" onclick="toggleEditForm('<?= $pelayanan->no_antrian ?>')">Edit</button>
+                        <button class="btn btn-danger btn-sm" onclick="openDeleteModal('<?= $pelayanan->no_antrian ?>')">Hapus</button>
                     </td>
                 </tr>
             <?php } ?>
@@ -209,31 +210,30 @@ include 'layouts/header.php';
         <h2 id="modalTitle">Tambah Data Pelayanan</h2>
         <form id="patientForm" method="POST">
             <input type="hidden" name="action" id="action" value="insert">
-            <input type="hidden" name="id" id="patientIdInput" value="">
             <input type="hidden" name="no_antrian" id="no_antrianInput" value="">
             
             <div class="form-group">
-                <label for="id">No Antrian</label>
+                <label for="no_antrian">No Antrian</label>
                 <input type="number" name="no_antrian" id="no_antrian" required>
             </div>
             <div class="form-group">
-                <label for="nama">No Ruangan</label>
+                <label for="no_ruang">No Ruangan</label>
                 <input type="number" name="no_ruang" id="no_ruang" required>
             </div>
             <div class="form-group">
-                <label for="tanggal_lahir">ID Dokter</label>
+                <label for="id_dokter">ID Dokter</label>
                 <input type="number" name="id_dokter" id="id_dokter" required>
             </div>
             <div class="form-group">
-                <label for="no_telepon">ID Pasien</label>
+                <label for="id_pasien">ID Pasien</label>
                 <input type="number" name="id_pasien" id="id_pasien" required>
             </div>
             <div class="form-group">
-                <label for="gol_darah">Tanggal</label>
+                <label for="tanggal">Tanggal</label>
                 <input type="date" name="tanggal" id="tanggal" required>
             </div>
             <div class="form-group">
-                <label for="alamat">Jam Operasi</label>
+                <label for="jam_operasi">Jam Operasi</label>
                 <input type="time" name="jam_operasi" id="jam_operasi" required>
             </div>
             <button type="submit">Simpan</button>
@@ -263,7 +263,6 @@ include 'layouts/header.php';
 <script>
     function openModal(patientData = null) {
         document.getElementById('patientForm').reset();
-        document.getElementById('patientIdInput').value = '';
         document.getElementById('no_antrianInput').value = '';
 
         if (patientData) {
@@ -293,8 +292,8 @@ include 'layouts/header.php';
         document.getElementById('deleteModal').style.display = 'none';
     }
 
-    function toggleEditForm(id, nama, tanggal_lahir, no_telepon, jenis_kelamin, gol_darah, alamat, no_antrian) {
-        openModal({ id, nama_pasien: nama, tanggal_lahir, no_telepon, jenis_kelamin, gol_darah, alamat, no_antrian });
+    function toggleEditForm(no_antrian) {
+        openModal({ no_antrian: no_antrian, no_ruang: 'Dummy', id_dokter: 'Dummy', id_pasien: 'Dummy', tanggal: '2023-01-01', jam_operasi: '08:00' });
     }
 </script>
 
