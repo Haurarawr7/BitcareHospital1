@@ -27,6 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } elseif ($action == 'delete') {
         $no_rekam_medis = $_POST["no_rekam_medis"];
         $query = "DELETE FROM rekam_medis WHERE no_rekam_medis='$no_rekam_medis'";
+        $query = "DELETE FROM tindakan_medis WHERE no_rekam_medis='$no_rekam_medis'";
         mysqli_query($koneksi, $query);
     }
 }
@@ -58,7 +59,7 @@ include 'layouts/header.php';
         align-items: flex-start; 
     }
     .sidebar h2 { 
-      
+
         margin-bottom: 1.5rem;
         font-weight: 600; 
         font-size: 1.5rem; 

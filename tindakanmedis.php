@@ -9,26 +9,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $no_tindakan = $_POST["no_tindakan"];
         $tanggal_tindakan = $_POST["tanggal_tindakan"];
         $id_dokter = $_POST["id_dokter"];
-        $no_rekammedis = $_POST["no_rekammedis"];
+        $no_rekam_medis = $_POST["no_rekam_medis"];
         $jenis_tindakan = $_POST["jenis_tindakan"];
 
-        $query = "INSERT INTO tindakanmedis (no_tindakan, tanggal_tindakan, id_dokter, no_rekammedis, jenis_tindakan) 
-            VALUES ('$no_tindakan', '$tanggal_tindakan', '$id_dokter', '$no_rekammedis', '$jenis_tindakan')";
+        $query = "INSERT INTO tindakanmedis (no_tindakan, tanggal_tindakan, id_dokter, no_rekam_medis, jenis_tindakan) 
+            VALUES ('$no_tindakan', '$tanggal_tindakan', '$id_dokter', '$no_rekam_medis', '$jenis_tindakan')";
         mysqli_query($koneksi, $query);
     }
     elseif ($action == 'edit') {
         $no_tindakan = $_POST["no_tindakan"];
         $tanggal_tindakan = $_POST["tanggal_tindakan"];
         $id_dokter = $_POST["id_dokter"];
-        $no_rekammedis = $_POST["no_rekammedis"];
+        $no_rekam_medis = $_POST["no_rekam_medis"];
         $jenis_tindakan = $_POST["jenis_tindakan"];
 
-        $query = "UPDATE tindakanmedis SET tanggal_tindakan='$tanggal_tindakan', id_dokter='$id_dokter', no_rekammedis='$no_rekammedis', jenis_tindakan='$jenis_tindakan' WHERE no_tindakan='$no_tindakan'";
+        $query = "UPDATE tindakanmedis SET tanggal_tindakan='$tanggal_tindakan', id_dokter='$id_dokter', no_rekam_medis='$no_rekam_medis', jenis_tindakan='$jenis_tindakan' WHERE no_tindakan='$no_tindakan'";
         mysqli_query($koneksi, $query);
     } elseif ($action == 'delete') {
-        $no_tindakan = $_POST["no_tindakan"];
-        $query = "DELETE FROM tindakanmedis WHERE no_tindakan='$no_tindakan'";
-        $query = "DELETE FROM rekammedis WHERE no_rekam_medis='$no_rekam_medis'";
+        $no_rekam_medis = $_POST["no_rekam_medis"];
+        $query = "DELETE FROM rekam_medis WHERE no_rekam_medis='$no_rekam_medis'";
+        $query = "DELETE FROM tindakan_medis WHERE no_rekam_medis='$no_rekam_medis'";
         mysqli_query($koneksi, $query);
     }
 }
@@ -185,11 +185,11 @@ include 'layouts/header.php';
                     <td><?= $tindakan->no_tindakan ?></td>
                     <td><?= $tindakan->tanggal_tindakan ?></td>
                     <td><?= $tindakan->id_dokter ?></td>
-                    <td><?= $tindakan->no_rekammedis ?></td>
+                    <td><?= $tindakan->no_rekam_medis ?></td>
                     <td><?= $tindakan->jenis_tindakan ?></td>
                     <td>
                         <button class="btn btn-warning btn-sm" onclick="toggleEditForm('<?= $tindakan->no_tindakan ?>')">Edit</button>
-                        <button class="btn btn-danger btn-sm" onclick="openDeleteModal('<?= $tindakan->no_tindakan ?>')">Hapus</button>
+                        <button class="btn btn-danger btn-sm" onclick="openDeleteModal('<?= $tindakan->no_rekam_medis ?>')">Hapus</button>
                     </td>
                 </tr>
             <?php } ?>
@@ -220,7 +220,7 @@ include 'layouts/header.php';
             </div>
             <div class="form-group">
                 <label for="noRekamMedis">No Rekam Medis:</label>
-                <input type="text" name="no_rekammedis" id="noRekamMedis" required>
+                <input type="text" name="no_rekam_medis" id="noRekamMedis" required>
             </div>
             <div class="form-group">
                 <label for="jenisTindakan">Jenis Tindakan:</label>
@@ -237,12 +237,12 @@ include 'layouts/header.php';
     <div class="modal-content">
         <span class="close-btn" onclick="closeDeleteModal()">&times;</span>
         <h2>Konfirmasi Hapus</h2>
-        <p>Masukkan No Tindakan untuk menghapus data:</p>
+        <p>Masukkan No Rekam Medis untuk menghapus data:</p>
         <form id="deleteForm" method="POST">
             <input type="hidden" name="action" value="delete">
             <div class="form-group">
-                <label for="no_tindakan_delete">No Tindakan</label>
-                <input type="text" name="no_tindakan" id="no_tindakan_delete" required>
+                <label for="no_rekammedis_delete">No Rekam Medis</label>
+                <input type="text" name="no_rekam_medis" id="no_rekammedis_delete" required>
             </div>
             <button type="submit">Hapus</button>
             <button type="button" onclick="closeDeleteModal()">Batal</button>
@@ -261,7 +261,7 @@ include 'layouts/header.php';
             document.getElementById('noTindakan').value = dataTindakan.no_tindakan;
             document.getElementById('tanggalTindakan').value = dataTindakan.tanggal_tindakan;
             document.getElementById('idDokter').value = dataTindakan.id_dokter;
-            document.getElementById('noRekamMedis').value = dataTindakan.no_rekammedis;
+            document.getElementById('noRekamMedis').value = dataTindakan.no_rekam_medis;
             document.getElementById('jenisTindakan').value = dataTindakan.jenis_tindakan;
         } else {
             document.getElementById('action').value = 'insert';
@@ -273,8 +273,8 @@ include 'layouts/header.php';
         document.getElementById('tindakanModal').style.display = 'none';
     }
 
-    function openDeleteModal(no_tindakan) {
-        document.getElementById('no_tindakan_delete').value = no_tindakan; // Set the no_tindakan to the input
+    function openDeleteModal(no_rekam_medis) {
+        document.getElementById('no_rekammedis_delete').value = no_rekam_medis; // Set the no_rekam_medis to the input
         document.getElementById('deleteModal').style.display = 'block';
     }
 
@@ -284,7 +284,7 @@ include 'layouts/header.php';
 
     function toggleEditForm(no_tindakan) {
         // Fetch the data for the selected medical action and open the modal
-        openModalTindakan({ no_tindakan: no_tindakan, tanggal_tindakan: 'Dummy', id_dokter: 'Dummy', no_rekammedis: 'Dummy', jenis_tindakan: 'Dummy' });
+        openModalTindakan({ no_tindakan: no_tindakan, tanggal_tindakan: 'Dummy', id_dokter: 'Dummy', no_rekam_medis: 'Dummy', jenis_tindakan: 'Dummy' });
     }
 </script>
 
