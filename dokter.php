@@ -50,15 +50,15 @@ include 'layouts/header.php';
 ?>
 
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
     * { box-sizing: border-box; }
     body { 
         margin: 0; 
-        font-family: 'Open Sans', sans-serif; 
+        font-family: 'Poppins', sans-serif; 
         display: flex; 
         min-height: 100vh; 
         background: linear-gradient(135deg, #333446 0%, #2575fc 100%); 
-        color: #37474f; 
+        color: #fff; 
     }
     .sidebar { width: 250px;
         background: rgba(255, 255, 255, 0.1);
@@ -154,6 +154,7 @@ include 'layouts/header.php';
         border: 1px solid #ccc; 
         border-radius: 4px; 
     }
+
 </style>
 
 <body>

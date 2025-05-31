@@ -40,15 +40,15 @@ include 'layouts/header.php';
 ?>
 
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
     * { box-sizing: border-box; }
     body { 
         margin: 0; 
-        font-family: 'Nunito Sans', sans-serif; 
+        font-family: 'Poppins', sans-serif; 
         display: flex; 
         min-height: 100vh; 
         background: linear-gradient(135deg, #333446 0%, #2575fc 100%); 
-        color: #3c4858; 
+        color: #fff; 
     }
     .sidebar { width: 250px;
         background: rgba(255, 255, 255, 0.1);
@@ -131,13 +131,15 @@ include 'layouts/header.php';
         text-decoration: none; 
         cursor: pointer; 
     }
-    .form-group { margin-bottom: 15px; }
+    .form-group { 
+        margin-bottom: 15px; 
+    }
     .form-group label { 
         display: block; 
         margin-bottom: 5px; 
     }
-    .form-group input[type="text"], .form-group input[type="number"], .form-group input[type="tel"] { 
-        width: calc(100% - 22px);
+    .form-group input[type="text"], .form-group input[type="number"], .form-group input[type="date"] { 
+        width: calc(100% - 22px); 
         padding: 10px; 
         border: 1px solid #ccc; 
         border-radius: 4px; 
