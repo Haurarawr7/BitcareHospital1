@@ -161,24 +161,23 @@ include 'layouts/header.php';
     <div class="menu-item" onclick="window.location.href='dokter.php'">Dokter</div>
   </div>
 
-<section class="main-content">
-    <header>
-        <h1>📋 Data staff</h1>
-    </header>
-    <button class="add-btn" onclick="openModal()">➕ Tambah Data Staff</button>
-
-    <table>
+<section class="p-4 ml-5 mr-5 w-75">
+    <div class="d-flex flex-row justify-content-between">
+        <h2>Data Staff</h2>
+        <button onclick="openModal()">+Tambah</button>
+    </div>
+    <table class="table table-light mt-3">
         <thead>
             <tr>
-                <th>ID staff</th>
-                <th>Nama</th>
-                <th>Jabatan</th>
-                <th>Ruang</th>
-                <th>Nomor Telepon</th>
-                <th>Aksi</th>
+                <th scope="col">Id Staff</th>
+                <th scope="col">Nama Staff</th>
+                <th scope="col">Jabatan</th>
+                <th scope="col">No Ruang</th>
+                <th scope="col">No Telepon</th>
+                <th scope="col">Aksi</th>
             </tr>
         </thead>
-        <tbody id="staffTableBody">
+        <tbody id="ruanganTableBody">
             <?php while ($staff = mysqli_fetch_object($result)) { ?>
                 <tr>
                     <td><?= $staff->id_staff ?></td>

@@ -57,7 +57,7 @@ include 'layouts/header.php';
         font-family: 'Open Sans', sans-serif; 
         display: flex; 
         min-height: 100vh; 
-        background: linear-gradient(135deg, #f0f5f9 0%, #0277bd 100%); 
+        background: linear-gradient(135deg, #333446 0%, #2575fc 100%); 
         color: #37474f; 
     }
     .sidebar { width: 250px;

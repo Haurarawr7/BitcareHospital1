@@ -47,7 +47,7 @@ include 'layouts/header.php';
         font-family: 'Nunito Sans', sans-serif; 
         display: flex; 
         min-height: 100vh; 
-        background: linear-gradient(135deg, #f4f7f6 0%, #00897b 100%); 
+        background: linear-gradient(135deg, #333446 0%, #2575fc 100%); 
         color: #3c4858; 
     }
     .sidebar { width: 250px;
