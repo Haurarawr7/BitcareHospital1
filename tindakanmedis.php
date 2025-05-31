@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } elseif ($action == 'delete') {
         $no_tindakan = $_POST["no_tindakan"];
         $query = "DELETE FROM tindakanmedis WHERE no_tindakan='$no_tindakan'";
-        $query = "DELETE FROM tindakanmedis WHERE no_rekam_medis='$no_rekam_medis'";
+        $query = "DELETE FROM rekammedis WHERE no_rekam_medis='$no_rekam_medis'";
         mysqli_query($koneksi, $query);
     }
 }
