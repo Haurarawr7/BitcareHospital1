@@ -180,6 +180,7 @@ include 'layouts/header.php';
                 <th scope="col">Id_pasien</th>
                 <th scope="col">Jenis Transaksi</th>
                 <th scope="col">Total harga</th>
+                <th scope="col">Asuransi</th>
                 <th scope="col">Aksi</th>
             </tr>
         </thead>
