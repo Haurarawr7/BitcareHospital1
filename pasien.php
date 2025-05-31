@@ -32,6 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         mysqli_query($koneksi, $query);
     } elseif ($action == 'delete') {
         $no_antrian = $_POST["no_antrian"];
+        $query = "DELETE FROM pelayanan WHERE no_antrian='$no_antrian'";
         $query = "DELETE FROM pasien WHERE no_antrian='$no_antrian'";
         mysqli_query($koneksi, $query);
     }
@@ -154,15 +155,16 @@ include 'layouts/header.php';
 <body>
   <div class="sidebar">
     <h2>Menu</h2>
-    <div class="menu-item">Tindakan medis</div>
-    <div class="menu-item">Rekam medis</div>
+    <div class="menu-item" onclick="window.location.href='pelayanan.php'">Pelayanan</div>
+    <div class="menu-item" onclick="window.location.href='tindakanmedis.php'">Tindakan medis</div>
+    <div class="menu-item" onclick="window.location.href='rekammedis.php'">Rekam medis</div>
     <div class="menu-item" onclick="window.location.href='obat.php'">Obat</div>
-    <div class="menu-item">Transaksi</div>
-    <div class="menu-item">Ruangan</div>
-    <div class="menu-item">Staff</div>
+    <div class="menu-item" onclick="window.location.href='transaksi.php'">Transaksi</div>
+    <div class="menu-item" onclick="window.location.href='urangan.php'">Ruangan</div>
+    <div class="menu-item" onclick="window.location.href='staff.php'">Staff</div>
     <div class="menu-item" onclick="window.location.href='pasien.php'">Pasien</div>
     <div class="menu-item" onclick="window.location.href='perawat.php'">Perawat</div>
-    <div class="menu-item">Dokter</div>
+    <div class="menu-item" onclick="window.location.href='dokter.php'">Dokter</div>
   </div>
 
 <section class="p-4 ml-5 mr-5 w-75">
