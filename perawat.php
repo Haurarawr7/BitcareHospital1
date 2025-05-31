@@ -103,7 +103,7 @@ include 'layouts/header.php';
             transform: translateY(0); 
         } 
     }
-    .modal { 
+    .formulir { 
         display: none; 
         position: fixed; 
         z-index: 1; 
@@ -111,7 +111,7 @@ include 'layouts/header.php';
         top: 0; 
         width: 100%; 
         height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4); padding-top: 60px; }
-    .modal-content { 
+    .formulir-content { 
         color : black;
         background-color: #fefefe;
         margin: 5% auto; 
@@ -196,8 +196,8 @@ include 'layouts/header.php';
 
 
 <!-- Modal for adding/editing nurse data -->
-<div id="perawatModal" class="modal">
-    <div class="modal-content">
+<div id="perawatModal" class="formulir">
+    <div class="formulir-content">
         <span class="close-btn" onclick="closeModalPerawat()">&times;</span>
         <h2 id="modalTitlePerawat">Tambah Data Perawat</h2>
         <form id="perawatForm" method="POST">
@@ -227,8 +227,8 @@ include 'layouts/header.php';
 </div>
 
 <!-- Modal for confirming delete -->
-<div id="deleteModal" class="modal">
-    <div class="modal-content">
+<div id="deleteModal" class="formulir">
+    <div class="formulir-content">
         <span class="close-btn" onclick="closeDeleteModal()">&times;</span>
         <h2>Konfirmasi Hapus</h2>
         <p>Masukkan ID Perawat untuk menghapus data:</p>
@@ -276,7 +276,7 @@ include 'layouts/header.php';
     }
 
     function toggleEditForm(id_perawat) {
-        // Fetch the data for the selected nurse and open the modal
+        // Fetch the data for the selected nurse and open the formulir
         // This function should be implemented to fetch data from the server
         openModalPerawat({ id_perawat: id_perawat, nama: 'Dummy', id_pasien: 'Dummy', nomor_telepon: 'Dummy', spesialisasi: 'Dummy' });
     }

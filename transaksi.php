@@ -1,209 +1,174 @@
-DATA TRANSAKSI
+<?php 
+include("koneksi.php"); 
 
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data Transaksi</title>
-    <style>
-        body {
-            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-            margin: 20px;
-            background-color: #eef1f4; /* Warna latar belakang lebih lembut */
-            color: #333;
-        }
+// Handle insert, update, and delete actions
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $action = $_POST['action'] ?? '';
 
-        h1 {
-            color: #2c3e50; /* Biru tua */
-            text-align: center;
-            margin-bottom: 30px;
-            font-weight: 300;
-        }
+    if ($action == 'insert') {
+        $kode_transaksi = $_POST["kode_transaksi"];
+        $tanggal_transaksi = $_POST["tanggal_transaksi"];
+        $no_ruang = $_POST["no_ruang"];
+        $id_pasien = $_POST["id_pasien"];
+        $jenis_transaksi = $_POST["jenis_transaksi"];
+        $total_harga = $_POST["total_harga"];
+        $asuransi = $_POST["asuransi"] ?? null;
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-            background-color: #fff;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-            border-radius: 8px;
-            overflow: hidden;
-        }
+        $query = "INSERT INTO transaksi (kode_transaksi, tanggal_transaksi, no_ruang, id_pasien, jenis_transaksi, total_harga, asuransi) 
+            VALUES ('$kode_transaksi', '$tanggal_transaksi', '$no_ruang', '$id_pasien', '$jenis_transaksi', '$total_harga', '$asuransi')";
+        mysqli_query($koneksi, $query);
+    }
+    elseif ($action == 'edit') {
+        $kode_transaksi = $_POST["kode_transaksi"];
+        $tanggal_transaksi = $_POST["tanggal_transaksi"];
+        $no_ruang = $_POST["no_ruang"];
+        $id_pasien = $_POST["id_pasien"];
+        $jenis_transaksi = $_POST["jenis_transaksi"];
+        $total_harga = $_POST["total_harga"];
+        $asuransi = $_POST["asuransi"] ?? null;
 
-        th, td {
-            border-bottom: 1px solid #ecf0f1; /* Garis antar baris lebih halus */
-            padding: 14px 18px; /* Padding lebih lega */
-            text-align: left;
-            vertical-align: middle;
-        }
+        $query = "UPDATE transaksi SET tanggal_transaksi='$tanggal_transaksi', no_ruang='$no_ruang', id_pasien='$id_pasien', jenis_transaksi='$jenis_transaksi', total_harga='$total_harga', asuransi='$asuransi' WHERE kode_transaksi='$kode_transaksi'";
+        mysqli_query($koneksi, $query);
+    } elseif ($action == 'delete') {
+        $kode_transaksi = $_POST["kode_transaksi"];
+        $query = "DELETE FROM transaksi WHERE kode_transaksi='$kode_transaksi'";
+        mysqli_query($koneksi, $query);
+    }
+}
 
-        th {
-            background-color: #3498db; /* Biru cerah untuk header */
-            color: white;
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 13px;
-        }
+// Fetch all transactions
+$query = 'SELECT * FROM transaksi;'; 
+$result = mysqli_query($koneksi, $query); 
 
-        tr:nth-child(even) {
-            background-color: #f8f9fa;
-        }
+include 'layouts/header.php'; 
+?>
 
-        tr:hover {
-            background-color: #e8f4fd; /* Highlight biru muda saat hover */
-        }
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+    * { box-sizing: border-box; }
+    body { 
+        margin: 0; 
+        font-family: 'Poppins', sans-serif; 
+        display: flex; 
+        min-height: 100vh; 
+        background: linear-gradient(135deg, #333446 0%, #2575fc 100%); 
+        color: #fff; 
+    }
+    .sidebar { width: 250px;
+        background: rgba(255, 255, 255, 0.1);
+        padding: 2rem;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+        display: flex;
+        flex-direction: column; 
+        align-items: flex-start; 
+    }
+    .sidebar h2 { 
+        margin-bottom: 1.5rem;
+        font-weight: 600; 
+        font-size: 1.5rem; 
+        text-align: left; 
+    }
+    .menu-item { margin: 0.5rem 0; 
+        padding: 0.5rem 1rem; 
+        border-radius: 8px; 
+        cursor: pointer; 
+        transition: background 0.3s ease; 
+        width: 100%; 
+        text-align: left; 
+    }
+    .menu-item:hover { 
+        background: rgba(255, 255, 255, 0.2); 
+    }
+    .main-content { 
+        flex: 1; 
+        padding: 2rem; 
+        display: flex; 
+        flex-direction: column; 
+        align-items: center; 
+    }
+    header { 
+        margin-bottom: 2rem; 
+        text-align: center; 
+    }
+    header h1 { 
+        font-weight: 600; 
+        font-size: 2.5rem; 
+        letter-spacing: 0.05em; 
+        text-shadow: 0 2px 6px rgba(0,0,0,0.3); 
+        margin: 0; 
+        animation: fadeIn 1s ease-in-out; 
+    }
+    @keyframes fadeIn { 
+        from { 
+            opacity: 0; 
+            transform: translateY(-20px); 
+        } 
+        to { opacity: 1; 
+            transform: translateY(0); 
+        } 
+    }
+    .formulir { 
+        display: none; 
+        position: fixed; 
+        z-index: 1; 
+        left: 0; 
+        top: 0; 
+        width: 100%; 
+        height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4); padding-top: 60px; }
+    .formulir-content { 
+        color : black;
+        background-color: #fefefe;
+        margin: 5% auto; 
+        padding: 20px; 
+        border: 1px solid #888; 
+        width: 80%; 
+        max-width: 500px; 
+        border-radius: 8px; }
+    .close-btn { 
+        color: #aaa; 
+        float: right; 
+        font-size: 28px; 
+        font-weight: bold; 
+    }
+    .close-btn:hover, .close-btn:focus { 
+        color: black; 
+        text-decoration: none; 
+        cursor: pointer; 
+    }
+    .form-group { 
+        margin-bottom: 15px; 
+    }
+    .form-group label { 
+        display: block; 
+        margin-bottom: 5px; 
+    }
+    .form-group input[type="text"], .form-group input[type="number"], .form-group input[type="date"] { 
+        width: calc(100% - 22px); 
+        padding: 10px; 
+        border: 1px solid #ccc; 
+        border-radius: 4px; 
+    }
+</style>
 
-        .actions button {
-            margin-right: 6px;
-            padding: 9px 13px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 13px;
-            transition: all 0.2s ease;
-        }
-        .actions button:active {
-            transform: translateY(1px);
-        }
-
-        .actions .edit-btn {
-            background-color: #f39c12; /* Oranye */
-            color: white;
-        }
-        .actions .edit-btn:hover {
-            background-color: #e67e22;
-        }
-
-        .actions .delete-btn {
-            background-color: #e74c3c; /* Merah */
-            color: white;
-        }
-        .actions .delete-btn:hover {
-            background-color: #c0392b;
-        }
-
-        .add-btn {
-            background-color: #2ecc71; /* Hijau emerlad */
-            color: white;
-            padding: 12px 20px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 15px;
-            font-weight: 500;
-            margin-bottom: 25px;
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-            transition: background-color 0.2s ease;
-        }
-        .add-btn:hover {
-            background-color: #27ae60;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1050; /* Di atas elemen lain */
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.55); /* Overlay lebih gelap */
-            padding-top: 40px;
-        }
-
-        .modal-content {
-            background-color: #fff;
-            margin: 5% auto 10% auto; /* Margin bawah lebih besar */
-            padding: 30px 35px;
-            border: none;
-            width: 90%;
-            max-width: 600px; /* Modal sedikit lebih lebar */
-            border-radius: 10px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-        }
-
-        .close-btn {
-            color: #95a5a6; /* Abu-abu */
-            float: right;
-            font-size: 32px;
-            font-weight: bold;
-            line-height: 0.7;
-        }
-
-        .close-btn:hover,
-        .close-btn:focus {
-            color: #7f8c8d; /* Abu-abu lebih gelap */
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-        .form-group {
-            margin-bottom: 22px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: #555;
-            font-size: 14px;
-        }
-
-        .form-group input[type="text"],
-        .form-group input[type="date"],
-        .form-group input[type="number"],
-        .form-group select {
-            width: 100%;
-            padding: 12px 15px; /* Padding input lebih nyaman */
-            border: 1px solid #bdc3c7; /* Border abu-abu lembut */
-            border-radius: 6px;
-            box-sizing: border-box;
-            font-size: 15px;
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus {
-            border-color: #3498db; /* Fokus biru */
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.15);
-        }
-
-        .form-group button[type="submit"] {
-            background-color: #3498db;
-            color: white;
-            padding: 14px 22px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 500;
-            width: 100%;
-            transition: background-color 0.2s ease;
-        }
-        .form-group button[type="submit"]:hover {
-            background-color: #2980b9;
-        }
-        .loading-message, .empty-message {
-            text-align: center;
-            font-style: italic;
-            color: #7f8c8d;
-            padding: 25px;
-            font-size: 15px;
-        }
-    </style>
-</head>
 <body>
+  <div class="sidebar">
+    <h2>Menu</h2>
+    <div class="menu-item" onclick="window.location.href='pelayanan.php'">Pelayanan</div>
+    <div class="menu-item" onclick="window.location.href='tindakanmedis.php'">Tindakan medis</div>
+    <div class="menu-item" onclick="window.location.href='rekammedis.php'">Rekam medis</div>
+    <div class="menu-item" onclick="window.location.href='obat.php'">Obat</div>
+    <div class="menu-item" onclick="window.location.href='transaksi.php'">Transaksi</div>
+    <div class="menu-item" onclick="window.location.href='ruangan.php'">Ruangan</div>
+    <div class="menu-item" onclick="window.location.href='staff.php'">Staff</div>
+    <div class="menu-item" onclick="window.location.href='pasien.php'">Pasien</div>
+    <div class="menu-item" onclick="window.location.href='perawat.php'">Perawat</div>
+    <div class="menu-item" onclick="window.location.href='dokter.php'">Dokter</div>
+  </div>
 
-    <h1><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-receipt-cutoff" viewBox="0 0 16 16" style="vertical-align: -5px; margin-right: 10px;">
-        <path d="M3 4.5a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5zM11.5 4a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1h-1zm0 2a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1h-1zm0 2a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1h-1zm0 2a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1h-1zm0 2a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1h-1z"/>
-        <path d="M2.354.646a.5.5 0 0 0-.801.13l-.5 1A.5.5 0 0 0 1.5 2h13a.5.5 0 0 0 .447-.724l-.5-1a.5.5 0 0 0-.8-.13L13 1.293l-.646-.647a.5.5 0 0 0-.708 0L11 1.293l-.646-.647a.5.5 0 0 0-.708 0L9 1.293l-.646-.647a.5.5 0 0 0-.708 0L7 1.293l-.646-.647a.5.5 0 0 0-.708 0L5 1.293l-.646-.647a.5.5 0 0 0-.708 0L3 1.293 2.354.646zm-.217 1.198.51.51a.5.5 0 0 0 .707 0L4 1.707l.646.647a.5.5 0 0 0 .708 0L6 1.707l.646.647a.5.5 0 0 0 .708 0L8 1.707l.646.647a.5.5 0 0 0 .708 0L10 1.707l.646.647a.5.5 0 0 0 .708 0L12 1.707l.646.647a.5.5 0 0 0 .708 0l.509-.51.137.274A.5.5 0 0 0 14.5 3h-13a.5.5 0 0 0-.405-.215l.135-.274zM0 3.5A1.5 1.5 0 0 1 1.5 2h13A1.5 1.5 0 0 1 16 3.5v11A1.5 1.5 0 0 1 14.5 16h-13A1.5 1.5 0 0 1 0 14.5v-11zm1.5.5a.5.5 0 0 0-.5.5v11a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5v-11a.5.5 0 0 0-.5-.5h-13z"/>
-      </svg>Data Transaksi</h1>
-
+<section class="main-content">
+    <header>
+        <h1>📋 Data Transaksi</h1>
+    </header>
     <button class="add-btn" onclick="openModalTransaksi()">➕ Tambah Data Transaksi</button>
 
     <table>
@@ -220,255 +185,124 @@ DATA TRANSAKSI
             </tr>
         </thead>
         <tbody id="transaksiTableBody">
-            </tbody>
+            <?php while ($transaksi = mysqli_fetch_object($result)) { ?>
+                <tr>
+                    <td><?= $transaksi->kode_transaksi ?></td>
+                    <td><?= $transaksi->tanggal_transaksi ?></td>
+                    <td><?= $transaksi->no_ruang ?></td>
+                    <td><?= $transaksi->id_pasien ?></td>
+                    <td><?= $transaksi->jenis_transaksi ?></td>
+                    <td><?= $transaksi->total_harga ?></td>
+                    <td><?= $transaksi->asuransi ?></td>
+                    <td>
+                        <button class="btn btn-warning btn-sm" onclick="toggleEditForm('<?= $transaksi->kode_transaksi ?>')">Edit</button>
+                        <button class="btn btn-danger btn-sm" onclick="openDeleteModal('<?= $transaksi->kode_transaksi ?>')">Hapus</button>
+                    </td>
+                </tr>
+            <?php } ?>
+        </tbody>
     </table>
+</section>
 
-    <div id="transaksiModal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn" onclick="closeModalTransaksi()">&times;</span>
-            <h2 id="modalTitleTransaksi" style="color: #2c3e50; margin-bottom: 25px; font-weight: 400;">Tambah Data Transaksi</h2>
-            <form id="transaksiForm">
-                <div class="form-group">
-                    <label for="kodeTransaksi">Kode Transaksi:</label>
-                    <input type="text" id="kodeTransaksi" name="kode_transaksi" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="tanggalTransaksi">Tanggal Transaksi:</label>
-                    <input type="date" id="tanggalTransaksi" name="tanggal_transaksi" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="noRuang">Nomor Ruang (FK):</label>
-                    <input type="text" id="noRuang" name="no_ruang" required>
-                    <small style="font-size: 12px; color: #7f8c8d;">Idealnya dropdown dari data Ruangan.</small>
-                </div>
-
-                <div class="form-group">
-                    <label for="idPasien">ID Pasien (FK):</label>
-                    <input type="text" id="idPasien" name="id_pasien" required>
-                    <small style="font-size: 12px; color: #7f8c8d;">Idealnya dropdown dari data Pasien.</small>
-                </div>
-
-                <div class="form-group">
-                    <label for="jenisTransaksi">Jenis Transaksi:</label>
-                    <input type="text" id="jenisTransaksi" name="jenis_transaksi" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="totalHarga">Total Harga (Rp):</label>
-                    <input type="number" id="totalHarga" name="total_harga" min="0" step="1000" required placeholder="Contoh: 500000">
-                </div>
-
-                <div class="form-group">
-                    <label for="asuransi">Asuransi:</label>
-                    <input type="text" id="asuransi" name="asuransi" placeholder="Nama Asuransi / Tidak Ada">
-                </div>
-
-                <input type="hidden" id="originalKodeTransaksi" name="originalKodeTransaksi"> <div class="form-group">
-                    <button type="submit" id="submitButtonTransaksi">Simpan</button>
-                </div>
-            </form>
-        </div>
+<!-- Modal for adding/editing transaction data -->
+<div id="transaksiModal" class="formulir">
+    <div class="formulir-content">
+        <span class="close-btn" onclick="closeModalTransaksi()">&times;</span>
+        <h2 id="modalTitleTransaksi">Tambah Data Transaksi</h2>
+        <form id="transaksiForm" method="POST">
+            <input type="hidden" name="action" id="action" value="insert">
+            <input type="hidden" name="kode_transaksi" id="kodeTransaksiInput" value="">
+            
+            <div class="form-group">
+                <label for="kodeTransaksi">Kode Transaksi:</label>
+                <input type="text" name="kode_transaksi" id="kodeTransaksi" required>
+            </div>
+            <div class="form-group">
+                <label for="tanggalTransaksi">Tanggal Transaksi:</label>
+                <input type="date" name="tanggal_transaksi" id="tanggalTransaksi" required>
+            </div>
+            <div class="form-group">
+                <label for="noRuang">Nomor Ruang:</label>
+                <input type="text" name="no_ruang" id="noRuang" required>
+            </div>
+            <div class="form-group">
+                <label for="idPasien">ID Pasien:</label>
+                <input type="text" name="id_pasien" id="idPasien" required>
+            </div>
+            <div class="form-group">
+                <label for="jenisTransaksi">Jenis Transaksi:</label>
+                <input type="text" name="jenis_transaksi" id="jenisTransaksi" required>
+            </div>
+            <div class="form-group">
+                <label for="totalHarga">Total Harga (Rp):</label>
+                <input type="number" name="total_harga" id="totalHarga" required>
+            </div>
+            <div class="form-group">
+                <label for="asuransi">Asuransi:</label>
+                <input type="text" name="asuransi" id="asuransi">
+            </div>
+            <button type="submit">Simpan</button>
+            <button type="button" onclick="closeModalTransaksi()">Batal</button>
+        </form>
     </div>
+</div>
 
-    <script>
-        const transaksiTableBody = document.getElementById('transaksiTableBody');
-        const transaksiModal = document.getElementById('transaksiModal');
-        const modalTitleTransaksi = document.getElementById('modalTitleTransaksi');
-        const transaksiForm = document.getElementById('transaksiForm');
-        const kodeTransaksiInput = document.getElementById('kodeTransaksi');
-        const originalKodeTransaksiInput = document.getElementById('originalKodeTransaksi');
-        const submitButtonTransaksi = document.getElementById('submitButtonTransaksi');
+<!-- Modal for confirming delete -->
+<div id="deleteModal" class="formulir">
+    <div class="formulir-content">
+        <span class="close-btn" onclick="closeDeleteModal()">&times;</span>
+        <h2>Konfirmasi Hapus</h2>
+        <p>Masukkan Kode Transaksi untuk menghapus data:</p>
+        <form id="deleteForm" method="POST">
+            <input type="hidden" name="action" value="delete">
+            <div class="form-group">
+                <label for="kode_transaksi_delete">Kode Transaksi</label>
+                <input type="text" name="kode_transaksi" id="kode_transaksi_delete" required>
+            </div>
+            <button type="submit">Hapus</button>
+            <button type="button" onclick="closeDeleteModal()">Batal</button>
+        </form>
+    </div>
+</div>
 
-        // GANTI DENGAN URL API BACKEND ANDA
-        const API_URL_TRANSAKSI = 'api/transaksi.php';
+<script>
+    function openModalTransaksi(dataTransaksi = null) {
+        document.getElementById('transaksiForm').reset();
+        document.getElementById('kodeTransaksiInput').value = '';
 
-        function formatRupiah(angka) {
-            if (angka === null || angka === undefined || isNaN(parseFloat(angka))) {
-                return 'N/A';
-            }
-            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
+        if (dataTransaksi) {
+            document.getElementById('action').value = 'edit';
+            document.getElementById('kodeTransaksiInput').value = dataTransaksi.kode_transaksi;
+            document.getElementById('kodeTransaksi').value = dataTransaksi.kode_transaksi;
+            document.getElementById('tanggalTransaksi').value = dataTransaksi.tanggal_transaksi;
+            document.getElementById('noRuang').value = dataTransaksi.no_ruang;
+            document.getElementById('idPasien').value = dataTransaksi.id_pasien;
+            document.getElementById('jenisTransaksi').value = dataTransaksi.jenis_transaksi;
+            document.getElementById('totalHarga').value = dataTransaksi.total_harga;
+            document.getElementById('asuransi').value = dataTransaksi.asuransi;
+        } else {
+            document.getElementById('action').value = 'insert';
         }
+        document.getElementById('transaksiModal').style.display = 'block';
+    }
 
-        async function fetchTransaksi() {
-            transaksiTableBody.innerHTML = '<tr><td colspan="8" class="loading-message">Memuat data transaksi... ⏳</td></tr>';
-            try {
-                const response = await fetch(API_URL_TRANSAKSI);
-                if (!response.ok) {
-                    throw new Error(HTTP error! status: ${response.status}, ${await response.text()});
-                }
-                const daftarTransaksi = await response.json();
+    function closeModalTransaksi() {
+        document.getElementById('transaksiModal').style.display = 'none';
+    }
 
-                transaksiTableBody.innerHTML = '';
+    function openDeleteModal(kodeTransaksi) {
+        document.getElementById('kode_transaksi_delete').value = kodeTransaksi; // Set the kode_transaksi to the input
+        document.getElementById('deleteModal').style.display = 'block';
+    }
 
-                if (daftarTransaksi && daftarTransaksi.length > 0) {
-                    daftarTransaksi.forEach(trx => {
-                        const row = transaksiTableBody.insertRow();
-                        // Sesuaikan nama properti (trx.kode_transaksi, dll.) dengan respons API Anda.
-                        row.innerHTML = `
-                            <td>${trx.kode_transaksi || 'N/A'}</td>
-                            <td>${trx.tanggal_transaksi ? new Date(trx.tanggal_transaksi).toLocaleDateString('id-ID') : 'N/A'}</td>
-                            <td>${trx.no_ruang || 'N/A'}</td>
-                            <td>${trx.id_pasien || 'N/A'}</td>
-                            <td>${trx.jenis_transaksi || 'N/A'}</td>
-                            <td>${formatRupiah(trx.total_harga)}</td>
-                            <td>${trx.asuransi || '-'}</td>
-                            <td class="actions">
-                                <button class="edit-btn" onclick="editTransaksi('${trx.kode_transaksi}', event)">✏ Edit</button>
-                                <button class="delete-btn" onclick="deleteTransaksi('${trx.kode_transaksi}')">🗑 Hapus</button>
-                            </td>
-                        `;
-                    });
-                } else {
-                    transaksiTableBody.innerHTML = '<tr><td colspan="8" class="empty-message">Belum ada data transaksi. 🤷</td></tr>';
-                }
+    function closeDeleteModal() {
+        document.getElementById('deleteModal').style.display = 'none';
+    }
 
-            } catch (error) {
-                console.error('Error fetching transaksi:', error);
-                transaksiTableBody.innerHTML = <tr><td colspan="8" class="empty-message">Gagal memuat data: ${error.message}. Pastikan backend aktif. 😥</td></tr>;
-            }
-        }
+    function toggleEditForm(kodeTransaksi) {
+        // Fetch the data for the selected transaction and open the formulir
+        openModalTransaksi({ kode_transaksi: kodeTransaksi, tanggal_transaksi: 'Dummy', no_ruang: 'Dummy', id_pasien: 'Dummy', jenis_transaksi: 'Dummy', total_harga: 0, asuransi: 'Dummy' });
+    }
+</script>
 
-        function openModalTransaksi(dataTrx = null) {
-            transaksiForm.reset();
-            kodeTransaksiInput.readOnly = false; // Default bisa diedit untuk Kode Transaksi
-            originalKodeTransaksiInput.value = '';
-
-
-            if (dataTrx) {
-                modalTitleTransaksi.textContent = '✏ Edit Data Transaksi';
-                submitButtonTransaksi.textContent = 'Update';
-
-                kodeTransaksiInput.value = dataTrx.kode_transaksi || '';
-                // Jika Kode Transaksi (PK) tidak boleh diubah setelah dibuat, uncomment baris berikut:
-                // kodeTransaksiInput.readOnly = true;
-                originalKodeTransaksiInput.value = dataTrx.kode_transaksi || ''; // Simpan PK asli untuk update
-
-
-                document.getElementById('tanggalTransaksi').value = dataTrx.tanggal_transaksi ? dataTrx.tanggal_transaksi.split('T')[0] : '';
-                document.getElementById('noRuang').value = dataTrx.no_ruang || '';
-                document.getElementById('idPasien').value = dataTrx.id_pasien || '';
-                document.getElementById('jenisTransaksi').value = dataTrx.jenis_transaksi || '';
-                document.getElementById('totalHarga').value = dataTrx.total_harga || '';
-                document.getElementById('asuransi').value = dataTrx.asuransi || '';
-            } else {
-                modalTitleTransaksi.textContent = '➕ Tambah Data Transaksi';
-                submitButtonTransaksi.textContent = 'Simpan';
-                // Untuk 'tambah', jika Kode Transaksi auto-generated, field ini bisa di-disable/hide
-                // atau biarkan user input jika memang manual.
-            }
-            transaksiModal.style.display = 'block';
-            // Untuk dropdown FK, panggil fungsi fetch data FK di sini jika ada
-        }
-
-        function closeModalTransaksi() {
-            transaksiModal.style.display = 'none';
-        }
-
-        window.onclick = function(event) {
-            if (event.target == transaksiModal) {
-                closeModalTransaksi();
-            }
-        }
-
-        transaksiForm.addEventListener('submit', async function(event) {
-            event.preventDefault();
-
-            const formData = new FormData(transaksiForm);
-            const data = Object.fromEntries(formData.entries());
-            const currentOriginalKodeTrx = originalKodeTransaksiInput.value;
-
-            let url = API_URL_TRANSAKSI;
-            let method = 'POST';
-
-            // Jika currentOriginalKodeTrx ada, berarti ini operasi UPDATE
-            if (currentOriginalKodeTrx) {
-                method = 'PUT';
-                // Jika PK (kode_transaksi) tidak diubah, backend bisa menggunakan kode_transaksi dari body.
-                // Jika PK bisa diubah, backend perlu originalKodeTransaksi untuk klausa WHERE.
-                // data.original_kode_transaksi = currentOriginalKodeTrx; // kirim pk lama jika pk bisa diubah
-                // URL untuk PUT bisa juga seperti: ${API_URL_TRANSAKSI}/${currentOriginalKodeTrx}
-                // tergantung desain API backend Anda.
-            }
-
-
-            try {
-                const response = await fetch(url, {
-                    method: method,
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(data),
-                });
-
-                if (!response.ok) {
-                    const errorData = await response.json().catch(() => ({ message: response.statusText }));
-                    throw new Error(errorData.message || HTTP error! status: ${response.status});
-                }
-
-                closeModalTransaksi();
-                fetchTransaksi();
-                alert(currentOriginalKodeTrx ? 'Data transaksi berhasil diupdate! 👍' : 'Data transaksi berhasil ditambahkan! 🎉');
-
-            } catch (error) {
-                console.error('Error submitting form:', error);
-                alert(Gagal menyimpan data: ${error.message} 😔);
-            }
-        });
-
-        async function editTransaksi(kodeTrx, event) {
-            event.stopPropagation();
-            try {
-                // Panggil API backend Anda untuk mendapatkan data transaksi berdasarkan Kode Transaksi
-                const response = await fetch(${API_URL_TRANSAKSI}?kode_transaksi=${kodeTrx});
-                if (!response.ok) {
-                    const errorData = await response.json().catch(() => ({ message: response.statusText }));
-                    throw new Error(errorData.message || HTTP error! status: ${response.status});
-                }
-                const dataTrx = await response.json();
-
-                if (dataTrx) {
-                    // Jika API mengembalikan array (misal dari SELECT WHERE), ambil elemen pertama
-                    openModalTransaksi(Array.isArray(dataTrx) ? dataTrx[0] : dataTrx);
-                } else {
-                    alert('Data transaksi tidak ditemukan!');
-                }
-
-            } catch (error) {
-                console.error('Error fetching transaksi data for edit:', error);
-                alert(Gagal mengambil data transaksi untuk diedit: ${error.message});
-            }
-        }
-
-        async function deleteTransaksi(kodeTrx) {
-            if (confirm(Apakah Anda yakin ingin menghapus transaksi dengan Kode ${kodeTrx}? 🚮)) {
-                try {
-                    const response = await fetch(API_URL_TRANSAKSI, {
-                        method: 'DELETE',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ kode_transaksi: kodeTrx }),
-                    });
-
-                    if (!response.ok) {
-                        const errorData = await response.json().catch(() => ({ message: response.statusText }));
-                        throw new Error(errorData.message || HTTP error! status: ${response.status});
-                    }
-
-                    alert(Transaksi dengan Kode ${kodeTrx} berhasil dihapus.);
-                    fetchTransaksi();
-
-                } catch (error) {
-                    console.error('Error deleting transaksi:', error);
-                    alert(Gagal menghapus data: ${error.message});
-                }
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', fetchTransaksi);
-    </script>
-
-</body>
-</html>
+<?php include 'layouts/footer.php'; ?>

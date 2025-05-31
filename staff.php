@@ -6,35 +6,38 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $action = $_POST['action'] ?? '';
 
     if ($action == 'insert') {
-        $no_tindakan = $_POST["no_tindakan"];
-        $jenis_tindakan = $_POST["jenis_tindakan"];
-        $tanggal = $_POST["tanggal"];
-        $id_dokter = $_POST["id_dokter"];
-        $no_rekammedis = $_POST["no_rekammedis"];
-        
-        $query = "INSERT INTO tindakanmedis (no_tindakanmedis, tanggal, id_dokter, no_rekammedis) 
-            VALUES ('$no_tindakanmedis', '$tanggal', '$id_dokter', '$no_rekammedis')";
-        mysqli_query($koneksi, $query);
-        }
-     elseif ($action == 'edit') {
-        $id = $_POST["id"];
+        $id_staf = $_POST["id_staf"];
         $nama = $_POST["nama"];
-        $tanggal_lahir = $_POST["tanggal_lahir"];
-        $no_telepon = $_POST["no_telepon"];
-        $jenis_kelamin = $_POST["jenis_kelamin"];
-        $gol_darah = $_POST["gol_darah"];
-        $alamat = $_POST["alamat"];
-        $no_antrian = $_POST["no_antrian"];
-        $query = "UPDATE pasien SET nama_pasien='$nama', tanggal_lahir='$tanggal_lahir', no_telepon='$no_telepon', jenis_kelamin ='$jenis_kelamin', gol_darah='$gol_darah', alamat='$alamat' WHERE id=$id";
+        $jabatan = $_POST["jabatan"];
+        $nomor_telepon = $_POST["nomor_telepon"];
+        $ruang = $_POST["ruang"];
+        $jenis_staf = $_POST["jenis_staf"];
+        $kode_spesifik = $_POST["kode_spesifik"] ?? null;
+
+        $query = "INSERT INTO staf (id_staf, nama, jabatan, nomor_telepon, ruang, jenis_staf, kode_spesifik) 
+            VALUES ('$id_staf', '$nama', '$jabatan', '$nomor_telepon', '$ruang', '$jenis_staf', '$kode_spesifik')";
+        mysqli_query($koneksi, $query);
+    }
+    elseif ($action == 'edit') {
+        $id_staf = $_POST["id_staf"];
+        $nama = $_POST["nama"];
+        $jabatan = $_POST["jabatan"];
+        $nomor_telepon = $_POST["nomor_telepon"];
+        $ruang = $_POST["ruang"];
+        $jenis_staf = $_POST["jenis_staf"];
+        $kode_spesifik = $_POST["kode_spesifik"] ?? null;
+
+        $query = "UPDATE staf SET nama='$nama', jabatan='$jabatan', nomor_telepon='$nomor_telepon', ruang='$ruang', jenis_staf='$jenis_staf', kode_spesifik='$kode_spesifik' WHERE id_staf='$id_staf'";
         mysqli_query($koneksi, $query);
     } elseif ($action == 'delete') {
-        $no_antrian = $_POST["no_antrian"];
-        $query = "DELETE FROM pasien WHERE no_antrian='$no_antrian'";
+        $id_staf = $_POST["id_staf"];
+        $query = "DELETE FROM staf WHERE id_staf='$id_staf'";
         mysqli_query($koneksi, $query);
     }
 }
-// Fetch all patients
-$query = 'SELECT * FROM pasien;'; 
+
+// Fetch all staff
+$query = 'SELECT * FROM staf;'; 
 $result = mysqli_query($koneksi, $query); 
 
 include 'layouts/header.php'; 
@@ -139,13 +142,12 @@ include 'layouts/header.php';
         display: block; 
         margin-bottom: 5px; 
     }
-    .form-group input[type="text"], .form-group input[type="number"], .form-group input[type="date"] { 
+    .form-group input[type="text"], .form-group input[type="tel"] { 
         width: calc(100% - 22px); 
         padding: 10px; 
         border: 1px solid #ccc; 
         border-radius: 4px; 
     }
-
 </style>
 
 <body>
@@ -163,39 +165,38 @@ include 'layouts/header.php';
     <div class="menu-item" onclick="window.location.href='dokter.php'">Dokter</div>
   </div>
 
-<section class="p-4 ml-5 mr-5 w-75">
-    <div class="d-flex flex-row justify-content-between">
-        <h2>Data Pasien</h2>
-        <button onclick="openModal()">+Tambah</button>
-    </div>
-    <table class="table table-light mt-3">
+<section class="main-content">
+    <header>
+        <h1>📋 Data Staf</h1>
+    </header>
+    <button class="add-btn" onclick="openModal()">➕ Tambah Data Staf</button>
+
+    <table>
         <thead>
             <tr>
-                <th scope="col">ID</th>
-                <th scope="col">Nama</th>
-                <th scope="col">Tanggal Lahir</th>
-                <th scope="col">Nomor Telepon</th>
-                <th scope="col">Jenis Kelamin</th>
-                <th scope="col">Golongan Darah</th>
-                <th scope="col">Alamat</th>
-                <th scope="col">No Antrian</th>
-                <th scope="col">Aksi</th>
+                <th>ID Staf</th>
+                <th>Nama</th>
+                <th>Jabatan</th>
+                <th>Ruang</th>
+                <th>Nomor Telepon</th>
+                <th>Jenis Staf</th>
+                <th>Kode Spesifik</th>
+                <th>Aksi</th>
             </tr>
         </thead>
-        <tbody>
-            <?php while ($pasien = mysqli_fetch_object($result)) { ?>
+        <tbody id="staffTableBody">
+            <?php while ($staf = mysqli_fetch_object($result)) { ?>
                 <tr>
-                    <td><?= $pasien->id ?></td>
-                    <td><?= $pasien->nama_pasien ?></td>
-                    <td><?= $pasien->tanggal_lahir ?></td>
-                    <td><?= $pasien->no_telepon?></td>
-                    <td><?= $pasien->jenis_kelamin?></td>
-                    <td><?= $pasien->gol_darah?></td>
-                    <td><?= $pasien->alamat ?></td>
-                    <td><?= $pasien->no_antrian?></td>
+                    <td><?= $staf->id_staf ?></td>
+                    <td><?= $staf->nama ?></td>
+                    <td><?= $staf->jabatan ?></td>
+                    <td><?= $staf->ruang ?></td>
+                    <td><?= $staf->nomor_telepon ?></td>
+                    <td><?= $staf->jenis_staf ?></td>
+                    <td><?= $staf->kode_spesifik ?></td>
                     <td>
-                        <button class="btn btn-warning btn-sm" onclick="toggleEditForm(<?= $pasien->id ?>)">Edit</button>
-                        <button class="btn btn-danger btn-sm" onclick="openDeleteModal(<?= $pasien->id ?>)">Hapus</button>
+                        <button class="btn btn-warning btn-sm" onclick="toggleEditForm('<?= $staf->id_staf ?>')">Edit</button>
+                        <button class="btn btn-danger btn-sm" onclick="openDeleteModal('<?= $staf->id_staf ?>')">Hapus</button>
                     </td>
                 </tr>
             <?php } ?>
@@ -203,51 +204,42 @@ include 'layouts/header.php';
     </table>
 </section>
 
-
-<!-- Modal for adding/editing patient data -->
-<div id="patientModal" class="formulir">
+<!-- Modal for adding/editing staff data -->
+<div id="staffModal" class="formulir">
     <div class="formulir-content">
         <span class="close-btn" onclick="closeModal()">&times;</span>
-        <h2 id="modalTitle">Tambah Data Pasien</h2>
-        <form id="patientForm" method="POST">
+        <h2 id="modalTitle">Tambah Data Staf</h2>
+        <form id="staffForm" method="POST">
             <input type="hidden" name="action" id="action" value="insert">
-            <input type="hidden" name="id" id="patientIdInput" value="">
-            <input type="hidden" name="no_antrian" id="no_antrianInput" value="">
+            <input type="hidden" name="id_staf" id="staffIdInput" value="">
             
             <div class="form-group">
-                <label for="id">ID Pasien</label>
-                <input type="number" name="id" id="id" required>
-            </div>
-            <div class="form-group">
-                <label for="nama">Nama Pasien</label>
+                <label for="nama">Nama Staf</label>
                 <input type="text" name="nama" id="nama" required>
             </div>
             <div class="form-group">
-                <label for="tanggal_lahir">Tanggal Lahir</label>
-                <input type="date" name="tanggal_lahir" id="tanggal_lahir" required>
+                <label for="jabatan">Jabatan</label>
+                <input type="text" name="jabatan" id="jabatan" required>
             </div>
             <div class="form-group">
-                <label for="no_telepon">Nomor Telepon</label>
-                <input type="text" name="no_telepon" id="no_telepon" required>
+                <label for="ruang">Ruang</label>
+                <input type="text" name="ruang" id="ruang" required>
             </div>
             <div class="form-group">
-                <label for="jenis_kelamin">Jenis Kelamin</label>
-                <select name="jenis_kelamin" id="jenis_kelamin" required>
-                    <option value="Laki-laki">Laki-laki</option>
-                    <option value="Perempuan">Perempuan</option>
+                <label for="nomor_telepon">Nomor Telepon</label>
+                <input type="tel" name="nomor_telepon" id="telepon" required>
+            </div>
+            <div class="form-group">
+                <label for="jenis_staf">Jenis Staf</label>
+                <select id="jenisStaf" name="jenis_staf" required>
+                    <option value="">Pilih Jenis Staf...</option>
+                    <option value="Administrasi">Administrasi</option>
+                    <option value="Umum">Umum</option>
                 </select>
             </div>
             <div class="form-group">
-                <label for="gol_darah">Golongan Darah</label>
-                <input type="text" name="gol_darah" id="gol_darah" required>
-            </div>
-            <div class="form-group">
-                <label for="alamat">Alamat Pasien</label>
-                <input type="text" name="alamat" id="alamat" required>
-            </div>
-            <div class="form-group">
-                <label for="no_antrian">No Antrian</label>
-                <input type="number" name="no_antrian" id="no_antrian" required>
+                <label for="kode_spesifik">Kode Spesifik</label>
+                <input type="text" name="kode_spesifik" id="kodeSpesifik">
             </div>
             <button type="submit">Simpan</button>
             <button type="button" onclick="closeModal()">Batal</button>
@@ -260,12 +252,12 @@ include 'layouts/header.php';
     <div class="formulir-content">
         <span class="close-btn" onclick="closeDeleteModal()">&times;</span>
         <h2>Konfirmasi Hapus</h2>
-        <p>Masukkan No Antrian untuk menghapus data pasien:</p>
+        <p>Masukkan ID Staf untuk menghapus data:</p>
         <form id="deleteForm" method="POST">
             <input type="hidden" name="action" value="delete">
             <div class="form-group">
-                <label for="no_antrian_delete">No Antrian</label>
-                <input type="number" name="no_antrian" id="no_antrian_delete" required>
+                <label for="id_staf_delete">ID Staf</label>
+                <input type="text" name="id_staf" id="id_staf_delete" required>
             </div>
             <button type="submit">Hapus</button>
             <button type="button" onclick="closeDeleteModal()">Batal</button>
@@ -274,33 +266,31 @@ include 'layouts/header.php';
 </div>
 
 <script>
-    function openModal(patientData = null) {
-        document.getElementById('patientForm').reset();
-        document.getElementById('patientIdInput').value = '';
-        document.getElementById('no_antrianInput').value = '';
+    function openModal(stafData = null) {
+        document.getElementById('staffForm').reset();
+        document.getElementById('staffIdInput').value = '';
 
-        if (patientData) {
+        if (stafData) {
             document.getElementById('action').value = 'edit';
-            document.getElementById('patientIdInput').value = patientData.id;
-            document.getElementById('nama').value = patientData.nama_pasien;
-            document.getElementById('tanggal_lahir').value = patientData.tanggal_lahir;
-            document.getElementById('no_telepon').value = patientData.no_telepon;
-            document.getElementById('jenis_kelamin').value = patientData.jenis_kelamin;
-            document.getElementById('gol_darah').value = patientData.gol_darah;
-            document.getElementById('alamat').value = patientData.alamat;
-            document.getElementById('no_antrian').value = patientData.no_antrian;
+            document.getElementById('staffIdInput').value = stafData.id_staf;
+            document.getElementById('nama').value = stafData.nama;
+            document.getElementById('jabatan').value = stafData.jabatan;
+            document.getElementById('ruang').value = stafData.ruang;
+            document.getElementById('telepon').value = stafData.nomor_telepon;
+            document.getElementById('jenisStaf').value = stafData.jenis_staf;
+            document.getElementById('kodeSpesifik').value = stafData.kode_spesifik;
         } else {
             document.getElementById('action').value = 'insert';
         }
-        document.getElementById('patientModal').style.display = 'block';
+        document.getElementById('staffModal').style.display = 'block';
     }
 
     function closeModal() {
-        document.getElementById('patientModal').style.display = 'none';
+        document.getElementById('staffModal').style.display = 'none';
     }
 
-    function openDeleteModal(no_antrian) {
-        document.getElementById('no_antrian_delete').value = no_antrian; // Set the no_antrian to the input
+    function openDeleteModal(id_staf) {
+        document.getElementById('id_staf_delete').value = id_staf; // Set the id_staf to the input
         document.getElementById('deleteModal').style.display = 'block';
     }
 
@@ -308,8 +298,9 @@ include 'layouts/header.php';
         document.getElementById('deleteModal').style.display = 'none';
     }
 
-    function toggleEditForm(id, nama, tanggal_lahir, no_telepon, jenis_kelamin, gol_darah, alamat, no_antrian) {
-        openModal({ id, nama_pasien: nama, tanggal_lahir, no_telepon, jenis_kelamin, gol_darah, alamat, no_antrian });
+    function toggleEditForm(id_staf) {
+        // Fetch the data for the selected staff and open the formulir
+        openModal({ id_staf: id_staf, nama: 'Dummy', jabatan: 'Dummy', nomor_telepon: 'Dummy', ruang: 'Dummy', jenis_staf: 'Dummy', kode_spesifik: 'Dummy' });
     }
 </script>
 

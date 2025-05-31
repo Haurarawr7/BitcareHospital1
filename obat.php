@@ -104,7 +104,7 @@ include 'layouts/header.php';
             transform: translateY(0); 
         } 
     }
-    .modal { 
+    .formulir { 
         display: none; 
         position: fixed; 
         z-index: 1; 
@@ -112,7 +112,7 @@ include 'layouts/header.php';
         top: 0; 
         width: 100%; 
         height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4); padding-top: 60px; }
-    .modal-content { 
+    .formulir-content { 
         color : black;
         background-color: #fefefe;
         margin: 5% auto; 
@@ -201,8 +201,8 @@ include 'layouts/header.php';
 
 
 <!-- Modal for adding/editing medicine data -->
-<div id="obatModal" class="modal">
-    <div class="modal-content">
+<div id="obatModal" class="formulir">
+    <div class="formulir-content">
         <span class="close-btn" onclick="closeModal()">&times;</span>
         <h2 id="modalTitle">Tambah Data Obat</h2>
         <form id="obatForm" method="POST">
@@ -236,8 +236,8 @@ include 'layouts/header.php';
 </div>
 
 <!-- Modal for confirming delete -->
-<div id="deleteModal" class="modal">
-    <div class="modal-content">
+<div id="deleteModal" class="formulir">
+    <div class="formulir-content">
         <span class="close-btn" onclick="closeDeleteModal()">&times;</span>
         <h2>Konfirmasi Hapus</h2>
         <p>Masukkan Kode Obat untuk menghapus data obat:</p>
