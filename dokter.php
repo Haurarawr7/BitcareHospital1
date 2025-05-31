@@ -6,38 +6,38 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $action = $_POST['action'] ?? '';
 
     if ($action == 'insert') {
-        $id_dokter = $_POST["id_dokter"];
-        $nama = $_POST["nama"];
+        $id = $_POST["id"];
+        $nama_dokter = $_POST["nama_dokter"];
         $jabatan = $_POST["jabatan"];
-        $nomor_telepon = $_POST["nomor_telepon"];
-        $jadwal = $_POST["jadwal"];
+        $no_telepon = $_POST["no_telepon"];
+        $jadwal_dokter = $_POST["jadwal_dokter"];
         $no_antrian = $_POST["no_antrian"];
         $no_ruangan = $_POST["no_ruangan"];
         $jenis_dokter = $_POST["jenis_dokter"];
-        $kode_khusus = $_POST["kode_khusus"] ?? null;
-        $kode_operasi = $_POST["kode_operasi"] ?? null;
+        $kodekhusus = $_POST["kodekhusus"] ?? null;
 
-        $query = "INSERT INTO dokter (id_dokter, nama, jabatan, nomor_telepon, jadwal, no_antrian, no_ruangan, jenis_dokter, kode_khusus, kode_operasi) 
-            VALUES ('$id_dokter', '$nama', '$jabatan', '$nomor_telepon', '$jadwal', '$no_antrian', '$no_ruangan', '$jenis_dokter', '$kode_khusus', '$kode_operasi')";
+
+        $query = "INSERT INTO dokter (id, nama_dokter, jabatan, no_telepon, jadwal_dokter, no_antrian, no_ruangan, jenis_dokter, kodekhusus, ) 
+            VALUES ('$id', '$nama_dokter', '$jabatan', '$no_telepon', '$jadwal_dokter', '$no_antrian', '$no_ruangan', '$jenis_dokter', '$kodekhusus', '$')";
         mysqli_query($koneksi, $query);
     }
     elseif ($action == 'edit') {
-        $id_dokter = $_POST["id_dokter"];
-        $nama = $_POST["nama"];
+        $id = $_POST["id"];
+        $nama_dokter = $_POST["nama_dokter"];
         $jabatan = $_POST["jabatan"];
-        $nomor_telepon = $_POST["nomor_telepon"];
-        $jadwal = $_POST["jadwal"];
+        $no_telepon = $_POST["no_telepon"];
+        $jadwal_dokter = $_POST["jadwal_dokter"];
         $no_antrian = $_POST["no_antrian"];
         $no_ruangan = $_POST["no_ruangan"];
         $jenis_dokter = $_POST["jenis_dokter"];
-        $kode_khusus = $_POST["kode_khusus"] ?? null;
-        $kode_operasi = $_POST["kode_operasi"] ?? null;
+        $kodekhusus = $_POST["kodekhusus"] ?? null;
 
-        $query = "UPDATE dokter SET nama='$nama', jabatan='$jabatan', nomor_telepon='$nomor_telepon', jadwal='$jadwal', no_antrian='$no_antrian', no_ruangan='$no_ruangan', jenis_dokter='$jenis_dokter', kode_khusus='$kode_khusus', kode_operasi='$kode_operasi' WHERE id_dokter='$id_dokter'";
+
+        $query = "UPDATE dokter SET nama_dokter='$nama_dokter', jabatan='$jabatan', no_telepon='$no_telepon', jadwal_dokter='$jadwal_dokter', no_antrian='$no_antrian', no_ruangan='$no_ruangan', jenis_dokter='$jenis_dokter', kodekhusus='$kodekhusus', ='$' WHERE id='$id'";
         mysqli_query($koneksi, $query);
     } elseif ($action == 'delete') {
-        $id_dokter = $_POST["id_dokter"];
-        $query = "DELETE FROM dokter WHERE id_dokter='$id_dokter'";
+        $id = $_POST["id"];
+        $query = "DELETE FROM dokter WHERE id='$id'";
         mysqli_query($koneksi, $query);
     }
 }
@@ -164,7 +164,7 @@ include 'layouts/header.php';
     <div class="menu-item" onclick="window.location.href='rekammedis.php'">Rekam medis</div>
     <div class="menu-item" onclick="window.location.href='obat.php'">Obat</div>
     <div class="menu-item" onclick="window.location.href='transaksi.php'">Transaksi</div>
-    <div class="menu-item" onclick="window.location.href='urangan.php'">Ruangan</div>
+    <div class="menu-item" onclick="window.location.href='ruangan.php'">Ruangan</div>
     <div class="menu-item" onclick="window.location.href='staff.php'">Staff</div>
     <div class="menu-item" onclick="window.location.href='pasien.php'">Pasien</div>
     <div class="menu-item" onclick="window.location.href='perawat.php'">Perawat</div>
@@ -180,10 +180,10 @@ include 'layouts/header.php';
         <thead>
             <tr>
                 <th scope="col">ID Dokter</th>
-                <th scope="col">Nama</th>
+                <th scope="col">nama_dokter</th>
                 <th scope="col">Jabatan</th>
                 <th scope="col">Nomor Telepon</th>
-                <th scope="col">Jadwal</th>
+                <th scope="col">jadwal_dokter</th>
                 <th scope="col">No Antrian</th>
                 <th scope="col">No Ruangan</th>
                 <th scope="col">Jenis Dokter</th>
@@ -194,18 +194,18 @@ include 'layouts/header.php';
         <tbody id="dokterTableBody">
             <?php while ($dokter = mysqli_fetch_object($result)) { ?>
                 <tr>
-                    <td><?= $dokter->id_dokter ?></td>
-                    <td><?= $dokter->nama ?></td>
+                    <td><?= $dokter->id ?></td>
+                    <td><?= $dokter->nama_dokter ?></td>
                     <td><?= $dokter->jabatan ?></td>
-                    <td><?= $dokter->nomor_telepon ?></td>
-                    <td><?= $dokter->jadwal ?></td>
+                    <td><?= $dokter->no_telepon ?></td>
+                    <td><?= $dokter->jadwal_dokter ?></td>
                     <td><?= $dokter->no_antrian ?></td>
                     <td><?= $dokter->no_ruangan ?></td>
                     <td><?= $dokter->jenis_dokter ?></td>
-                    <td><?= $dokter->kode_khusus ?></td>
+                    <td><?= $dokter->kodekhusus ?></td>
                     <td>
-                        <button class="btn btn-warning btn-sm" onclick="toggleEditForm('<?= $dokter->id_dokter ?>')">Edit</button>
-                        <button class="btn btn-danger btn-sm" onclick="openDeleteModal('<?= $dokter->id_dokter ?>')">Hapus</button>
+                        <button class="btn btn-warning btn-sm" onclick="toggleEditForm('<?= $dokter->id ?>')">Edit</button>
+                        <button class="btn btn-danger btn-sm" onclick="openDeleteModal('<?= $dokter->id ?>')">Hapus</button>
                     </td>
                 </tr>
             <?php } ?>
@@ -220,23 +220,23 @@ include 'layouts/header.php';
         <h2 id="modalTitleDokter">Tambah Data Dokter</h2>
         <form id="dokterForm" method="POST">
             <input type="hidden" name="action" id="action" value="insert">
-            <input type="hidden" name="id_dokter" id="idDokterInput" value="">
+            <input type="hidden" name="id" id="idDokterInput" value="">
             
             <div class="form-group">
-                <label for="nama">Nama Dokter</label>
-                <input type="text" name="nama" id="namaDokter" required>
+                <label for="nama_dokter">nama_dokter Dokter</label>
+                <input type="text" name="nama_dokter" id="namaDokter" required>
             </div>
             <div class="form-group">
                 <label for="jabatan">Jabatan</label>
                 <input type="text" name="jabatan" id="jabatanDokter" required>
             </div>
             <div class="form-group">
-                <label for="nomor_telepon">Nomor Telepon</label>
-                <input type="tel" name="nomor_telepon" id="teleponDokter" required>
+                <label for="no_telepon">Nomor Telepon</label>
+                <input type="tel" name="no_telepon" id="teleponDokter" required>
             </div>
             <div class="form-group">
-                <label for="jadwal">Jadwal</label>
-                <input type="text" name="jadwal" id="jadwalDokter" required>
+                <label for="jadwal_dokter">jadwal_dokter</label>
+                <input type="text" name="jadwal_dokter" id="jadwalDokter" required>
             </div>
             <div class="form-group">
                 <label for="no_antrian">No Antrian</label>
@@ -251,12 +251,12 @@ include 'layouts/header.php';
                 <input type="text" name="jenis_dokter" id="jenisDokter" required>
             </div>
             <div class="form-group">
-                <label for="kode_khusus">Kode Khusus</label>
-                <input type="text" name="kode_khusus" id="kodeKhususDokter">
+                <label for="kodekhusus">Kode Khusus</label>
+                <input type="text" name="kodekhusus" id="kodeKhususDokter">
             </div>
             <div class="form-group">
-                <label for="kode_operasi">Kode Operasi</label>
-                <input type="text" name="kode_operasi" id="kodeOperasiDokter">
+                <label for="">Kode Operasi</label>
+                <input type="text" name="" id="kodeOperasiDokter">
             </div>
             <button type="submit">Simpan</button>
             <button type="button" onclick="closeModalDokter()">Batal</button>
@@ -274,7 +274,7 @@ include 'layouts/header.php';
             <input type="hidden" name="action" value="delete">
             <div class="form-group">
                 <label for="id_dokter_delete">ID Dokter</label>
-                <input type="text" name="id_dokter" id="id_dokter_delete" required>
+                <input type="text" name="id" id="id_dokter_delete" required>
             </div>
             <button type="submit">Hapus</button>
             <button type="button" onclick="closeDeleteModal()">Batal</button>
@@ -289,16 +289,15 @@ include 'layouts/header.php';
 
         if (dataDokter) {
             document.getElementById('action').value = 'edit';
-            document.getElementById('idDokterInput').value = dataDokter.id_dokter;
-            document.getElementById('namaDokter').value = dataDokter.nama;
+            document.getElementById('idDokterInput').value = dataDokter.id;
+            document.getElementById('namaDokter').value = dataDokter.nama_dokter;
             document.getElementById('jabatanDokter').value = dataDokter.jabatan;
-            document.getElementById('teleponDokter').value = dataDokter.nomor_telepon;
-            document.getElementById('jadwalDokter').value = dataDokter.jadwal;
+            document.getElementById('teleponDokter').value = dataDokter.no_telepon;
+            document.getElementById('jadwalDokter').value = dataDokter.jadwal_dokter;
             document.getElementById('noAntrianDokter').value = dataDokter.no_antrian;
             document.getElementById('noRuanganDokter').value = dataDokter.no_ruangan;
             document.getElementById('jenisDokter').value = dataDokter.jenis_dokter;
-            document.getElementById('kodeKhususDokter').value = dataDokter.kode_khusus;
-            document.getElementById('kodeOperasiDokter').value = dataDokter.kode_operasi;
+            document.getElementById('kodeKhususDokter').value = dataDokter.kodekhusus;
         } else {
             document.getElementById('action').value = 'insert';
         }
@@ -309,8 +308,8 @@ include 'layouts/header.php';
         document.getElementById('dokterModal').style.display = 'none';
     }
 
-    function openDeleteModal(id_dokter) {
-        document.getElementById('id_dokter_delete').value = id_dokter; // Set the id_dokter to the input
+    function openDeleteModal(id) {
+        document.getElementById('id_dokter_delete').value = id; // Set the id to the input
         document.getElementById('deleteModal').style.display = 'block';
     }
 
@@ -318,10 +317,10 @@ include 'layouts/header.php';
         document.getElementById('deleteModal').style.display = 'none';
     }
 
-    function toggleEditForm(id_dokter) {
+    function toggleEditForm(id) {
         // Fetch the data for the selected doctor and open the formulir
         // This function should be implemented to fetch data from the server
-        openModalDokter({ id_dokter: id_dokter, nama: 'Dummy', jabatan: 'Dummy', nomor_telepon: 'Dummy', jadwal: 'Dummy', no_antrian: 'Dummy', no_ruangan: 'Dummy', jenis_dokter: 'Dummy', kode_khusus: 'Dummy', kode_operasi: 'Dummy' });
+        openModalDokter({ id: id, nama_dokter: 'isi disini', jabatan: 'isi disini', no_telepon: 'isi disini', jadwal_dokter: 'isi disini', no_antrian: 'isi disini', no_ruangan: 'isi disini', jenis_dokter: 'isi disini', kodekhusus: 'isi disini'});
     }
 </script>
 

@@ -6,7 +6,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $action = $_POST['action'] ?? '';
 
     if ($action == 'insert') {
-        $kode_transaksi = $_POST["kode_transaksi"];
+        $no_transaksi = $_POST["no_transaksi"];
         $tanggal_transaksi = $_POST["tanggal_transaksi"];
         $no_ruang = $_POST["no_ruang"];
         $id_pasien = $_POST["id_pasien"];
@@ -14,12 +14,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $total_harga = $_POST["total_harga"];
         $asuransi = $_POST["asuransi"] ?? null;
 
-        $query = "INSERT INTO transaksi (kode_transaksi, tanggal_transaksi, no_ruang, id_pasien, jenis_transaksi, total_harga, asuransi) 
-            VALUES ('$kode_transaksi', '$tanggal_transaksi', '$no_ruang', '$id_pasien', '$jenis_transaksi', '$total_harga', '$asuransi')";
+        $query = "INSERT INTO transaksi (no_transaksi, tanggal_transaksi, no_ruang, id_pasien, jenis_transaksi, total_harga, asuransi) 
+            VALUES ('$no_transaksi', '$tanggal_transaksi', '$no_ruang', '$id_pasien', '$jenis_transaksi', '$total_harga', '$asuransi')";
         mysqli_query($koneksi, $query);
     }
     elseif ($action == 'edit') {
-        $kode_transaksi = $_POST["kode_transaksi"];
+        $no_transaksi = $_POST["no_transaksi"];
         $tanggal_transaksi = $_POST["tanggal_transaksi"];
         $no_ruang = $_POST["no_ruang"];
         $id_pasien = $_POST["id_pasien"];
@@ -27,11 +27,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $total_harga = $_POST["total_harga"];
         $asuransi = $_POST["asuransi"] ?? null;
 
-        $query = "UPDATE transaksi SET tanggal_transaksi='$tanggal_transaksi', no_ruang='$no_ruang', id_pasien='$id_pasien', jenis_transaksi='$jenis_transaksi', total_harga='$total_harga', asuransi='$asuransi' WHERE kode_transaksi='$kode_transaksi'";
+        $query = "UPDATE transaksi SET tanggal_transaksi='$tanggal_transaksi', no_ruang='$no_ruang', id_pasien='$id_pasien', jenis_transaksi='$jenis_transaksi', total_harga='$total_harga', asuransi='$asuransi' WHERE no_transaksi='$no_transaksi'";
         mysqli_query($koneksi, $query);
     } elseif ($action == 'delete') {
-        $kode_transaksi = $_POST["kode_transaksi"];
-        $query = "DELETE FROM transaksi WHERE kode_transaksi='$kode_transaksi'";
+        $no_transaksi = $_POST["no_transaksi"];
+        $query = "DELETE FROM transaksi WHERE no_transaksi='$no_transaksi'";
         mysqli_query($koneksi, $query);
     }
 }
@@ -148,6 +148,7 @@ include 'layouts/header.php';
         border: 1px solid #ccc; 
         border-radius: 4px; 
     }
+
 </style>
 
 <body>
@@ -187,7 +188,7 @@ include 'layouts/header.php';
         <tbody id="transaksiTableBody">
             <?php while ($transaksi = mysqli_fetch_object($result)) { ?>
                 <tr>
-                    <td><?= $transaksi->kode_transaksi ?></td>
+                    <td><?= $transaksi->no_transaksi ?></td>
                     <td><?= $transaksi->tanggal_transaksi ?></td>
                     <td><?= $transaksi->no_ruang ?></td>
                     <td><?= $transaksi->id_pasien ?></td>
@@ -195,8 +196,8 @@ include 'layouts/header.php';
                     <td><?= $transaksi->total_harga ?></td>
                     <td><?= $transaksi->asuransi ?></td>
                     <td>
-                        <button class="btn btn-warning btn-sm" onclick="toggleEditForm('<?= $transaksi->kode_transaksi ?>')">Edit</button>
-                        <button class="btn btn-danger btn-sm" onclick="openDeleteModal('<?= $transaksi->kode_transaksi ?>')">Hapus</button>
+                        <button class="btn btn-warning btn-sm" onclick="toggleEditForm('<?= $transaksi->no_transaksi ?>')">Edit</button>
+                        <button class="btn btn-danger btn-sm" onclick="openDeleteModal('<?= $transaksi->no_transaksi ?>')">Hapus</button>
                     </td>
                 </tr>
             <?php } ?>
@@ -211,11 +212,11 @@ include 'layouts/header.php';
         <h2 id="modalTitleTransaksi">Tambah Data Transaksi</h2>
         <form id="transaksiForm" method="POST">
             <input type="hidden" name="action" id="action" value="insert">
-            <input type="hidden" name="kode_transaksi" id="kodeTransaksiInput" value="">
+            <input type="hidden" name="no_transaksi" id="kodeTransaksiInput" value="">
             
             <div class="form-group">
                 <label for="kodeTransaksi">Kode Transaksi:</label>
-                <input type="text" name="kode_transaksi" id="kodeTransaksi" required>
+                <input type="text" name="no_transaksi" id="kodeTransaksi" required>
             </div>
             <div class="form-group">
                 <label for="tanggalTransaksi">Tanggal Transaksi:</label>
@@ -257,7 +258,7 @@ include 'layouts/header.php';
             <input type="hidden" name="action" value="delete">
             <div class="form-group">
                 <label for="kode_transaksi_delete">Kode Transaksi</label>
-                <input type="text" name="kode_transaksi" id="kode_transaksi_delete" required>
+                <input type="text" name="no_transaksi" id="kode_transaksi_delete" required>
             </div>
             <button type="submit">Hapus</button>
             <button type="button" onclick="closeDeleteModal()">Batal</button>
@@ -272,8 +273,8 @@ include 'layouts/header.php';
 
         if (dataTransaksi) {
             document.getElementById('action').value = 'edit';
-            document.getElementById('kodeTransaksiInput').value = dataTransaksi.kode_transaksi;
-            document.getElementById('kodeTransaksi').value = dataTransaksi.kode_transaksi;
+            document.getElementById('kodeTransaksiInput').value = dataTransaksi.no_transaksi;
+            document.getElementById('kodeTransaksi').value = dataTransaksi.no_transaksi;
             document.getElementById('tanggalTransaksi').value = dataTransaksi.tanggal_transaksi;
             document.getElementById('noRuang').value = dataTransaksi.no_ruang;
             document.getElementById('idPasien').value = dataTransaksi.id_pasien;
@@ -291,7 +292,7 @@ include 'layouts/header.php';
     }
 
     function openDeleteModal(kodeTransaksi) {
-        document.getElementById('kode_transaksi_delete').value = kodeTransaksi; // Set the kode_transaksi to the input
+        document.getElementById('kode_transaksi_delete').value = kodeTransaksi; // Set the no_transaksi to the input
         document.getElementById('deleteModal').style.display = 'block';
     }
 
@@ -301,7 +302,7 @@ include 'layouts/header.php';
 
     function toggleEditForm(kodeTransaksi) {
         // Fetch the data for the selected transaction and open the formulir
-        openModalTransaksi({ kode_transaksi: kodeTransaksi, tanggal_transaksi: 'Dummy', no_ruang: 'Dummy', id_pasien: 'Dummy', jenis_transaksi: 'Dummy', total_harga: 0, asuransi: 'Dummy' });
+        openModalTransaksi({ no_transaksi: kodeTransaksi, tanggal_transaksi: 'isi disini', no_ruang: 'isi disini', id_pasien: 'isi disini', jenis_transaksi: 'isi disini', total_harga: 0, asuransi: 'isi disini' });
     }
 </script>
 

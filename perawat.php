@@ -278,7 +278,7 @@ include 'layouts/header.php';
     function toggleEditForm(id_perawat) {
         // Fetch the data for the selected nurse and open the formulir
         // This function should be implemented to fetch data from the server
-        openModalPerawat({ id_perawat: id_perawat, nama: 'Dummy', id_pasien: 'Dummy', nomor_telepon: 'Dummy', spesialisasi: 'Dummy' });
+        openModalPerawat({ id_perawat: id_perawat, nama: 'isi disini', id_pasien: 'isi disini', nomor_telepon: 'isi disini', spesialisasi: 'isi disini' });
     }
 </script>
 

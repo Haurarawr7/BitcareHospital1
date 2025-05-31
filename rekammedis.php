@@ -6,23 +6,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $action = $_POST['action'] ?? '';
 
     if ($action == 'insert') {
-        $tanggal = $_POST["tanggal_rekam_medis"];
+        $tanggal_rekam = $_POST["tanggal_rekam"];
         $id_pasien = $_POST["id_pasien"];
         $riwayat = $_POST["riwayat"];
         $id_dokter = $_POST["id_dokter"];
     
-        $query = "INSERT INTO rekam_medis (tanggal_rekam_medis, id_pasien, riwayat, id_dokter) 
-            VALUES ('$tanggal', '$id_pasien', '$riwayat', '$id_dokter')";
+        $query = "INSERT INTO rekam_medis (tanggal_rekam, id_pasien, riwayat, id_dokter) 
+            VALUES ('$tanggal_rekam', '$id_pasien', '$riwayat', '$id_dokter')";
         mysqli_query($koneksi, $query);
     }
     elseif ($action == 'edit') {
         $no_rekam_medis = $_POST["no_rekam_medis"];
-        $tanggal = $_POST["tanggal_rekam_medis"];
+        $tanggal_rekam = $_POST["tanggal_rekam"];
         $id_pasien = $_POST["id_pasien"];
         $riwayat = $_POST["riwayat"];
         $id_dokter = $_POST["id_dokter"];
         
-        $query = "UPDATE rekam_medis SET tanggal_rekam_medis='$tanggal', id_pasien='$id_pasien', riwayat='$riwayat', id_dokter='$id_dokter' WHERE no_rekam_medis='$no_rekam_medis'";
+        $query = "UPDATE rekam_medis SET tanggal_rekam='$tanggal_rekam', id_pasien='$id_pasien', riwayat='$riwayat', id_dokter='$id_dokter' WHERE no_rekam_medis='$no_rekam_medis'";
         mysqli_query($koneksi, $query);
     } elseif ($action == 'delete') {
         $no_rekam_medis = $_POST["no_rekam_medis"];
@@ -46,8 +46,8 @@ include 'layouts/header.php';
         font-family: 'Poppins', sans-serif; 
         display: flex; 
         min-height: 100vh; 
-        background: linear-gradient(135deg, #f4f7f6 0%, #00897b 100%); 
-        color: #3c4858; 
+        background: linear-gradient(135deg, #333446 0%, #2575fc 100%); 
+        color: #fff; 
     }
     .sidebar { width: 250px;
         background: rgba(255, 255, 255, 0.1);
@@ -111,6 +111,7 @@ include 'layouts/header.php';
         width: 100%; 
         height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4); padding-top: 60px; }
     .formulir-content { 
+        color : black;
         background-color: #fefefe;
         margin: 5% auto; 
         padding: 20px; 
@@ -118,11 +119,31 @@ include 'layouts/header.php';
         width: 80%; 
         max-width: 500px; 
         border-radius: 8px; }
-    .close-btn { color: #aaa; float: right; font-size: 28px; font-weight: bold; }
-    .close-btn:hover, .close-btn:focus { color: black; text-decoration: none; cursor: pointer; }
-    .form-group { margin-bottom: 15px; }
-    .form-group label { display: block; margin-bottom: 5px; }
-    .form-group input[type="text"], .form-group input[type="date"], .form-group input[type="number"] { width: calc(100% - 22px); padding: 10px; border: 1px solid #ccc; border-radius: 4px; }
+    .close-btn { 
+        color: #aaa; 
+        float: right; 
+        font-size: 28px; 
+        font-weight: bold; 
+    }
+    .close-btn:hover, .close-btn:focus { 
+        color: black; 
+        text-decoration: none; 
+        cursor: pointer; 
+    }
+    .form-group { 
+        margin-bottom: 15px; 
+    }
+    .form-group label { 
+        display: block; 
+        margin-bottom: 5px; 
+    }
+    .form-group input[type="text"], .form-group input[type="number"], .form-group input[type="date"] { 
+        width: calc(100% - 22px); 
+        padding: 10px; 
+        border: 1px solid #ccc; 
+        border-radius: 4px; 
+    }
+
 </style>
 
 <body>
@@ -149,7 +170,7 @@ include 'layouts/header.php';
         <thead>
             <tr>
                 <th scope="col">No. Rekam Medis</th>
-                <th scope="col">Tanggal</th>
+                <th scope="col">Tanggal rekam</th>
                 <th scope="col">ID Pasien</th>
                 <th scope="col">Riwayat Penyakit/Keluhan</th>
                 <th scope="col">ID Dokter</th>
@@ -160,7 +181,7 @@ include 'layouts/header.php';
             <?php while ($rekam = mysqli_fetch_object($result)) { ?>
                 <tr>
                     <td><?= $rekam->no_rekam_medis ?></td>
-                    <td><?= $rekam->tanggal_rekam_medis ?></td>
+                    <td><?= $rekam->tanggal_rekam ?></td>
                     <td><?= $rekam->id_pasien ?></td>
                     <td><?= $rekam->riwayat ?></td>
                     <td><?= $rekam->id_dokter ?></td>
@@ -185,8 +206,8 @@ include 'layouts/header.php';
             <input type="hidden" name="no_rekam_medis" id="noRekamMedisInput" value="">
             
             <div class="form-group">
-                <label for="tanggalRekamMedis">Tanggal Rekam Medis:</label>
-                <input type="date" id="tanggalRekamMedis" name="tanggal_rekam_medis" required>
+                <label for="tanggalRekamMedis">tanggal_rekam Rekam Medis:</label>
+                <input type="date" id="tanggalRekamMedis" name="tanggal_rekam" required>
             </div>
             <div class="form-group">
                 <label for="idPasienRm">ID Pasien:</label>
@@ -234,7 +255,7 @@ include 'layouts/header.php';
         if (dataRekamMedis) {
             document.getElementById('action').value = 'edit';
             document.getElementById('noRekamMedisInput').value = dataRekamMedis.no_rekam_medis;
-            document.getElementById('tanggalRekamMedis').value = dataRekamMedis.tanggal_rekam_medis;
+            document.getElementById('tanggalRekamMedis').value = dataRekamMedis.tanggal_rekam;
             document.getElementById('idPasienRm').value = dataRekamMedis.id_pasien;
             document.getElementById('riwayatRekamMedis').value = dataRekamMedis.riwayat;
             document.getElementById('idDokterRm').value = dataRekamMedis.id_dokter;
@@ -260,7 +281,7 @@ include 'layouts/header.php';
     function toggleEditForm(no_rekam_medis) {
         // Fetch the data for the selected medical record and open the formulir
         // This function should be implemented to fetch data from the server
-        openModal({ no_rekam_medis: no_rekam_medis, tanggal_rekam_medis: '2023-01-01', id_pasien: 'Dummy', riwayat: 'Dummy', id_dokter: 'Dummy' });
+        openModal({ no_rekam_medis: no_rekam_medis, tanggal_rekam: '2023-01-01', id_pasien: 'isi disini', riwayat: 'isi disini', id_dokter: 'isi disini' });
     }
 </script>
 

@@ -293,7 +293,7 @@ include 'layouts/header.php';
     }
 
     function toggleEditForm(no_antrian) {
-        openModal({ no_antrian: no_antrian, no_ruang: 'Dummy', id_dokter: 'Dummy', id_pasien: 'Dummy', tanggal: '2023-01-01', jam_operasi: '08:00' });
+        openModal({ no_antrian: no_antrian, no_ruang: 'isi disini', id_dokter: 'isi disini', id_pasien: 'isi disini', tanggal: '2023-01-01', jam_operasi: '08:00' });
     }
 </script>
 

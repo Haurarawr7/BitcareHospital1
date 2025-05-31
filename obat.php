@@ -287,7 +287,7 @@ include 'layouts/header.php';
 
     function toggleEditForm(kode_obat) {
 
-        openModal({ kode_obat: kode_obat, nama_obat: 'Dummy', dosis: '500mg', tanggal_produksi: '2023-01-01', stok: 10, harga: 15000 });
+        openModal({ kode_obat: kode_obat, nama_obat: 'isi disini', dosis: '500mg', tanggal_produksi: '2023-01-01', stok: 10, harga: 15000 });
     }
 </script>
 

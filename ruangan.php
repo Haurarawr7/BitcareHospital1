@@ -6,28 +6,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $action = $_POST['action'] ?? '';
 
     if ($action == 'insert') {
-        $nomor_ruangan = $_POST["nomor_ruangan"];
-        $nomor_lantai = $_POST["nomor_lantai"];
+        $no_ruangan = $_POST["no_ruangan"];
+        $lantai = $_POST["lantai"];
         $jenis_ruangan = $_POST["jenis_ruangan"];
         $kapasitas = $_POST["kapasitas"];
-        $alat_ruangan = $_POST["alat_ruangan"];
+        $alat = $_POST["alat"];
     
-        $query = "INSERT INTO ruangan (nomor_ruangan, nomor_lantai, jenis_ruangan, kapasitas, alat_ruangan) 
-            VALUES ('$nomor_ruangan', '$nomor_lantai', '$jenis_ruangan', '$kapasitas', '$alat_ruangan')";
+        $query = "INSERT INTO ruangan (no_ruangan, lantai, jenis_ruangan, kapasitas, alat) 
+            VALUES ('$no_ruangan', '$lantai', '$jenis_ruangan', '$kapasitas', '$alat')";
         mysqli_query($koneksi, $query);
     }
     elseif ($action == 'edit') {
-        $nomor_ruangan = $_POST["nomor_ruangan"];
-        $nomor_lantai = $_POST["nomor_lantai"];
+        $no_ruangan = $_POST["no_ruangan"];
+        $lantai = $_POST["lantai"];
         $jenis_ruangan = $_POST["jenis_ruangan"];
         $kapasitas = $_POST["kapasitas"];
-        $alat_ruangan = $_POST["alat_ruangan"];
+        $alat = $_POST["alat"];
         
-        $query = "UPDATE ruangan SET nomor_lantai='$nomor_lantai', jenis_ruangan='$jenis_ruangan', kapasitas='$kapasitas', alat_ruangan='$alat_ruangan' WHERE nomor_ruangan='$nomor_ruangan'";
+        $query = "UPDATE ruangan SET lantai='$lantai', jenis_ruangan='$jenis_ruangan', kapasitas='$kapasitas', alat='$alat' WHERE no_ruangan='$no_ruangan'";
         mysqli_query($koneksi, $query);
     } elseif ($action == 'delete') {
-        $nomor_ruangan = $_POST["nomor_ruangan"];
-        $query = "DELETE FROM ruangan WHERE nomor_ruangan='$nomor_ruangan'";
+        $no_ruangan = $_POST["no_ruangan"];
+        $query = "DELETE FROM ruangan WHERE no_ruangan='$no_ruangan'";
         mysqli_query($koneksi, $query);
     }
 }
@@ -154,7 +154,7 @@ include 'layouts/header.php';
     <div class="menu-item" onclick="window.location.href='rekammedis.php'">Rekam medis</div>
     <div class="menu-item" onclick="window.location.href='obat.php'">Obat</div>
     <div class="menu-item" onclick="window.location.href='transaksi.php'">Transaksi</div>
-    <div class="menu-item" onclick="window.location.href='urangan.php'">Ruangan</div>
+    <div class="menu-item" onclick="window.location.href='ruangan.php'">Ruangan</div>
     <div class="menu-item" onclick="window.location.href='staff.php'">Staff</div>
     <div class="menu-item" onclick="window.location.href='pasien.php'">Pasien</div>
     <div class="menu-item" onclick="window.location.href='perawat.php'">Perawat</div>
@@ -180,14 +180,14 @@ include 'layouts/header.php';
         <tbody id="ruanganTableBody">
             <?php while ($ruangan = mysqli_fetch_object($result)) { ?>
                 <tr>
-                    <td><?= $ruangan->nomor_ruangan ?></td>
-                    <td><?= $ruangan->nomor_lantai ?></td>
+                    <td><?= $ruangan->no_ruangan ?></td>
+                    <td><?= $ruangan->lantai ?></td>
                     <td><?= $ruangan->jenis_ruangan ?></td>
                     <td><?= $ruangan->kapasitas ?></td>
-                    <td><?= $ruangan->alat_ruangan ?></td>
+                    <td><?= $ruangan->alat ?></td>
                     <td>
-                        <button class="btn btn-warning btn-sm" onclick="toggleEditForm('<?= $ruangan->nomor_ruangan ?>')">Edit</button>
-                        <button class="btn btn-danger btn-sm" onclick="openDeleteModal('<?= $ruangan->nomor_ruangan ?>')">Hapus</button>
+                        <button class="btn btn-warning btn-sm" onclick="toggleEditForm('<?= $ruangan->no_ruangan ?>')">Edit</button>
+                        <button class="btn btn-danger btn-sm" onclick="openDeleteModal('<?= $ruangan->no_ruangan ?>')">Hapus</button>
                     </td>
                 </tr>
             <?php } ?>
@@ -203,15 +203,15 @@ include 'layouts/header.php';
         <h2 id="modalTitle">Tambah Data Ruangan</h2>
         <form id="ruanganForm" method="POST">
             <input type="hidden" name="action" id="action" value="insert">
-            <input type="hidden" name="nomor_ruangan" id="nomorRuanganInput" value="">
+            <input type="hidden" name="no_ruangan" id="nomorRuanganInput" value="">
             
             <div class="form-group">
                 <label for="nomorRuangan">Nomor Ruangan</label>
-                <input type="text" name="nomor_ruangan" id="nomorRuangan" required>
+                <input type="text" name="no_ruangan" id="nomorRuangan" required>
             </div>
             <div class="form-group">
                 <label for="nomorLantai">Nomor Lantai</label>
-                <input type="number" name="nomor_lantai" id="nomorLantai" required>
+                <input type="number" name="lantai" id="nomorLantai" required>
             </div>
             <div class="form-group">
                 <label for="jenisRuangan">Jenis Ruangan</label>
@@ -223,7 +223,7 @@ include 'layouts/header.php';
             </div>
             <div class="form-group">
                 <label for="alatRuangan">Alat di Ruangan</label>
-                <input type="text" name="alat_ruangan" id="alatRuangan" required>
+                <input type="text" name="alat" id="alatRuangan" required>
             </div>
             <button type="submit">Simpan</button>
             <button type="button" onclick="closeModal()">Batal</button>
@@ -241,7 +241,7 @@ include 'layouts/header.php';
             <input type="hidden" name="action" value="delete">
             <div class="form-group">
                 <label for="nomor_ruangan_delete">Nomor Ruangan</label>
-                <input type="text" name="nomor_ruangan" id="nomor_ruangan_delete" required>
+                <input type="text" name="no_ruangan" id="nomor_ruangan_delete" required>
             </div>
             <button type="submit">Hapus</button>
             <button type="button" onclick="closeDeleteModal()">Batal</button>
@@ -256,12 +256,12 @@ include 'layouts/header.php';
 
         if (ruanganData) {
             document.getElementById('action').value = 'edit';
-            document.getElementById('nomorRuanganInput').value = ruanganData.nomor_ruangan;
-            document.getElementById('nomorRuangan').value = ruanganData.nomor_ruangan;
-            document.getElementById('nomorLantai').value = ruanganData.nomor_lantai;
+            document.getElementById('nomorRuanganInput').value = ruanganData.no_ruangan;
+            document.getElementById('nomorRuangan').value = ruanganData.no_ruangan;
+            document.getElementById('nomorLantai').value = ruanganData.lantai;
             document.getElementById('jenisRuangan').value = ruanganData.jenis_ruangan;
             document.getElementById('kapasitas').value = ruanganData.kapasitas;
-            document.getElementById('alatRuangan').value = ruanganData.alat_ruangan;
+            document.getElementById('alatRuangan').value = ruanganData.alat;
         } else {
             document.getElementById('action').value = 'insert';
         }
@@ -272,8 +272,8 @@ include 'layouts/header.php';
         document.getElementById('ruanganModal').style.display = 'none';
     }
 
-    function openDeleteModal(nomor_ruangan) {
-        document.getElementById('nomor_ruangan_delete').value = nomor_ruangan; // Set the nomor_ruangan to the input
+    function openDeleteModal(no_ruangan) {
+        document.getElementById('nomor_ruangan_delete').value = no_ruangan; // Set the no_ruangan to the input
         document.getElementById('deleteModal').style.display = 'block';
     }
 
@@ -281,9 +281,9 @@ include 'layouts/header.php';
         document.getElementById('deleteModal').style.display = 'none';
     }
 
-    function toggleEditForm(nomor_ruangan) {
+    function toggleEditForm(no_ruangan) {
         // Fetch the data for the selected room and open the formulir
-        openModal({ nomor_ruangan: nomor_ruangan, nomor_lantai: 'Dummy', jenis_ruangan: 'Dummy', kapasitas: 10, alat_ruangan: 'Dummy' });
+        openModal({ no_ruangan: no_ruangan, lantai: 'isi disini', jenis_ruangan: 'isi disini', kapasitas: 10, alat: 'isi disini' });
     }
 </script>
 
