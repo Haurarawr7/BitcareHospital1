@@ -152,7 +152,7 @@ include 'layouts/header.php';
 <body>
   <div class="sidebar">
     <h2>Menu</h2>
-    <div class="menu-item" onclick="window.location.href='pelayanan.php'">Pelayanan</div>
+    <div class="menu-item" onclick="window.location.href='pelayanan.php'">Administrasi</div>
     <div class="menu-item" onclick="window.location.href='tindakanmedis.php'">Tindakan medis</div>
     <div class="menu-item" onclick="window.location.href='rekammedis.php'">Rekam medis</div>
     <div class="menu-item" onclick="window.location.href='obat.php'">Obat</div>
@@ -166,7 +166,7 @@ include 'layouts/header.php';
 
 <section class="p-4 ml-5 mr-5 w-75">
     <div class="d-flex flex-row justify-content-between">
-        <h2>Data Pelayanan</h2>
+        <h2>Data Administrasi</h2>
         <button onclick="openModal()">+Tambah</button>
     </div>
     <table class="table table-light mt-3">

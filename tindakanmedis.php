@@ -162,21 +162,20 @@ include 'layouts/header.php';
     <div class="menu-item" onclick="window.location.href='dokter.php'">Dokter</div>
   </div>
 
-<section class="main-content">
-    <header>
-        <h1>📋 Data Tindakan Medis</h1>
-    </header>
-    <button class="add-btn" onclick="openModalTindakan()">➕ Tambah Data Tindakan Medis</button>
-
-    <table>
+<section class="p-4 ml-5 mr-5 w-75">
+    <div class="d-flex flex-row justify-content-between">
+        <h2>Data Tindakan Medis</h2>
+        <button onclick="openModalTindakan()">+Tambah</button>
+    </div>
+    <table class="table table-light mt-3">
         <thead>
             <tr>
-                <th>No Tindakan</th>
-                <th>Tanggal Tindakan</th>
-                <th>ID Dokter</th>
-                <th>No Rekam Medis</th>
-                <th>Jenis Tindakan</th>
-                <th>Aksi</th>
+                <th scope="col">No. Tindakan</th>
+                <th scope="col">Tanggal Tindakan</th>
+                <th scope="col">ID Dokter</th>
+                <th scope="col">No Rekam Medis</th>
+                <th scope="col">Jenis Tindakan</th>
+                <th scope="col">Aksi</th>
             </tr>
         </thead>
         <tbody id="tindakanTableBody">

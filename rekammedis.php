@@ -59,7 +59,6 @@ include 'layouts/header.php';
         align-items: flex-start; 
     }
     .sidebar h2 { 
-
         margin-bottom: 1.5rem;
         font-weight: 600; 
         font-size: 1.5rem; 
