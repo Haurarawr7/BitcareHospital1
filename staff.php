@@ -11,9 +11,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $jabatan = $_POST["jabatan"];
         $no_telepon = $_POST["no_telepon"];
         $no_ruang = $_POST["no_ruang"];
+        $jenis_staf = $_POST["jenis_staf"];
+        $kodekhusus = $_POST["kodekhusus"];
 
-        $query = "INSERT INTO staff (id_staff, nama_staf, jabatan, no_telepon, no_ruang, , ) 
-            VALUES ('$id_staff', '$nama_staf', '$jabatan', '$no_telepon', '$no_ruang', '$', '$')";
+        $query = "INSERT INTO staff (id_staff, nama_staf, jabatan, no_telepon, no_ruang, jenis_staf, kodekhusus) 
+            VALUES ('$id_staff', '$nama_staf', '$jabatan', '$no_telepon', '$no_ruang', '$jenis_staf', '$kodekhusus')";
         mysqli_query($koneksi, $query);
     }
     elseif ($action == 'edit') {
@@ -22,8 +24,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $jabatan = $_POST["jabatan"];
         $no_telepon = $_POST["no_telepon"];
         $no_ruang = $_POST["no_ruang"];
+        $jenis_staf = $_POST["jenis_staf"];
+        $kodekhusus = $_POST["kodekhusus"];
 
-        $query = "UPDATE staff SET nama_staf='$nama_staf', jabatan='$jabatan', no_telepon='$no_telepon', no_ruang='$no_ruang', ='$', ='$' WHERE id_staff='$id_staff'";
+        $query = "UPDATE staff SET nama_staf='$nama_staf', jabatan='$jabatan', no_telepon='$no_telepon', no_ruang='$no_ruang', jenis_staf='$jenis_staf', kodekhusus='$kodekhusus' WHERE id_staff='$id_staff'";
         mysqli_query($koneksi, $query);
     } elseif ($action == 'delete') {
         $id_staff = $_POST["id_staff"];
@@ -174,6 +178,8 @@ include 'layouts/header.php';
                 <th scope="col">Jabatan</th>
                 <th scope="col">No. Ruang</th>
                 <th scope="col">No. Telepon</th>
+                <th scope="col">Jenis Staf</th>
+                <th scope="col">Kode Spesifik</th>
                 <th scope="col">Aksi</th>
             </tr>
         </thead>
@@ -185,6 +191,8 @@ include 'layouts/header.php';
                     <td><?= $staff->jabatan ?></td>
                     <td><?= $staff->no_ruang ?></td>
                     <td><?= $staff->no_telepon ?></td>
+                    <td><?= $staff->jenis_staf ?></td>
+                    <td><?= $staff->kodekhusus ?></td>
                     <td>
                         <button class="btn btn-warning btn-sm" onclick="toggleEditForm('<?= $staff->id_staff ?>')">Edit</button>
                         <button class="btn btn-danger btn-sm" onclick="openDeleteModal('<?= $staff->id_staff ?>')">Hapus</button>
@@ -199,13 +207,13 @@ include 'layouts/header.php';
 <div id="staffModal" class="modal">
     <div class="modal-content">
         <span class="close-btn" onclick="closeModal()">&times;</span>
-        <h2 id="modalTitle">Tambah Data staff</h2>
+        <h2 id="modalTitle">Tambah Data staf</h2>
         <form id="staffForm" method="POST">
             <input type="hidden" name="action" id="action" value="insert">
             <input type="hidden" name="id_staff" id="staffIdInput" value="">
             
             <div class="form-group">
-                <label for="nama_staf">Nama staff</label>
+                <label for="nama_staf">Nama staf</label>
                 <input type="text" name="nama_staf" id="nama_staf" required>
             </div>
             <div class="form-group">
@@ -221,8 +229,8 @@ include 'layouts/header.php';
                 <input type="tel" name="no_telepon" id="telepon" required>
             </div>
             <div class="form-group">
-                <label for="">Jenis staff</label>
-                <select id="jenisStaf" name="" required>
+                <label for="">Jenis staf</label>
+                <select id="jenis_staf" name="jenis_staf" required>
                     <option value="">Pilih Jenis staff...</option>
                     <option value="Administrasi">Administrasi</option>
                     <option value="Umum">Umum</option>
@@ -230,7 +238,7 @@ include 'layouts/header.php';
             </div>
             <div class="form-group">
                 <label for="">Kode Spesifik</label>
-                <input type="text" name="" id="kodeSpesifik">
+                <input type="text" name="kodekhusus" id="kodekhusus">
             </div>
             <button type="submit">Simpan</button>
             <button type="button" onclick="closeModal()">Batal</button>
@@ -268,6 +276,8 @@ include 'layouts/header.php';
             document.getElementById('jabatan').value = stafData.jabatan;
             document.getElementById('no_ruang').value = stafData.no_ruang;
             document.getElementById('telepon').value = stafData.no_telepon;
+            document.getElementById('jenis_staf').value = stafData.jenis_staf;
+            document.getElementById('kodekhusus').value = stafData.kodekhusus;
         } else {
             document.getElementById('action').value = 'insert';
         }

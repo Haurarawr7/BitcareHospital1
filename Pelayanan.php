@@ -207,7 +207,7 @@ include 'layouts/header.php';
 <div id="patientModal" class="formulir">
     <div class="formulir-content">
         <span class="close-btn" onclick="closeModal()">&times;</span>
-        <h2 id="modalTitle">Tambah Data Pelayanan</h2>
+        <h2 id="modalTitle">Tambah Data Administrasi</h2>
         <form id="patientForm" method="POST">
             <input type="hidden" name="action" id="action" value="insert">
             <input type="hidden" name="no_antrian" id="no_antrianInput" value="">

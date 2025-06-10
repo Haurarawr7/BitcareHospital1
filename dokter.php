@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 
         $query = "INSERT INTO dokter (id, nama_dokter, jabatan, no_telepon, jadwal_dokter, no_antrian, no_ruangan, jenis_dokter, kodekhusus, ) 
-            VALUES ('$id', '$nama_dokter', '$jabatan', '$no_telepon', '$jadwal_dokter', '$no_antrian', '$no_ruangan', '$jenis_dokter', '$kodekhusus', '$')";
+            VALUES ('$id', '$nama_dokter', '$jabatan', '$no_telepon', '$jadwal_dokter', '$no_antrian', '$no_ruangan', '$jenis_dokter', '$kodekhusus')";
         mysqli_query($koneksi, $query);
     }
     elseif ($action == 'edit') {
@@ -33,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $kodekhusus = $_POST["kodekhusus"] ?? null;
 
 
-        $query = "UPDATE dokter SET nama_dokter='$nama_dokter', jabatan='$jabatan', no_telepon='$no_telepon', jadwal_dokter='$jadwal_dokter', no_antrian='$no_antrian', no_ruangan='$no_ruangan', jenis_dokter='$jenis_dokter', kodekhusus='$kodekhusus', ='$' WHERE id='$id'";
+        $query = "UPDATE dokter SET nama_dokter='$nama_dokter', jabatan='$jabatan', no_telepon='$no_telepon', jadwal_dokter='$jadwal_dokter', no_antrian='$no_antrian', no_ruangan='$no_ruangan', jenis_dokter='$jenis_dokter', kodekhusus='$kodekhusus' WHERE id='$id'";
         mysqli_query($koneksi, $query);
     } elseif ($action == 'delete') {
         $id = $_POST["id"];
@@ -224,7 +224,7 @@ include 'layouts/header.php';
             <input type="hidden" name="id" id="idDokterInput" value="">
             
             <div class="form-group">
-                <label for="nama_dokter">nama_dokter Dokter</label>
+                <label for="nama_dokter">Nama Dokter</label>
                 <input type="text" name="nama_dokter" id="namaDokter" required>
             </div>
             <div class="form-group">
@@ -236,15 +236,15 @@ include 'layouts/header.php';
                 <input type="tel" name="no_telepon" id="teleponDokter" required>
             </div>
             <div class="form-group">
-                <label for="jadwal_dokter">jadwal_dokter</label>
+                <label for="jadwal_dokter">Jadwal Dokter</label>
                 <input type="text" name="jadwal_dokter" id="jadwalDokter" required>
             </div>
             <div class="form-group">
-                <label for="no_antrian">No Antrian</label>
+                <label for="no_antrian">Nomor Antrian</label>
                 <input type="text" name="no_antrian" id="noAntrianDokter" required>
             </div>
             <div class="form-group">
-                <label for="no_ruangan">No Ruangan</label>
+                <label for="no_ruangan">Nomor Ruangan</label>
                 <input type="text" name="no_ruangan" id="noRuanganDokter" required>
             </div>
             <div class="form-group">
@@ -254,10 +254,6 @@ include 'layouts/header.php';
             <div class="form-group">
                 <label for="kodekhusus">Kode Khusus</label>
                 <input type="text" name="kodekhusus" id="kodeKhususDokter">
-            </div>
-            <div class="form-group">
-                <label for="">Kode Operasi</label>
-                <input type="text" name="" id="kodeOperasiDokter">
             </div>
             <button type="submit">Simpan</button>
             <button type="button" onclick="closeModalDokter()">Batal</button>
