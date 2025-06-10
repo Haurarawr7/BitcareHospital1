@@ -151,13 +151,13 @@ include 'layouts/header.php';
 <body>
   <div class="sidebar">
    <h2>Menu</h2>
-    <div class="menu-item" onclick="window.location.href='pelayanan.php'">Pelayanan</div>
+    <div class="menu-item" onclick="window.location.href='pelayanan.php'">Administrasi</div>
     <div class="menu-item" onclick="window.location.href='tindakanmedis.php'">Tindakan medis</div>
     <div class="menu-item" onclick="window.location.href='rekammedis.php'">Rekam medis</div>
     <div class="menu-item" onclick="window.location.href='obat.php'">Obat</div>
     <div class="menu-item" onclick="window.location.href='transaksi.php'">Transaksi</div>
     <div class="menu-item" onclick="window.location.href='ruangan.php'">Ruangan</div>
-    <div class="menu-item" onclick="window.location.href='staff.php'">Staff</div>
+    <div class="menu-item" onclick="window.location.href='staff.php'">Staf</div>
     <div class="menu-item" onclick="window.location.href='pasien.php'">Pasien</div>
     <div class="menu-item" onclick="window.location.href='perawat.php'">Perawat</div>
     <div class="menu-item" onclick="window.location.href='dokter.php'">Dokter</div>

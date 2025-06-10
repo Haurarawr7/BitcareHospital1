@@ -149,13 +149,13 @@ include 'layouts/header.php';
 <body>
   <div class="sidebar">
     <h2>Menu</h2>
-    <div class="menu-item" onclick="window.location.href='pelayanan.php'">Pelayanan</div>
+    <div class="menu-item" onclick="window.location.href='pelayanan.php'">Administrasi</div>
     <div class="menu-item" onclick="window.location.href='tindakanmedis.php'">Tindakan medis</div>
     <div class="menu-item" onclick="window.location.href='rekammedis.php'">Rekam medis</div>
     <div class="menu-item" onclick="window.location.href='obat.php'">Obat</div>
     <div class="menu-item" onclick="window.location.href='transaksi.php'">Transaksi</div>
     <div class="menu-item" onclick="window.location.href='ruangan.php'">Ruangan</div>
-    <div class="menu-item" onclick="window.location.href='staff.php'">Staff</div>
+    <div class="menu-item" onclick="window.location.href='staff.php'">Staf</div>
     <div class="menu-item" onclick="window.location.href='pasien.php'">Pasien</div>
     <div class="menu-item" onclick="window.location.href='perawat.php'">Perawat</div>
     <div class="menu-item" onclick="window.location.href='dokter.php'">Dokter</div>
@@ -169,11 +169,11 @@ include 'layouts/header.php';
     <table class="table table-light mt-3">
         <thead>
             <tr>
-                <th scope="col">Nomor Ruangan</th>
-                <th scope="col">Nomor Lantai</th>
+                <th scope="col">No. Ruangan</th>
+                <th scope="col">No. Lantai</th>
                 <th scope="col">Jenis Ruangan</th>
                 <th scope="col">Kapasitas</th>
-                <th scope="col">Alat di Ruangan</th>
+                <th scope="col">Alat</th>
                 <th scope="col">Aksi</th>
             </tr>
         </thead>

@@ -158,7 +158,7 @@ include 'layouts/header.php';
     <div class="menu-item" onclick="window.location.href='obat.php'">Obat</div>
     <div class="menu-item" onclick="window.location.href='transaksi.php'">Transaksi</div>
     <div class="menu-item" onclick="window.location.href='ruangan.php'">Ruangan</div>
-    <div class="menu-item" onclick="window.location.href='staff.php'">Staff</div>
+    <div class="menu-item" onclick="window.location.href='staff.php'">Staf</div>
     <div class="menu-item" onclick="window.location.href='pasien.php'">Pasien</div>
     <div class="menu-item" onclick="window.location.href='perawat.php'">Perawat</div>
     <div class="menu-item" onclick="window.location.href='dokter.php'">Dokter</div>
@@ -172,8 +172,8 @@ include 'layouts/header.php';
     <table class="table table-light mt-3">
         <thead>
             <tr>
-                <th scope="col">No Antrian</th>
-                <th scope="col">No Ruangan</th>
+                <th scope="col">No. Antrian</th>
+                <th scope="col">No. Ruangan</th>
                 <th scope="col">ID Dokter</th>
                 <th scope="col">ID Pasien</th>
                 <th scope="col">Tanggal</th>

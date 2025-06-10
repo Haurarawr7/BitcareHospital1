@@ -160,13 +160,13 @@ include 'layouts/header.php';
 <body>
   <div class="sidebar">
     <h2>Menu</h2>
-    <div class="menu-item" onclick="window.location.href='pelayanan.php'">Pelayanan</div>
+    <div class="menu-item" onclick="window.location.href='pelayanan.php'">Administrasi</div>
     <div class="menu-item" onclick="window.location.href='tindakanmedis.php'">Tindakan medis</div>
     <div class="menu-item" onclick="window.location.href='rekammedis.php'">Rekam medis</div>
     <div class="menu-item" onclick="window.location.href='obat.php'">Obat</div>
     <div class="menu-item" onclick="window.location.href='transaksi.php'">Transaksi</div>
     <div class="menu-item" onclick="window.location.href='ruangan.php'">Ruangan</div>
-    <div class="menu-item" onclick="window.location.href='staff.php'">Staff</div>
+    <div class="menu-item" onclick="window.location.href='staff.php'">Staf</div>
     <div class="menu-item" onclick="window.location.href='pasien.php'">Pasien</div>
     <div class="menu-item" onclick="window.location.href='perawat.php'">Perawat</div>
     <div class="menu-item" onclick="window.location.href='dokter.php'">Dokter</div>
@@ -181,12 +181,12 @@ include 'layouts/header.php';
         <thead>
             <tr>
                 <th scope="col">ID Dokter</th>
-                <th scope="col">nama_dokter</th>
+                <th scope="col">Nama</th>
                 <th scope="col">Jabatan</th>
-                <th scope="col">Nomor Telepon</th>
-                <th scope="col">jadwal_dokter</th>
-                <th scope="col">No Antrian</th>
-                <th scope="col">No Ruangan</th>
+                <th scope="col">No. Telepon</th>
+                <th scope="col">Jadwal Dokter</th>
+                <th scope="col">No. Antrian</th>
+                <th scope="col">No. Ruangan</th>
                 <th scope="col">Jenis Dokter</th>
                 <th scope="col">Kode Khusus</th>
                 <th scope="col">Aksi</th>
