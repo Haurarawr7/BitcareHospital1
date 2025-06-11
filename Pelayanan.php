@@ -16,16 +16,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $query = "INSERT INTO pelayanan (no_antrian, no_ruang, id_dokter, id_pasien, tanggal, jam_operasi) 
             VALUES ('$no_antrian', '$no_ruang', '$id_dokter', '$id_pasien', '$tanggal', '$jam_operasi')";
         mysqli_query($koneksi, $query);
-        }
-     elseif ($action == 'edit') {
+    } elseif ($action == 'edit') {
         $no_antrian = $_POST["no_antrian"];
+        $oldno_antrian = $_POST["oldno_antrian"];
         $no_ruang = $_POST["no_ruang"];
         $id_dokter = $_POST["id_dokter"];
         $id_pasien = $_POST["id_pasien"];
         $tanggal = $_POST["tanggal"];
         $jam_operasi = $_POST["jam_operasi"];
        
-        $query = "UPDATE pelayanan SET no_ruang='$no_ruang', id_dokter='$id_dokter', id_pasien ='$id_pasien', tanggal='$tanggal' WHERE no_antrian=$no_antrian";
+        $query = "UPDATE pelayanan SET no_ruang='$no_ruang', id_dokter='$id_dokter', id_pasien ='$id_pasien', tanggal='$tanggal', jam_operasi='$jam_operasi' WHERE no_antrian=$oldno_antrian";
         mysqli_query($koneksi, $query);
     } elseif ($action == 'delete') {
         $no_antrian = $_POST["no_antrian"];
@@ -181,7 +181,7 @@ include 'layouts/header.php';
                 <th scope="col">Aksi</th>
             </tr>
         </thead>
-        <tbody>
+        <tbody no_antrian="AdminTableBody">
             <?php while ($pelayanan = mysqli_fetch_object($result)) { ?>
                 <tr>
                     <td><?= $pelayanan->no_antrian ?></td>
@@ -190,10 +190,15 @@ include 'layouts/header.php';
                     <td><?= $pelayanan->id_pasien ?></td>
                     <td><?= $pelayanan->tanggal ?></td>
                     <td><?= $pelayanan->jam_operasi ?></td>
-                    
-                    
                     <td>
-                        <button class="btn btn-warning btn-sm" onclick="toggleEditForm('<?= $pelayanan->no_antrian ?>')">Edit</button>
+                        <button class="btn btn-warning btn-sm" onclick="toggleEditForm(
+                            '<?= $pelayanan->no_antrian ?>',
+                            '<?= $pelayanan->no_ruang ?>',
+                            '<?= $pelayanan->id_dokter ?>',
+                            '<?= $pelayanan->id_pasien ?>',
+                            '<?= $pelayanan->tanggal ?>',
+                            '<?= $pelayanan->jam_operasi ?>'
+                        )">Edit</button>
                         <button class="btn btn-danger btn-sm" onclick="openDeleteModal('<?= $pelayanan->no_antrian ?>')">Hapus</button>
                     </td>
                 </tr>
@@ -207,10 +212,10 @@ include 'layouts/header.php';
 <div id="patientModal" class="formulir">
     <div class="formulir-content">
         <span class="close-btn" onclick="closeModal()">&times;</span>
-        <h2 id="modalTitle">Tambah Data Administrasi</h2>
+        <h2 id="modalTitleAdmin">Tambah Data Administrasi</h2>
         <form id="patientForm" method="POST">
             <input type="hidden" name="action" id="action" value="insert">
-            <input type="hidden" name="no_antrian" id="no_antrianInput" value="">
+            <input type="hidden" name="oldno_antrian" id="oldno_antrianInput" value="">
             
             <div class="form-group">
                 <label for="no_antrian">No Antrian</label>
@@ -263,11 +268,14 @@ include 'layouts/header.php';
 <script>
     function openModal(patientData = null) {
         document.getElementById('patientForm').reset();
-        document.getElementById('no_antrianInput').value = '';
+        document.getElementById('oldno_antrianInput').value = '';
+        document.getElementById('modalTitleAdmin').innerText = 'Tambah Data Administrasi';
 
         if (patientData) {
             document.getElementById('action').value = 'edit';
+            document.getElementById('modalTitleAdmin').innerText = 'Edit Data Administrasi';
             document.getElementById('no_antrian').value = patientData.no_antrian;
+            document.getElementById('oldno_antrianInput').value = patientData.no_antrian;
             document.getElementById('no_ruang').value = patientData.no_ruang;
             document.getElementById('id_dokter').value = patientData.id_dokter;
             document.getElementById('id_pasien').value = patientData.id_pasien;
@@ -292,8 +300,15 @@ include 'layouts/header.php';
         document.getElementById('deleteModal').style.display = 'none';
     }
 
-    function toggleEditForm(no_antrian) {
-        openModal({ no_antrian: no_antrian, no_ruang: 'isi disini', id_dokter: 'isi disini', id_pasien: 'isi disini', tanggal: '2023-01-01', jam_operasi: '08:00' });
+    function toggleEditForm(no_antrian, no_ruang, id_dokter, id_pasien, tanggal, jam_operasi) {
+        openModal({ 
+            no_antrian: no_antrian, 
+            no_ruang: no_ruang, 
+            id_dokter: id_dokter, 
+            id_pasien: id_pasien, 
+            tanggal: tanggal, 
+            jam_operasi: jam_operasi 
+        });
     }
 </script>
 

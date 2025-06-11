@@ -19,12 +19,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
     elseif ($action == 'edit') {
         $kode_obat = $_POST["kode_obat"];
+        $oldkode_obat = $_POST["oldkode_obat"];
         $nama_obat = $_POST["nama_obat"];
         $dosis = $_POST["dosis"];
         $tanggal_produksi = $_POST["tanggal_produksi"];
         $stok = $_POST["stok"];
         $harga = $_POST["harga"];
-        $query = "UPDATE obat SET nama_obat='$nama_obat', dosis='$dosis', tanggal_produksi='$tanggal_produksi', stok='$stok', harga='$harga' WHERE kode_obat='$kode_obat'";
+        $query = "UPDATE obat SET kode_obat='$kode_obat', nama_obat='$nama_obat', dosis='$dosis', tanggal_produksi='$tanggal_produksi', stok='$stok', harga='$harga' WHERE kode_obat='$oldkode_obat'";
         mysqli_query($koneksi, $query);
     } elseif ($action == 'delete') {
         $kode_obat = $_POST["kode_obat"];
@@ -180,7 +181,7 @@ include 'layouts/header.php';
                 <th scope="col">Aksi</th>
             </tr>
         </thead>
-        <tbody>
+        <tbody kode_obat="ObatTableBody">
             <?php while ($obat = mysqli_fetch_object($result)) { ?>
                 <tr>
                     <td><?= $obat->kode_obat ?></td>
@@ -190,7 +191,14 @@ include 'layouts/header.php';
                     <td><?= $obat->stok ?></td>
                     <td><?= $obat->harga ?></td>
                     <td>
-                        <button class="btn btn-warning btn-sm" onclick="toggleEditForm('<?= $obat->kode_obat ?>')">Edit</button>
+                        <button class="btn btn-warning btn-sm" onclick="toggleEditForm(
+                        '<?= $obat->kode_obat ?>',
+                        '<?= $obat->nama_obat ?>',
+                        '<?= $obat->dosis ?>',
+                        '<?= $obat->tanggal_kadaluarsa ?>',
+                        '<?= $obat->stok ?>',
+                        '<?= $obat->harga ?>'
+                        )">Edit</button>
                         <button class="btn btn-danger btn-sm" onclick="openDeleteModal('<?= $obat->kode_obat ?>')">Hapus</button>
                     </td>
                 </tr>
@@ -204,11 +212,15 @@ include 'layouts/header.php';
 <div id="obatModal" class="formulir">
     <div class="formulir-content">
         <span class="close-btn" onclick="closeModal()">&times;</span>
-        <h2 id="modalTitle">Tambah Data Obat</h2>
+        <h2 id="modalTitleObat">Tambah Data Obat</h2>
         <form id="obatForm" method="POST">
             <input type="hidden" name="action" id="action" value="insert">
-            <input type="hidden" name="kode_obat" id="kodeObatInput" value="">
-            
+            <input type="hidden" name="oldkode_obat" id="oldkodeObatInput" value="">
+
+            <div class="form-group">
+                <label for="kode_obat">Kode Obat</label>
+                <input type="text" name="kode_obat" id="kode_obat" required>
+            </div>
             <div class="form-group">
                 <label for="nama_obat">Nama Obat</label>
                 <input type="text" name="nama_obat" id="nama_obat" required>
@@ -218,7 +230,7 @@ include 'layouts/header.php';
                 <input type="text" name="dosis" id="dosis" required>
             </div>
             <div class="form-group">
-                <label for="tanggal_produksi">Tanggal Produksi</label>
+                <label for="tanggal_produksi">Tanggal Kadaluarsa</label>
                 <input type="date" name="tanggal_produksi" id="tanggal_produksi" required>
             </div>
             <div class="form-group">
@@ -256,14 +268,17 @@ include 'layouts/header.php';
 <script>
     function openModal(obatData = null) {
         document.getElementById('obatForm').reset();
-        document.getElementById('kodeObatInput').value = '';
+        document.getElementById('oldkodeObatInput').value = '';
+        document.getElementById('modalTitleObat').innerText = 'Tambah Data Obat';
 
         if (obatData) {
             document.getElementById('action').value = 'edit';
-            document.getElementById('kodeObatInput').value = obatData.kode_obat;
+            document.getElementById('modalTitleObat').innerText = 'Edit Data Obat';
+            document.getElementById('kode_obat').value = obatData.kode_obat;
+            document.getElementById('oldkodeObatInput').value = obatData.kode_obat;
             document.getElementById('nama_obat').value = obatData.nama_obat;
             document.getElementById('dosis').value = obatData.dosis;
-            document.getElementById('tanggal_produksi').value = obatData.tanggal_produksi;
+            document.getElementById('tanggal_produksi').value = obatData.tanggal_kadaluarsa; // Perhatikan perubahan nama variabel
             document.getElementById('stok').value = obatData.stok;
             document.getElementById('harga').value = obatData.harga;
         } else {
@@ -285,9 +300,15 @@ include 'layouts/header.php';
         document.getElementById('deleteModal').style.display = 'none';
     }
 
-    function toggleEditForm(kode_obat) {
-
-        openModal({ kode_obat: kode_obat, nama_obat: 'isi disini', dosis: '500mg', tanggal_produksi: '2023-01-01', stok: 10, harga: 15000 });
+    function toggleEditForm(kode_obat, nama_obat, dosis, tanggal_kadaluarsa, stok, harga) {
+        openModal({
+            kode_obat: kode_obat,
+            nama_obat: nama_obat,
+            dosis: dosis,
+            tanggal_kadaluarsa: tanggal_kadaluarsa, 
+            stok: stok,
+            harga: harga
+        });
     }
 </script>
 

@@ -16,13 +16,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $jenis_dokter = $_POST["jenis_dokter"];
         $kodekhusus = $_POST["kodekhusus"] ?? null;
 
-
-        $query = "INSERT INTO dokter (id, nama_dokter, jabatan, no_telepon, jadwal_dokter, no_antrian, no_ruangan, jenis_dokter, kodekhusus, ) 
+        // Fixed: Removed trailing comma in INSERT query
+        $query = "INSERT INTO dokter (id, nama_dokter, jabatan, no_telepon, jadwal_dokter, no_antrian, no_ruangan, jenis_dokter, kodekhusus) 
             VALUES ('$id', '$nama_dokter', '$jabatan', '$no_telepon', '$jadwal_dokter', '$no_antrian', '$no_ruangan', '$jenis_dokter', '$kodekhusus')";
         mysqli_query($koneksi, $query);
     }
     elseif ($action == 'edit') {
         $id = $_POST["id"];
+        $old_id = $_POST["old_id"]; // New: to track the original ID
         $nama_dokter = $_POST["nama_dokter"];
         $jabatan = $_POST["jabatan"];
         $no_telepon = $_POST["no_telepon"];
@@ -32,8 +33,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $jenis_dokter = $_POST["jenis_dokter"];
         $kodekhusus = $_POST["kodekhusus"] ?? null;
 
-
-        $query = "UPDATE dokter SET nama_dokter='$nama_dokter', jabatan='$jabatan', no_telepon='$no_telepon', jadwal_dokter='$jadwal_dokter', no_antrian='$no_antrian', no_ruangan='$no_ruangan', jenis_dokter='$jenis_dokter', kodekhusus='$kodekhusus' WHERE id='$id'";
+        // Fixed: Use old_id in WHERE clause to update the correct record
+        $query = "UPDATE dokter SET id='$id', nama_dokter='$nama_dokter', jabatan='$jabatan', no_telepon='$no_telepon', jadwal_dokter='$jadwal_dokter', no_antrian='$no_antrian', no_ruangan='$no_ruangan', jenis_dokter='$jenis_dokter', kodekhusus='$kodekhusus' WHERE id='$old_id'";
         mysqli_query($koneksi, $query);
     } elseif ($action == 'delete') {
         $id = $_POST["id"];
@@ -148,7 +149,7 @@ include 'layouts/header.php';
         display: block; 
         margin-bottom: 5px; 
     }
-    .form-group input[type="text"], .form-group input[type="number"], .form-group input[type="date"] { 
+    .form-group input[type="text"], .form-group input[type="number"], .form-group input[type="date"], .form-group input[type="tel"] { 
         width: calc(100% - 22px); 
         padding: 10px; 
         border: 1px solid #ccc; 
@@ -205,7 +206,17 @@ include 'layouts/header.php';
                     <td><?= $dokter->jenis_dokter ?></td>
                     <td><?= $dokter->kodekhusus ?></td>
                     <td>
-                        <button class="btn btn-warning btn-sm" onclick="toggleEditForm('<?= $dokter->id ?>')">Edit</button>
+                        <button class="btn btn-warning btn-sm" onclick="toggleEditForm(
+                            '<?= $dokter->id ?>', 
+                            '<?= $dokter->nama_dokter ?>', 
+                            '<?= $dokter->jabatan ?>', 
+                            '<?= $dokter->no_telepon ?>', 
+                            '<?= $dokter->jadwal_dokter ?>', 
+                            '<?= $dokter->no_antrian ?>', 
+                            '<?= $dokter->no_ruangan ?>', 
+                            '<?= $dokter->jenis_dokter ?>', 
+                            '<?= $dokter->kodekhusus ?>'
+                        )">Edit</button>
                         <button class="btn btn-danger btn-sm" onclick="openDeleteModal('<?= $dokter->id ?>')">Hapus</button>
                     </td>
                 </tr>
@@ -221,7 +232,13 @@ include 'layouts/header.php';
         <h2 id="modalTitleDokter">Tambah Data Dokter</h2>
         <form id="dokterForm" method="POST">
             <input type="hidden" name="action" id="action" value="insert">
-            <input type="hidden" name="id" id="idDokterInput" value="">
+            <input type="hidden" name="old_id" id="oldIdDokterInput" value="">
+            
+            <!-- Changed: Made ID field visible and editable -->
+            <div class="form-group">
+                <label for="id">ID Dokter</label>
+                <input type="text" name="id" id="idDokterInput" required>
+            </div>
             
             <div class="form-group">
                 <label for="nama_dokter">Nama Dokter</label>
@@ -283,10 +300,14 @@ include 'layouts/header.php';
     function openModalDokter(dataDokter = null) {
         document.getElementById('dokterForm').reset();
         document.getElementById('idDokterInput').value = '';
+        document.getElementById('oldIdDokterInput').value = '';
+        document.getElementById('modalTitleDokter').innerText = 'Tambah Data Dokter';
 
         if (dataDokter) {
             document.getElementById('action').value = 'edit';
+            document.getElementById('modalTitleDokter').innerText = 'Edit Data Dokter';
             document.getElementById('idDokterInput').value = dataDokter.id;
+            document.getElementById('oldIdDokterInput').value = dataDokter.id; // Store original ID
             document.getElementById('namaDokter').value = dataDokter.nama_dokter;
             document.getElementById('jabatanDokter').value = dataDokter.jabatan;
             document.getElementById('teleponDokter').value = dataDokter.no_telepon;
@@ -306,7 +327,7 @@ include 'layouts/header.php';
     }
 
     function openDeleteModal(id) {
-        document.getElementById('id_dokter_delete').value = id; // Set the id to the input
+        document.getElementById('id_dokter_delete').value = id;
         document.getElementById('deleteModal').style.display = 'block';
     }
 
@@ -314,10 +335,19 @@ include 'layouts/header.php';
         document.getElementById('deleteModal').style.display = 'none';
     }
 
-    function toggleEditForm(id) {
-        // Fetch the data for the selected doctor and open the formulir
-        // This function should be implemented to fetch data from the server
-        openModalDokter({ id: id, nama_dokter: 'isi disini', jabatan: 'isi disini', no_telepon: 'isi disini', jadwal_dokter: 'isi disini', no_antrian: 'isi disini', no_ruangan: 'isi disini', jenis_dokter: 'isi disini', kodekhusus: 'isi disini'});
+    // Updated: Pass actual data to the edit function
+    function toggleEditForm(id, nama_dokter, jabatan, no_telepon, jadwal_dokter, no_antrian, no_ruangan, jenis_dokter, kodekhusus) {
+        openModalDokter({ 
+            id: id, 
+            nama_dokter: nama_dokter, 
+            jabatan: jabatan, 
+            no_telepon: no_telepon, 
+            jadwal_dokter: jadwal_dokter, 
+            no_antrian: no_antrian, 
+            no_ruangan: no_ruangan, 
+            jenis_dokter: jenis_dokter, 
+            kodekhusus: kodekhusus
+        });
     }
 </script>
 

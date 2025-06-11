@@ -20,6 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
     elseif ($action == 'edit') {
         $no_transaksi = $_POST["no_transaksi"];
+        $oldno_transaksi = $_POST["oldno_transaksi"];
         $tanggal_transaksi = $_POST["tanggal_transaksi"];
         $no_ruang = $_POST["no_ruang"];
         $id_pasien = $_POST["id_pasien"];
@@ -27,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $total_harga = $_POST["total_harga"];
         $asuransi = $_POST["asuransi"] ?? null;
 
-        $query = "UPDATE transaksi SET tanggal_transaksi='$tanggal_transaksi', no_ruang='$no_ruang', id_pasien='$id_pasien', jenis_transaksi='$jenis_transaksi', total_harga='$total_harga', asuransi='$asuransi' WHERE no_transaksi='$no_transaksi'";
+        $query = "UPDATE transaksi SET tanggal_transaksi='$tanggal_transaksi', no_ruang='$no_ruang', id_pasien='$id_pasien', jenis_transaksi='$jenis_transaksi', total_harga='$total_harga', asuransi='$asuransi' WHERE no_transaksi='$oldno_transaksi'";
         mysqli_query($koneksi, $query);
     } elseif ($action == 'delete') {
         $no_transaksi = $_POST["no_transaksi"];
@@ -169,7 +170,7 @@ include 'layouts/header.php';
 <section class="p-4 ml-5 mr-5 w-75">
     <div class="d-flex flex-row justify-content-between">
         <h2>Data Transaksi</h2>
-        <button onclick="openModal()">+Tambah</button>
+        <button onclick="openModalTransaksi()">+Tambah</button>
     </div>
     <table class="table table-light mt-3">
         <thead>
@@ -195,7 +196,15 @@ include 'layouts/header.php';
                     <td><?= $transaksi->total_harga ?></td>
                     <td><?= $transaksi->asuransi ?></td>
                     <td>
-                        <button class="btn btn-warning btn-sm" onclick="toggleEditForm('<?= $transaksi->no_transaksi ?>')">Edit</button>
+                        <button class="btn btn-warning btn-sm" onclick="toggleEditForm(
+                        '<?= $transaksi->no_transaksi ?>',
+                        '<?= $transaksi->tanggal_transaksi ?>',
+                        '<?= $transaksi->no_ruang ?>',
+                        '<?= $transaksi->id_pasien ?>',
+                        '<?= $transaksi->jenis_transaksi ?>',
+                        '<?= $transaksi->total_harga ?>',
+                        '<?= $transaksi->asuransi ?>'
+                        )">Edit</button>
                         <button class="btn btn-danger btn-sm" onclick="openDeleteModal('<?= $transaksi->no_transaksi ?>')">Hapus</button>
                     </td>
                 </tr>
@@ -211,11 +220,11 @@ include 'layouts/header.php';
         <h2 id="modalTitleTransaksi">Tambah Data Transaksi</h2>
         <form id="transaksiForm" method="POST">
             <input type="hidden" name="action" id="action" value="insert">
-            <input type="hidden" name="no_transaksi" id="kodeTransaksiInput" value="">
+            <input type="hidden" name="oldno_transaksi" id="oldkodeTransaksiInput" value="">
             
             <div class="form-group">
-                <label for="kodeTransaksi">Kode Transaksi:</label>
-                <input type="text" name="no_transaksi" id="kodeTransaksi" required>
+                <label for="no_transaksi">Nomor Transaksi:</label>
+                <input type="text" name="no_transaksi" id="no_transaksi" required>
             </div>
             <div class="form-group">
                 <label for="tanggalTransaksi">Tanggal Transaksi:</label>
@@ -268,20 +277,21 @@ include 'layouts/header.php';
 <script>
     function openModalTransaksi(dataTransaksi = null) {
         document.getElementById('transaksiForm').reset();
-        document.getElementById('kodeTransaksiInput').value = '';
+        document.getElementById('oldkodeTransaksiInput').value = '';
+        document.getElementById('modalTitleTransaksi').innerText = 'Tambah Data Transaksi';
+        document.getElementById('action').value = 'insert';
 
         if (dataTransaksi) {
             document.getElementById('action').value = 'edit';
-            document.getElementById('kodeTransaksiInput').value = dataTransaksi.no_transaksi;
-            document.getElementById('kodeTransaksi').value = dataTransaksi.no_transaksi;
+            document.getElementById('modalTitleTransaksi').innerText = 'Edit Data Transaksi';
+            document.getElementById('no_transaksi').value = dataTransaksi.no_transaksi;
+            document.getElementById('oldkodeTransaksiInput').value = dataTransaksi.no_transaksi;
             document.getElementById('tanggalTransaksi').value = dataTransaksi.tanggal_transaksi;
             document.getElementById('noRuang').value = dataTransaksi.no_ruang;
             document.getElementById('idPasien').value = dataTransaksi.id_pasien;
             document.getElementById('jenisTransaksi').value = dataTransaksi.jenis_transaksi;
             document.getElementById('totalHarga').value = dataTransaksi.total_harga;
             document.getElementById('asuransi').value = dataTransaksi.asuransi;
-        } else {
-            document.getElementById('action').value = 'insert';
         }
         document.getElementById('transaksiModal').style.display = 'block';
     }
@@ -290,8 +300,8 @@ include 'layouts/header.php';
         document.getElementById('transaksiModal').style.display = 'none';
     }
 
-    function openDeleteModal(kodeTransaksi) {
-        document.getElementById('kode_transaksi_delete').value = kodeTransaksi; // Set the no_transaksi to the input
+    function openDeleteModal(no_transaksi) {
+        document.getElementById('kode_transaksi_delete').value = no_transaksi;
         document.getElementById('deleteModal').style.display = 'block';
     }
 
@@ -299,10 +309,18 @@ include 'layouts/header.php';
         document.getElementById('deleteModal').style.display = 'none';
     }
 
-    function toggleEditForm(kodeTransaksi) {
-        // Fetch the data for the selected transaction and open the formulir
-        openModalTransaksi({ no_transaksi: kodeTransaksi, tanggal_transaksi: 'isi disini', no_ruang: 'isi disini', id_pasien: 'isi disini', jenis_transaksi: 'isi disini', total_harga: 0, asuransi: 'isi disini' });
+    function toggleEditForm(no_transaksi, tanggal_transaksi, no_ruang, id_pasien, jenis_transaksi, total_harga, asuransi) {
+        openModalTransaksi({
+            no_transaksi: no_transaksi,
+            tanggal_transaksi: tanggal_transaksi,
+            no_ruang: no_ruang,
+            id_pasien: id_pasien,
+            jenis_transaksi: jenis_transaksi,
+            total_harga: total_harga,
+            asuransi: asuransi
+        });
     }
 </script>
+
 
 <?php include 'layouts/footer.php'; ?>

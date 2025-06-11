@@ -15,15 +15,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $query = "INSERT INTO tindakan_medis (no_tindakan, tanggal_tindakan, id_dokter, no_rekam_medis, jenis_tindakan) 
             VALUES ('$no_tindakan', '$tanggal_tindakan', '$id_dokter', '$no_rekam_medis', '$jenis_tindakan')";
         mysqli_query($koneksi, $query);
-    }
-    elseif ($action == 'edit') {
+    } elseif ($action == 'edit') {
         $no_tindakan = $_POST["no_tindakan"];
+        $oldno_tindakan = $_POST["oldno_tindakan"];
         $tanggal_tindakan = $_POST["tanggal_tindakan"];
         $id_dokter = $_POST["id_dokter"];
         $no_rekam_medis = $_POST["no_rekam_medis"];
         $jenis_tindakan = $_POST["jenis_tindakan"];
 
-        $query = "UPDATE tindakan_medis SET tanggal_tindakan='$tanggal_tindakan', id_dokter='$id_dokter', no_rekam_medis='$no_rekam_medis', jenis_tindakan='$jenis_tindakan' WHERE no_tindakan='$no_tindakan'";
+        $query = "UPDATE tindakan_medis SET tanggal_tindakan='$tanggal_tindakan', id_dokter='$id_dokter', no_rekam_medis='$no_rekam_medis', jenis_tindakan='$jenis_tindakan' WHERE no_tindakan='$oldno_tindakan'";
         mysqli_query($koneksi, $query);
     } elseif ($action == 'delete') {
         $no_rekam_medis = $_POST["no_rekam_medis"];
@@ -187,7 +187,13 @@ include 'layouts/header.php';
                     <td><?= $tindakan->no_rekam_medis ?></td>
                     <td><?= $tindakan->jenis_tindakan ?></td>
                     <td>
-                        <button class="btn btn-warning btn-sm" onclick="toggleEditForm('<?= $tindakan->no_tindakan ?>')">Edit</button>
+                        <button class="btn btn-warning btn-sm" onclick="toggleEditForm(
+                        '<?= $tindakan->no_tindakan ?>',
+                        '<?= $tindakan->tanggal_tindakan ?>',
+                        '<?= $tindakan->id_dokter ?>',
+                        '<?= $tindakan->no_rekam_medis ?>',
+                        '<?= $tindakan->jenis_tindakan ?>'
+                        )">Edit</button>
                         <button class="btn btn-danger btn-sm" onclick="openDeleteModal('<?= $tindakan->no_rekam_medis ?>')">Hapus</button>
                     </td>
                 </tr>
@@ -203,7 +209,7 @@ include 'layouts/header.php';
         <h2 id="modalTitleTindakan">Tambah Data Tindakan Medis</h2>
         <form id="tindakanForm" method="POST">
             <input type="hidden" name="action" id="action" value="insert">
-            <input type="hidden" name="no_tindakan" id="noTindakanInput" value="">
+            <input type="hidden" name="oldno_tindakan" id="oldnoTindakanInput" value="">
             
             <div class="form-group">
                 <label for="noTindakan">No Tindakan:</label>
@@ -252,12 +258,14 @@ include 'layouts/header.php';
 <script>
     function openModalTindakan(dataTindakan = null) {
         document.getElementById('tindakanForm').reset();
-        document.getElementById('noTindakanInput').value = '';
+        document.getElementById('oldnoTindakanInput').value = '';
+        document.getElementById('modalTitleTindakan').innerText = 'Tambah Data Tindakan Medis';
 
         if (dataTindakan) {
             document.getElementById('action').value = 'edit';
-            document.getElementById('noTindakanInput').value = dataTindakan.no_tindakan;
+            document.getElementById('modalTitleTindakan').innerText = 'Edit Data Tindakan Medis';
             document.getElementById('noTindakan').value = dataTindakan.no_tindakan;
+            document.getElementById('oldnoTindakanInput').value = dataTindakan.no_tindakan;
             document.getElementById('tanggalTindakan').value = dataTindakan.tanggal_tindakan;
             document.getElementById('idDokter').value = dataTindakan.id_dokter;
             document.getElementById('noRekamMedis').value = dataTindakan.no_rekam_medis;
@@ -273,7 +281,7 @@ include 'layouts/header.php';
     }
 
     function openDeleteModal(no_rekam_medis) {
-        document.getElementById('no_rekammedis_delete').value = no_rekam_medis; // Set the no_rekam_medis to the input
+        document.getElementById('no_rekammedis_delete').value = no_rekam_medis;
         document.getElementById('deleteModal').style.display = 'block';
     }
 
@@ -281,9 +289,14 @@ include 'layouts/header.php';
         document.getElementById('deleteModal').style.display = 'none';
     }
 
-    function toggleEditForm(no_tindakan) {
-        // Fetch the data for the selected medical action and open the modal
-        openModalTindakan({ no_tindakan: no_tindakan, tanggal_tindakan: 'Dummy', id_dokter: 'Dummy', no_rekam_medis: 'Dummy', jenis_tindakan: 'Dummy' });
+    function toggleEditForm(no_tindakan, tanggal_tindakan, id_dokter, no_rekam_medis, jenis_tindakan) {
+        openModalTindakan({
+            no_tindakan: no_tindakan,
+            tanggal_tindakan: tanggal_tindakan,
+            id_dokter: id_dokter,
+            no_rekam_medis: no_rekam_medis,
+            jenis_tindakan: jenis_tindakan
+        });
     }
 </script>
 
