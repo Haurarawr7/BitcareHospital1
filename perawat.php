@@ -1,6 +1,26 @@
 <?php 
 include("koneksi.php"); 
 
+// --- BAGIAN BARU UNTUK MENGAMBIL DATA VIA AJAX ---
+// Cek jika ini adalah request GET dengan action=get_data dan ada id
+if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['action']) && $_GET['action'] == 'get_data' && isset($_GET['id'])) {
+    $id_perawat = $_GET['id'];
+    
+    // Query untuk mengambil satu data perawat
+    $query = "SELECT * FROM perawat WHERE id_perawat = ?";
+    
+    $stmt = mysqli_prepare($koneksi, $query);
+    mysqli_stmt_bind_param($stmt, 'i', $id_perawat);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    $data = mysqli_fetch_assoc($result);
+
+    // Set header sebagai JSON dan kirim datanya
+    header('Content-Type: application/json');
+    echo json_encode($data);
+    exit(); // Penting: hentikan eksekusi script agar tidak menampilkan sisa HTML
+}
+
 // Handle insert, update, and delete actions
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $action = $_POST['action'] ?? '';
@@ -271,22 +291,6 @@ include 'layouts/header.php';
 </div>
 
 <script>
-    function openModalPerawat(dataPerawat = null) {
-        document.getElementById('perawatForm').reset();
-        document.getElementById('idPerawatInput').value = '';
-
-        if (dataPerawat) {
-            document.getElementById('action').value = 'edit';
-            document.getElementById('idPerawatInput').value = dataPerawat.id_perawat;
-            document.getElementById('namaPerawat').value = dataPerawat.nama_perawat;
-            document.getElementById('idPasienPerawat').value = dataPerawat.id_pasien;
-            document.getElementById('teleponPerawat').value = dataPerawat.no_telepon;
-            document.getElementById('spesialisasiPerawat').value = dataPerawat.spesialisasi;
-        } else {
-            document.getElementById('action').value = 'insert';
-        }
-        document.getElementById('perawatModal').style.display = 'block';
-    }
 
     function closeModalPerawat() {
         document.getElementById('perawatModal').style.display = 'none';
@@ -301,11 +305,67 @@ include 'layouts/header.php';
         document.getElementById('deleteModal').style.display = 'none';
     }
 
-    function toggleEditForm(id_perawat) {
-        // Fetch the data for the selected nurse and open the formulir
-        // This function should be implemented to fetch data from the server
-        openModalPerawat({ id_perawat: id_perawat, nama_perawat: 'isi disini', id_pasien: 'isi disini', no_telepon: 'isi disini', spesialisasi: 'isi disini' });
+    function openModalPerawat(mode, dataPerawat = null) {
+        // Reset form setiap kali dibuka
+        document.getElementById('perawatForm').reset();
+
+        const modalTitle = document.getElementById('modalTitlePerawat');
+        const actionInput = document.getElementById('action');
+        const idInput = document.getElementById('idPerawatInput');
+
+        if (mode === 'edit' && dataPerawat) {
+            // --- MODE EDIT ---
+            modalTitle.innerText = 'Edit Data Perawat';
+            actionInput.value = 'edit';
+            
+            // Isi semua field dengan data yang didapat dari server
+            idInput.value = dataPerawat.id_perawat;
+            document.getElementById('namaPerawat').value = dataPerawat.nama_perawat;
+            document.getElementById('idPasienPerawat').value = dataPerawat.id_pasien;
+            document.getElementById('teleponPerawat').value = dataPerawat.no_telepon;
+            document.getElementById('spesialisasiPerawat').value = dataPerawat.spesialisasi;
+
+        } else {
+            // --- MODE TAMBAH ---
+            modalTitle.innerText = 'Tambah Data Perawat';
+            actionInput.value = 'insert';
+            idInput.value = ''; // Pastikan ID kosong saat tambah data
+        }
+
+        // Tampilkan modal
+        document.getElementById('perawatModal').style.display = 'block';
     }
+
+    function toggleEditForm(id_perawat) {
+        // URL ke endpoint AJAX yang kita buat di PHP
+        const url = `perawat.php?action=get_data&id=${id_perawat}`;
+
+        // Gunakan Fetch API untuk mengambil data dari server
+        fetch(url)
+            .then(response => {
+                // Periksa apakah request berhasil (status code 200-299)
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                // Ubah response menjadi JSON
+                return response.json();
+            })
+            .then(data => {
+                // Jika berhasil mendapatkan data, panggil modal dalam mode 'edit'
+                // dan kirim data yang didapat dari server
+                if(data) {
+                    openModalPerawat('edit', data);
+                } else {
+                    alert('Data perawat tidak ditemukan.');
+                }
+            })
+            .catch(error => {
+                // Tangani jika ada error saat fetching data
+                console.error('Error fetching perawat data:', error);
+                alert('Gagal mengambil data perawat. Silakan coba lagi.');
+            });
+    }
+
 </script>
 
 <?php include 'layouts/footer.php'; ?>
