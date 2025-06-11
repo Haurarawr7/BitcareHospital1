@@ -18,12 +18,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
     elseif ($action == 'edit') {
         $no_ruangan = $_POST["no_ruangan"];
+        $oldno_ruangan = $_POST["oldno_ruangan"];
         $lantai = $_POST["lantai"];
         $jenis_ruangan = $_POST["jenis_ruangan"];
         $kapasitas = $_POST["kapasitas"];
         $alat = $_POST["alat"];
         
-        $query = "UPDATE ruangan SET lantai='$lantai', jenis_ruangan='$jenis_ruangan', kapasitas='$kapasitas', alat='$alat' WHERE no_ruangan='$no_ruangan'";
+        $query = "UPDATE ruangan SET no_ruangan='$no_ruangan', lantai='$lantai', jenis_ruangan='$jenis_ruangan', kapasitas='$kapasitas', alat='$alat' WHERE no_ruangan='$oldno_ruangan'";
         mysqli_query($koneksi, $query);
     } elseif ($action == 'delete') {
         $no_ruangan = $_POST["no_ruangan"];
@@ -164,7 +165,7 @@ include 'layouts/header.php';
 <section class="p-4 ml-5 mr-5 w-75">
     <div class="d-flex flex-row justify-content-between">
         <h2>Data Ruangan</h2>
-        <button onclick="openModal()">+Tambah</button>
+        <button onclick="openModalRuangan()">+Tambah</button>
     </div>
     <table class="table table-light mt-3">
         <thead>
@@ -186,7 +187,13 @@ include 'layouts/header.php';
                     <td><?= $ruangan->kapasitas ?></td>
                     <td><?= $ruangan->alat ?></td>
                     <td>
-                        <button class="btn btn-warning btn-sm" onclick="toggleEditForm('<?= $ruangan->no_ruangan ?>')">Edit</button>
+                        <button class="btn btn-warning btn-sm" onclick="toggleEditForm(
+                        '<?= $ruangan->no_ruangan ?>',
+                        '<?= $ruangan->lantai ?>',
+                        '<?= $ruangan->jenis_ruangan ?>',
+                        '<?= $ruangan->kapasitas ?>',
+                        '<?= $ruangan->alat ?>'
+                        )">Edit</button>
                         <button class="btn btn-danger btn-sm" onclick="openDeleteModal('<?= $ruangan->no_ruangan ?>')">Hapus</button>
                     </td>
                 </tr>
@@ -200,10 +207,10 @@ include 'layouts/header.php';
 <div id="ruanganModal" class="formulir">
     <div class="formulir-content">
         <span class="close-btn" onclick="closeModal()">&times;</span>
-        <h2 id="modalTitle">Tambah Data Ruangan</h2>
+        <h2 id="modalTitleRuangan">Tambah Data Ruangan</h2>
         <form id="ruanganForm" method="POST">
             <input type="hidden" name="action" id="action" value="insert">
-            <input type="hidden" name="no_ruangan" id="nomorRuanganInput" value="">
+            <input type="hidden" name="oldno_ruangan" id="oldnomorRuanganInput" value="">
             
             <div class="form-group">
                 <label for="nomorRuangan">Nomor Ruangan</label>
@@ -250,14 +257,16 @@ include 'layouts/header.php';
 </div>
 
 <script>
-    function openModal(ruanganData = null) {
+    function openModalRuangan(ruanganData = null) {
         document.getElementById('ruanganForm').reset();
-        document.getElementById('nomorRuanganInput').value = '';
+        document.getElementById('oldnomorRuanganInput').value = '';
+        document.getElementById('modalTitleRuangan').innerText = 'Tambah Data Ruangan';
 
         if (ruanganData) {
             document.getElementById('action').value = 'edit';
-            document.getElementById('nomorRuanganInput').value = ruanganData.no_ruangan;
+            document.getElementById('modalTitleRuangan').innerText = 'Edit Data Ruangan';
             document.getElementById('nomorRuangan').value = ruanganData.no_ruangan;
+            document.getElementById('oldnomorRuanganInput').value = ruanganData.no_ruangan;
             document.getElementById('nomorLantai').value = ruanganData.lantai;
             document.getElementById('jenisRuangan').value = ruanganData.jenis_ruangan;
             document.getElementById('kapasitas').value = ruanganData.kapasitas;
@@ -273,7 +282,7 @@ include 'layouts/header.php';
     }
 
     function openDeleteModal(no_ruangan) {
-        document.getElementById('nomor_ruangan_delete').value = no_ruangan; // Set the no_ruangan to the input
+        document.getElementById('nomor_ruangan_delete').value = no_ruangan;
         document.getElementById('deleteModal').style.display = 'block';
     }
 
@@ -281,9 +290,14 @@ include 'layouts/header.php';
         document.getElementById('deleteModal').style.display = 'none';
     }
 
-    function toggleEditForm(no_ruangan) {
-        // Fetch the data for the selected room and open the formulir
-        openModal({ no_ruangan: no_ruangan, lantai: 'isi disini', jenis_ruangan: 'isi disini', kapasitas: 10, alat: 'isi disini' });
+    function toggleEditForm(no_ruangan, lantai, jenis_ruangan, kapasitas, alat) {
+        openModalRuangan({
+            no_ruangan: no_ruangan,
+            lantai: lantai,
+            jenis_ruangan: jenis_ruangan,
+            kapasitas: kapasitas,
+            alat: alat
+        });
     }
 </script>
 
