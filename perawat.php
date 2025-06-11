@@ -5,34 +5,58 @@ include("koneksi.php");
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $action = $_POST['action'] ?? '';
 
+    // --- FUNGSI INSERT (TAMBAH DATA) ---
     if ($action == 'insert') {
-        $id_perawat = $_POST["id_perawat"];
+        // Ambil data dari form, KECUALI id_perawat
         $nama_perawat = $_POST["nama_perawat"];
         $id_pasien = $_POST["id_pasien"];
         $no_telepon = $_POST["no_telepon"];
         $spesialisasi = $_POST["spesialisasi"];
     
-        $query = "INSERT INTO perawat (id_perawat, nama_perawat, id_pasien, no_telepon, spesialisasi) 
-            VALUES ('$id_perawat', '$nama_perawat', '$id_pasien', '$no_telepon', '$spesialisasi')";
-        mysqli_query($koneksi, $query);
-    }
-    elseif ($action == 'edit') {
+        // PERBAIKAN: Hapus 'id_perawat' dari query. Biarkan database mengisinya otomatis.
+        // KEAMANAN: Gunakan prepared statement untuk mencegah SQL Injection.
+        $query = "INSERT INTO perawat (nama_perawat, id_pasien, no_telepon, spesialisasi) VALUES (?, ?, ?, ?)";
+        
+        $stmt = mysqli_prepare($koneksi, $query);
+        // 'siss' artinya tipe data: String, Integer, String, String
+        mysqli_stmt_bind_param($stmt, 'siss', $nama_perawat, $id_pasien, $no_telepon, $spesialisasi);
+        mysqli_stmt_execute($stmt);
+
+    // --- FUNGSI UPDATE (EDIT DATA) ---
+    } elseif ($action == 'edit') {
         $id_perawat = $_POST["id_perawat"];
         $nama_perawat = $_POST["nama_perawat"];
         $id_pasien = $_POST["id_pasien"];
         $no_telepon = $_POST["no_telepon"];
         $spesialisasi = $_POST["spesialisasi"];
         
-        $query = "UPDATE perawat SET nama_perawat='$nama_perawat', id_pasien='$id_pasien', no_telepon='$no_telepon', spesialisasi='$spesialisasi' WHERE id_perawat='$id_perawat'";
-        mysqli_query($koneksi, $query);
+        // KEAMANAN: Gunakan prepared statement untuk query UPDATE
+        $query = "UPDATE perawat SET nama_perawat=?, id_pasien=?, no_telepon=?, spesialisasi=? WHERE id_perawat=?";
+        
+        $stmt = mysqli_prepare($koneksi, $query);
+        // 'sissi' artinya: String, Integer, String, String, Integer
+        mysqli_stmt_bind_param($stmt, 'sissi', $nama_perawat, $id_pasien, $no_telepon, $spesialisasi, $id_perawat);
+        mysqli_stmt_execute($stmt);
+
+    // --- FUNGSI DELETE (HAPUS DATA) ---
     } elseif ($action == 'delete') {
         $id_perawat = $_POST["id_perawat"];
-        $query = "DELETE FROM perawat WHERE id_perawat='$id_perawat'";
-        mysqli_query($koneksi, $query);
+
+        // KEAMANAN: Gunakan prepared statement untuk query DELETE
+        $query = "DELETE FROM perawat WHERE id_perawat=?";
+        
+        $stmt = mysqli_prepare($koneksi, $query);
+        // 'i' artinya tipe data: Integer
+        mysqli_stmt_bind_param($stmt, 'i', $id_perawat);
+        mysqli_stmt_execute($stmt);
     }
+
+    // Redirect untuk mencegah form dikirim ulang jika halaman di-refresh
+    header("Location: " . $_SERVER['PHP_SELF']);
+    exit();
 }
 
-// Fetch all nurses
+// Ambil semua data perawat untuk ditampilkan
 $query = 'SELECT * FROM perawat;'; 
 $result = mysqli_query($koneksi, $query); 
 
