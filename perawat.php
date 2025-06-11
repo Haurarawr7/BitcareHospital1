@@ -27,36 +27,55 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // --- FUNGSI INSERT (TAMBAH DATA) ---
     if ($action == 'insert') {
-        // Ambil data dari form, KECUALI id_perawat
+        // Ambil data dari form, TERMASUK id_perawat yang bisa diinput
+        $id_perawat = $_POST["id_perawat"];
         $nama_perawat = $_POST["nama_perawat"];
         $id_pasien = $_POST["id_pasien"];
         $no_telepon = $_POST["no_telepon"];
         $spesialisasi = $_POST["spesialisasi"];
     
-        // PERBAIKAN: Hapus 'id_perawat' dari query. Biarkan database mengisinya otomatis.
+        // PERUBAHAN: Sekarang id_perawat bisa diinput manual
         // KEAMANAN: Gunakan prepared statement untuk mencegah SQL Injection.
-        $query = "INSERT INTO perawat (nama_perawat, id_pasien, no_telepon, spesialisasi) VALUES (?, ?, ?, ?)";
+        $query = "INSERT INTO perawat (id_perawat, nama_perawat, id_pasien, no_telepon, spesialisasi) VALUES (?, ?, ?, ?, ?)";
         
         $stmt = mysqli_prepare($koneksi, $query);
-        // 'siss' artinya tipe data: String, Integer, String, String
-        mysqli_stmt_bind_param($stmt, 'siss', $nama_perawat, $id_pasien, $no_telepon, $spesialisasi);
-        mysqli_stmt_execute($stmt);
+        // 'isiss' artinya tipe data: Integer, String, Integer, String, String
+        mysqli_stmt_bind_param($stmt, 'isiss', $id_perawat, $nama_perawat, $id_pasien, $no_telepon, $spesialisasi);
+        
+        if (!mysqli_stmt_execute($stmt)) {
+            // Handle error jika ID sudah ada (duplicate key)
+            if (mysqli_errno($koneksi) == 1062) {
+                echo "<script>alert('ID Perawat sudah ada. Gunakan ID yang berbeda.');</script>";
+            } else {
+                echo "<script>alert('Gagal menambah data perawat.');</script>";
+            }
+        }
 
     // --- FUNGSI UPDATE (EDIT DATA) ---
     } elseif ($action == 'edit') {
-        $id_perawat = $_POST["id_perawat"];
+        $id_perawat_baru = $_POST["id_perawat"];
+        $id_perawat_lama = $_POST["id_perawat_lama"]; // ID asli sebelum diubah
         $nama_perawat = $_POST["nama_perawat"];
         $id_pasien = $_POST["id_pasien"];
         $no_telepon = $_POST["no_telepon"];
         $spesialisasi = $_POST["spesialisasi"];
         
         // KEAMANAN: Gunakan prepared statement untuk query UPDATE
-        $query = "UPDATE perawat SET nama_perawat=?, id_pasien=?, no_telepon=?, spesialisasi=? WHERE id_perawat=?";
+        // Jika ID perawat diubah, kita perlu update berdasarkan ID lama
+        $query = "UPDATE perawat SET id_perawat=?, nama_perawat=?, id_pasien=?, no_telepon=?, spesialisasi=? WHERE id_perawat=?";
         
         $stmt = mysqli_prepare($koneksi, $query);
-        // 'sissi' artinya: String, Integer, String, String, Integer
-        mysqli_stmt_bind_param($stmt, 'sissi', $nama_perawat, $id_pasien, $no_telepon, $spesialisasi, $id_perawat);
-        mysqli_stmt_execute($stmt);
+        // 'isissi' artinya: Integer, String, Integer, String, String, Integer
+        mysqli_stmt_bind_param($stmt, 'isissi', $id_perawat_baru, $nama_perawat, $id_pasien, $no_telepon, $spesialisasi, $id_perawat_lama);
+        
+        if (!mysqli_stmt_execute($stmt)) {
+            // Handle error jika ID baru sudah ada (saat mengubah ID)
+            if (mysqli_errno($koneksi) == 1062) {
+                echo "<script>alert('ID Perawat sudah ada. Gunakan ID yang berbeda.');</script>";
+            } else {
+                echo "<script>alert('Gagal mengupdate data perawat.');</script>";
+            }
+        }
 
     // --- FUNGSI DELETE (HAPUS DATA) ---
     } elseif ($action == 'delete') {
@@ -77,7 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 // Ambil semua data perawat untuk ditampilkan
-$query = 'SELECT * FROM perawat;'; 
+$query = 'SELECT * FROM perawat ORDER BY id_perawat;'; 
 $result = mysqli_query($koneksi, $query); 
 
 include 'layouts/header.php'; 
@@ -182,7 +201,7 @@ include 'layouts/header.php';
         display: block; 
         margin-bottom: 5px; 
     }
-    .form-group input[type="text"], .form-group input[type="number"], .form-group input[type="date"] { 
+    .form-group input[type="text"], .form-group input[type="number"], .form-group input[type="date"], .form-group input[type="tel"] { 
         width: calc(100% - 22px); 
         padding: 10px; 
         border: 1px solid #ccc; 
@@ -248,7 +267,14 @@ include 'layouts/header.php';
         <h2 id="modalTitlePerawat">Tambah Data Perawat</h2>
         <form id="perawatForm" method="POST">
             <input type="hidden" name="action" id="action" value="insert">
-            <input type="hidden" name="id_perawat" id="idPerawatInput" value="">
+            <!-- Hidden field untuk menyimpan ID perawat lama saat edit -->
+            <input type="hidden" name="id_perawat_lama" id="idPerawatLama" value="">
+            
+            <!-- PERUBAHAN: ID Perawat sekarang bisa diinput -->
+            <div class="form-group">
+                <label for="id_perawat">ID Perawat</label>
+                <input type="number" name="id_perawat" id="idPerawatInput" required>
+            </div>
             
             <div class="form-group">
                 <label for="nama_perawat">Nama Perawat</label>
@@ -256,11 +282,11 @@ include 'layouts/header.php';
             </div>
             <div class="form-group">
                 <label for="id_pasien">ID Pasien</label>
-                <input type="text" name="id_pasien" id="idPasienPerawat" required>
+                <input type="number" name="id_pasien" id="idPasienPerawat" required>
             </div>
             <div class="form-group">
                 <label for="no_telepon">Nomor Telepon</label>
-                <input type="tel" name="no_telepon" id="teleponPerawat" required>
+                <input type="tel" name="no_telepon" id="telefonPerawat" required>
             </div>
             <div class="form-group">
                 <label for="spesialisasi">Spesialisasi</label>
@@ -282,7 +308,7 @@ include 'layouts/header.php';
             <input type="hidden" name="action" value="delete">
             <div class="form-group">
                 <label for="id_perawat_delete">ID Perawat</label>
-                <input type="text" name="id_perawat" id="id_perawat_delete" required>
+                <input type="number" name="id_perawat" id="id_perawat_delete" required>
             </div>
             <button type="submit">Hapus</button>
             <button type="button" onclick="closeDeleteModal()">Batal</button>
@@ -312,24 +338,29 @@ include 'layouts/header.php';
         const modalTitle = document.getElementById('modalTitlePerawat');
         const actionInput = document.getElementById('action');
         const idInput = document.getElementById('idPerawatInput');
+        const idLamaInput = document.getElementById('idPerawatLama');
 
         if (mode === 'edit' && dataPerawat) {
             // --- MODE EDIT ---
             modalTitle.innerText = 'Edit Data Perawat';
             actionInput.value = 'edit';
             
+            // Simpan ID lama untuk referensi update
+            idLamaInput.value = dataPerawat.id_perawat;
+            
             // Isi semua field dengan data yang didapat dari server
             idInput.value = dataPerawat.id_perawat;
             document.getElementById('namaPerawat').value = dataPerawat.nama_perawat;
             document.getElementById('idPasienPerawat').value = dataPerawat.id_pasien;
-            document.getElementById('teleponPerawat').value = dataPerawat.no_telepon;
+            document.getElementById('telefonPerawat').value = dataPerawat.no_telepon;
             document.getElementById('spesialisasiPerawat').value = dataPerawat.spesialisasi;
 
         } else {
             // --- MODE TAMBAH ---
             modalTitle.innerText = 'Tambah Data Perawat';
             actionInput.value = 'insert';
-            idInput.value = ''; // Pastikan ID kosong saat tambah data
+            idInput.value = ''; // Kosongkan field ID untuk input manual
+            idLamaInput.value = ''; // Kosongkan juga ID lama
         }
 
         // Tampilkan modal
