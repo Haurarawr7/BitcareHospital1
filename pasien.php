@@ -1,10 +1,31 @@
 <?php 
 include("koneksi.php"); 
 
+// --- BAGIAN BARU UNTUK MENGAMBIL DATA VIA AJAX ---
+// Cek jika ini adalah request GET dengan action=get_data dan ada id
+if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['action']) && $_GET['action'] == 'get_data' && isset($_GET['id'])) {
+    $id_pasien = $_GET['id'];
+    
+    // Query untuk mengambil satu data pasien
+    $query = "SELECT * FROM pasien WHERE id = ?";
+    
+    $stmt = mysqli_prepare($koneksi, $query);
+    mysqli_stmt_bind_param($stmt, 'i', $id_pasien);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    $data = mysqli_fetch_assoc($result);
+
+    // Set header sebagai JSON dan kirim datanya
+    header('Content-Type: application/json');
+    echo json_encode($data);
+    exit(); // Penting: hentikan eksekusi script agar tidak menampilkan sisa HTML
+}
+
 // Handle insert, update, and delete actions
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $action = $_POST['action'] ?? '';
 
+    // --- FUNGSI INSERT (TAMBAH DATA) ---
     if ($action == 'insert') {
         $id = $_POST["id"];
         $nama = $_POST["nama"];
@@ -15,12 +36,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $alamat = $_POST["alamat"];
         $no_antrian = $_POST["no_antrian"];
     
+        // KEAMANAN: Gunakan prepared statement untuk mencegah SQL Injection
         $query = "INSERT INTO pasien (id, nama_pasien, tanggal_lahir, no_telepon, jenis_kelamin, gol_darah, alamat, no_antrian) 
-            VALUES ('$id', '$nama', '$tanggal_lahir', '$no_telepon', '$jenis_kelamin', '$gol_darah', '$alamat', '$no_antrian')";
-        mysqli_query($koneksi, $query);
+                  VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        
+        $stmt = mysqli_prepare($koneksi, $query);
+        mysqli_stmt_bind_param($stmt, 'issssssi', $id, $nama, $tanggal_lahir, $no_telepon, $jenis_kelamin, $gol_darah, $alamat, $no_antrian);
+        
+        if (!mysqli_stmt_execute($stmt)) {
+            // Handle error jika ID sudah ada (duplicate key)
+            if (mysqli_errno($koneksi) == 1062) {
+                echo "<script>alert('ID Pasien atau No Antrian sudah ada. Gunakan yang berbeda.');</script>";
+            } else {
+                echo "<script>alert('Gagal menambah data pasien: " . mysqli_error($koneksi) . "');</script>";
+            }
         }
-     elseif ($action == 'edit') {
-        $id = $_POST["id"];
+
+    // --- FUNGSI UPDATE (EDIT DATA) ---
+    } elseif ($action == 'edit') {
+        $id_baru = $_POST["id"];
+        $id_lama = $_POST["id_lama"]; // ID asli sebelum diubah
         $nama = $_POST["nama"];
         $tanggal_lahir = $_POST["tanggal_lahir"];
         $no_telepon = $_POST["no_telepon"];
@@ -28,17 +63,76 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $gol_darah = $_POST["gol_darah"];
         $alamat = $_POST["alamat"];
         $no_antrian = $_POST["no_antrian"];
-        $query = "UPDATE pasien SET nama_pasien='$nama', tanggal_lahir='$tanggal_lahir', no_telepon='$no_telepon', jenis_kelamin ='$jenis_kelamin', gol_darah='$gol_darah', alamat='$alamat' WHERE id=$id";
-        mysqli_query($koneksi, $query);
+        
+        // KEAMANAN: Gunakan prepared statement untuk query UPDATE
+        $query = "UPDATE pasien SET id=?, nama_pasien=?, tanggal_lahir=?, no_telepon=?, jenis_kelamin=?, gol_darah=?, alamat=?, no_antrian=? WHERE id=?";
+        
+        $stmt = mysqli_prepare($koneksi, $query);
+        mysqli_stmt_bind_param($stmt, 'issssssii', $id_baru, $nama, $tanggal_lahir, $no_telepon, $jenis_kelamin, $gol_darah, $alamat, $no_antrian, $id_lama);
+        
+        if (!mysqli_stmt_execute($stmt)) {
+            // Handle error jika ID baru sudah ada (saat mengubah ID)
+            if (mysqli_errno($koneksi) == 1062) {
+                echo "<script>alert('ID Pasien atau No Antrian sudah ada. Gunakan yang berbeda.');</script>";
+            } else {
+                echo "<script>alert('Gagal mengupdate data pasien: " . mysqli_error($koneksi) . "');</script>";
+            }
+        }
+
+    // --- FUNGSI DELETE (HAPUS DATA) ---
     } elseif ($action == 'delete') {
-        $no_antrian = $_POST["no_antrian"];
-        $query = "DELETE FROM pelayanan WHERE no_antrian='$no_antrian'";
-        $query = "DELETE FROM pasien WHERE no_antrian='$no_antrian'";
-        mysqli_query($koneksi, $query);
+        $id_pasien = $_POST["id_pasien"];
+
+        // PERBAIKAN: Hapus data terkait terlebih dahulu untuk menghindari foreign key constraint error
+        try {
+            // Mulai transaction untuk memastikan semua operasi berhasil atau semua gagal
+            mysqli_autocommit($koneksi, FALSE);
+            
+            // 1. Hapus data di tabel pelayanan yang mereferensi pasien ini
+            $query_pelayanan = "DELETE FROM pelayanan WHERE id_pasien = ?";
+            $stmt_pelayanan = mysqli_prepare($koneksi, $query_pelayanan);
+            mysqli_stmt_bind_param($stmt_pelayanan, 'i', $id_pasien);
+            mysqli_stmt_execute($stmt_pelayanan);
+            
+            // 2. Hapus data di tabel rekam_medis jika ada
+            $query_rekam = "DELETE FROM rekam_medis WHERE id_pasien = ?";
+            $stmt_rekam = mysqli_prepare($koneksi, $query_rekam);
+            mysqli_stmt_bind_param($stmt_rekam, 'i', $id_pasien);
+            mysqli_stmt_execute($stmt_rekam);
+            
+            // 3. Hapus data di tabel perawat yang mereferensi pasien ini
+            $query_perawat = "DELETE FROM perawat WHERE id_pasien = ?";
+            $stmt_perawat = mysqli_prepare($koneksi, $query_perawat);
+            mysqli_stmt_bind_param($stmt_perawat, 'i', $id_pasien);
+            mysqli_stmt_execute($stmt_perawat);
+            
+            // 4. Terakhir hapus data pasien
+            $query_pasien = "DELETE FROM pasien WHERE id = ?";
+            $stmt_pasien = mysqli_prepare($koneksi, $query_pasien);
+            mysqli_stmt_bind_param($stmt_pasien, 'i', $id_pasien);
+            mysqli_stmt_execute($stmt_pasien);
+            
+            // Commit transaction jika semua berhasil
+            mysqli_commit($koneksi);
+            echo "<script>alert('Data pasien dan semua data terkait berhasil dihapus.');</script>";
+            
+        } catch (Exception $e) {
+            // Rollback jika ada error
+            mysqli_rollback($koneksi);
+            echo "<script>alert('Gagal menghapus data: " . $e->getMessage() . "');</script>";
+        }
+        
+        // Kembalikan autocommit ke true
+        mysqli_autocommit($koneksi, TRUE);
     }
+
+    // Redirect untuk mencegah form dikirim ulang jika halaman di-refresh
+    header("Location: " . $_SERVER['PHP_SELF']);
+    exit();
 }
-// Fetch all patients
-$query = 'SELECT * FROM pasien;'; 
+
+// Ambil semua data pasien untuk ditampilkan
+$query = 'SELECT * FROM pasien ORDER BY id;'; 
 $result = mysqli_query($koneksi, $query); 
 
 include 'layouts/header.php'; 
@@ -143,7 +237,7 @@ include 'layouts/header.php';
         display: block; 
         margin-bottom: 5px; 
     }
-    .form-group input[type="text"], .form-group input[type="number"], .form-group input[type="date"] { 
+    .form-group input[type="text"], .form-group input[type="number"], .form-group input[type="date"], .form-group select { 
         width: calc(100% - 22px); 
         padding: 10px; 
         border: 1px solid #ccc; 
@@ -198,8 +292,8 @@ include 'layouts/header.php';
                     <td><?= $pasien->alamat ?></td>
                     <td><?= $pasien->no_antrian?></td>
                     <td>
-                        <button class="btn btn-warning btn-sm" onclick="toggleEditForm(<?= $pasien->id ?>)">Edit</button>
-                        <button class="btn btn-danger btn-sm" onclick="openDeleteModal(<?= $pasien->id ?>)">Hapus</button>
+                        <button class="btn btn-warning btn-sm" onclick="toggleEditForm('<?= $pasien->id ?>')">Edit</button>
+                        <button class="btn btn-danger btn-sm" onclick="openDeleteModal('<?= $pasien->id ?>')">Hapus</button>
                     </td>
                 </tr>
             <?php } ?>
@@ -215,8 +309,8 @@ include 'layouts/header.php';
         <h2 id="modalTitle">Tambah Data Pasien</h2>
         <form id="patientForm" method="POST">
             <input type="hidden" name="action" id="action" value="insert">
-            <input type="hidden" name="id" id="patientIdInput" value="">
-            <input type="hidden" name="no_antrian" id="no_antrianInput" value="">
+            <!-- Hidden field untuk menyimpan ID pasien lama saat edit -->
+            <input type="hidden" name="id_lama" id="idLama" value="">
             
             <div class="form-group">
                 <label for="id">ID Pasien</label>
@@ -237,13 +331,20 @@ include 'layouts/header.php';
             <div class="form-group">
                 <label for="jenis_kelamin">Jenis Kelamin</label>
                 <select name="jenis_kelamin" id="jenis_kelamin" required>
+                    <option value="">Pilih Jenis Kelamin</option>
                     <option value="Laki-laki">Laki-laki</option>
                     <option value="Perempuan">Perempuan</option>
                 </select>
             </div>
             <div class="form-group">
                 <label for="gol_darah">Golongan Darah</label>
-                <input type="text" name="gol_darah" id="gol_darah" required>
+                <select name="gol_darah" id="gol_darah" required>
+                    <option value="">Pilih Golongan Darah</option>
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="AB">AB</option>
+                    <option value="O">O</option>
+                </select>
             </div>
             <div class="form-group">
                 <label for="alamat">Alamat Pasien</label>
@@ -264,38 +365,55 @@ include 'layouts/header.php';
     <div class="formulir-content">
         <span class="close-btn" onclick="closeDeleteModal()">&times;</span>
         <h2>Konfirmasi Hapus</h2>
-        <p>Masukkan No Antrian untuk menghapus data pasien:</p>
+        <p><strong>PERINGATAN:</strong> Menghapus pasien akan menghapus semua data terkait (pelayanan, rekam medis, dll.)</p>
+        <p>Masukkan ID Pasien untuk menghapus data:</p>
         <form id="deleteForm" method="POST">
             <input type="hidden" name="action" value="delete">
             <div class="form-group">
-                <label for="no_antrian_delete">No Antrian</label>
-                <input type="number" name="no_antrian" id="no_antrian_delete" required>
+                <label for="id_pasien_delete">ID Pasien</label>
+                <input type="number" name="id_pasien" id="id_pasien_delete" required>
             </div>
-            <button type="submit">Hapus</button>
+            <button type="submit" style="background-color: #dc3545;">Hapus</button>
             <button type="button" onclick="closeDeleteModal()">Batal</button>
         </form>
     </div>
 </div>
 
 <script>
-    function openModal(patientData = null) {
+    function openModal(mode, dataPasien = null) {
+        // Reset form setiap kali dibuka
         document.getElementById('patientForm').reset();
-        document.getElementById('patientIdInput').value = '';
-        document.getElementById('no_antrianInput').value = '';
 
-        if (patientData) {
-            document.getElementById('action').value = 'edit';
-            document.getElementById('patientIdInput').value = patientData.id;
-            document.getElementById('nama').value = patientData.nama_pasien;
-            document.getElementById('tanggal_lahir').value = patientData.tanggal_lahir;
-            document.getElementById('no_telepon').value = patientData.no_telepon;
-            document.getElementById('jenis_kelamin').value = patientData.jenis_kelamin;
-            document.getElementById('gol_darah').value = patientData.gol_darah;
-            document.getElementById('alamat').value = patientData.alamat;
-            document.getElementById('no_antrian').value = patientData.no_antrian;
+        const modalTitle = document.getElementById('modalTitle');
+        const actionInput = document.getElementById('action');
+        const idLamaInput = document.getElementById('idLama');
+
+        if (mode === 'edit' && dataPasien) {
+            // --- MODE EDIT ---
+            modalTitle.innerText = 'Edit Data Pasien';
+            actionInput.value = 'edit';
+            
+            // Simpan ID lama untuk referensi update
+            idLamaInput.value = dataPasien.id;
+            
+            // Isi semua field dengan data yang didapat dari server
+            document.getElementById('id').value = dataPasien.id;
+            document.getElementById('nama').value = dataPasien.nama_pasien;
+            document.getElementById('tanggal_lahir').value = dataPasien.tanggal_lahir;
+            document.getElementById('no_telepon').value = dataPasien.no_telepon;
+            document.getElementById('jenis_kelamin').value = dataPasien.jenis_kelamin;
+            document.getElementById('gol_darah').value = dataPasien.gol_darah;
+            document.getElementById('alamat').value = dataPasien.alamat;
+            document.getElementById('no_antrian').value = dataPasien.no_antrian;
+
         } else {
-            document.getElementById('action').value = 'insert';
+            // --- MODE TAMBAH ---
+            modalTitle.innerText = 'Tambah Data Pasien';
+            actionInput.value = 'insert';
+            idLamaInput.value = ''; // Kosongkan ID lama
         }
+
+        // Tampilkan modal
         document.getElementById('patientModal').style.display = 'block';
     }
 
@@ -303,8 +421,8 @@ include 'layouts/header.php';
         document.getElementById('patientModal').style.display = 'none';
     }
 
-    function openDeleteModal(no_antrian) {
-        document.getElementById('no_antrian_delete').value = no_antrian; // Set the no_antrian to the input
+    function openDeleteModal(id_pasien) {
+        document.getElementById('id_pasien_delete').value = id_pasien;
         document.getElementById('deleteModal').style.display = 'block';
     }
 
@@ -312,8 +430,34 @@ include 'layouts/header.php';
         document.getElementById('deleteModal').style.display = 'none';
     }
 
-    function toggleEditForm(id, nama, tanggal_lahir, no_telepon, jenis_kelamin, gol_darah, alamat, no_antrian) {
-        openModal({ id, nama_pasien: nama, tanggal_lahir, no_telepon, jenis_kelamin, gol_darah, alamat, no_antrian });
+    function toggleEditForm(id_pasien) {
+        // URL ke endpoint AJAX yang kita buat di PHP
+        const url = `pasien.php?action=get_data&id=${id_pasien}`;
+
+        // Gunakan Fetch API untuk mengambil data dari server
+        fetch(url)
+            .then(response => {
+                // Periksa apakah request berhasil (status code 200-299)
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                // Ubah response menjadi JSON
+                return response.json();
+            })
+            .then(data => {
+                // Jika berhasil mendapatkan data, panggil modal dalam mode 'edit'
+                // dan kirim data yang didapat dari server
+                if(data) {
+                    openModal('edit', data);
+                } else {
+                    alert('Data pasien tidak ditemukan.');
+                }
+            })
+            .catch(error => {
+                // Tangani jika ada error saat fetching data
+                console.error('Error fetching patient data:', error);
+                alert('Gagal mengambil data pasien. Silakan coba lagi.');
+            });
     }
 </script>
 
