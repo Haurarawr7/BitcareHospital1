@@ -1,5 +1,5 @@
-<?php 
-include("koneksi.php"); 
+<?php
+include("koneksi.php");
 
 // Handle insert, update, and delete actions
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -14,12 +14,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $jenis_staf = $_POST["jenis_staf"];
         $kodekhusus = $_POST["kodekhusus"];
 
+        // Prepared statement untuk keamanan
         $query = "INSERT INTO staff (id_staff, nama_staf, jabatan, no_telepon, no_ruang, jenis_staf, kodekhusus) 
-            VALUES ('$id_staff', '$nama_staf', '$jabatan', '$no_telepon', '$no_ruang', '$jenis_staf', '$kodekhusus')";
-        mysqli_query($koneksi, $query);
-    }
-    elseif ($action == 'edit') {
+                  VALUES (?, ?, ?, ?, ?, ?, ?)";
+        $stmt = mysqli_prepare($koneksi, $query);
+        mysqli_stmt_bind_param($stmt, 'sssssss', $id_staff, $nama_staf, $jabatan, $no_telepon, $no_ruang, $jenis_staf, $kodekhusus);
+        mysqli_stmt_execute($stmt);
+    } elseif ($action == 'edit') {
         $id_staff = $_POST["id_staff"];
+        $oldid_staff = $_POST["oldid_staff"];
         $nama_staf = $_POST["nama_staf"];
         $jabatan = $_POST["jabatan"];
         $no_telepon = $_POST["no_telepon"];
@@ -27,21 +30,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $jenis_staf = $_POST["jenis_staf"];
         $kodekhusus = $_POST["kodekhusus"];
 
-        $query = "UPDATE staff SET nama_staf='$nama_staf', jabatan='$jabatan', no_telepon='$no_telepon', no_ruang='$no_ruang', jenis_staf='$jenis_staf', kodekhusus='$kodekhusus' WHERE id_staff='$id_staff'";
-        mysqli_query($koneksi, $query);
+        // Prepared statement untuk keamanan
+        $query = "UPDATE staff SET nama_staf=?, jabatan=?, no_telepon=?, no_ruang=?, jenis_staf=?, kodekhusus=? WHERE id_staff=?";
+        $stmt = mysqli_prepare($koneksi, $query);
+        mysqli_stmt_bind_param($stmt, 'sssssss', $nama_staf, $jabatan, $no_telepon, $no_ruang, $jenis_staf, $kodekhusus, $oldid_staff);
+        mysqli_stmt_execute($stmt);
     } elseif ($action == 'delete') {
         $id_staff = $_POST["id_staff"];
-        $query = "DELETE FROM staff WHERE id_staff='$id_staff'";
-        mysqli_query($koneksi, $query);
+
+        // Prepared statement untuk keamanan
+        $query = "DELETE FROM staff WHERE id_staff=?";
+        $stmt = mysqli_prepare($koneksi, $query);
+        mysqli_stmt_bind_param($stmt, 's', $id_staff);
+        mysqli_stmt_execute($stmt);
     }
 }
 
 // Fetch all staff
-$query = 'SELECT * FROM staff;'; 
-$result = mysqli_query($koneksi, $query); 
+$query = 'SELECT * FROM staff;';
+$result = mysqli_query($koneksi, $query);
 
-include 'layouts/header.php'; 
+include 'layouts/header.php';
 ?>
+
 
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
@@ -183,7 +194,7 @@ include 'layouts/header.php';
                 <th scope="col">Aksi</th>
             </tr>
         </thead>
-        <tbody id="staffableBody">
+        <tbody id="staffTableBody">
             <?php while ($staff = mysqli_fetch_object($result)) { ?>
                 <tr>
                     <td><?= $staff->id_staff ?></td>
@@ -194,7 +205,15 @@ include 'layouts/header.php';
                     <td><?= $staff->jenis_staf ?></td>
                     <td><?= $staff->kodekhusus ?></td>
                     <td>
-                        <button class="btn btn-warning btn-sm" onclick="toggleEditForm('<?= $staff->id_staff ?>')">Edit</button>
+                        <button class="btn btn-warning btn-sm" onclick="toggleEditForm(
+                        '<?= $staff->id_staff ?>',
+                        '<?= $staff->nama_staf ?>',
+                        '<?= $staff->jabatan ?>',
+                        '<?= $staff->no_ruang ?>',
+                        '<?= $staff->no_telepon ?>',
+                        '<?= $staff->jenis_staf ?>',
+                        '<?= $staff->kodekhusus ?>'
+                        )">Edit</button>
                         <button class="btn btn-danger btn-sm" onclick="openDeleteModal('<?= $staff->id_staff ?>')">Hapus</button>
                     </td>
                 </tr>
@@ -210,8 +229,12 @@ include 'layouts/header.php';
         <h2 id="modalTitle">Tambah Data staf</h2>
         <form id="staffForm" method="POST">
             <input type="hidden" name="action" id="action" value="insert">
-            <input type="hidden" name="id_staff" id="staffIdInput" value="">
+            <input type="hidden" name="oldid_staff" id="oldstaffIdInput" value="">
             
+            <div class="form-group">
+                <label for="id_staf">ID staf</label>
+                <input type="text" name="id_staff" id="id_staf" required>
+            </div>
             <div class="form-group">
                 <label for="nama_staf">Nama staf</label>
                 <input type="text" name="nama_staf" id="nama_staf" required>
@@ -251,11 +274,11 @@ include 'layouts/header.php';
     <div class="modal-content">
         <span class="close-btn" onclick="closeDeleteModal()">&times;</span>
         <h2>Konfirmasi Hapus</h2>
-        <p>Masukkan ID staff untuk menghapus data:</p>
+        <p>Masukkan ID staf untuk menghapus data:</p>
         <form id="deleteForm" method="POST">
             <input type="hidden" name="action" value="delete">
             <div class="form-group">
-                <label for="id_staf_delete">ID Staff</label>
+                <label for="id_staf_delete">ID Staf</label>
                 <input type="text" name="id_staff" id="id_staf_delete" required>
             </div>
             <button type="submit">Hapus</button>
@@ -267,11 +290,14 @@ include 'layouts/header.php';
 <script>
     function openModal(stafData = null) {
         document.getElementById('staffForm').reset();
-        document.getElementById('staffIdInput').value = '';
+        document.getElementById('oldstaffIdInput').value = '';
+        document.getElementById('modalTitle').innerText = 'Tambah Data staf';
 
         if (stafData) {
             document.getElementById('action').value = 'edit';
-            document.getElementById('staffIdInput').value = stafData.id_staff;
+            document.getElementById('modalTitle').innerText = 'Edit Data Staf';
+            document.getElementById('id_staf').value = stafData.id_staff;
+            document.getElementById('oldstaffIdInput').value = stafData.id_staff;
             document.getElementById('nama_staf').value = stafData.nama_staf;
             document.getElementById('jabatan').value = stafData.jabatan;
             document.getElementById('no_ruang').value = stafData.no_ruang;
@@ -297,10 +323,18 @@ include 'layouts/header.php';
         document.getElementById('deleteModal').style.display = 'none';
     }
 
-    function toggleEditForm(id_staff) {
-        // Fetch the data for the selected staff and open the modal
-        openModal({ id_staff: id_staff, nama_staf: 'Dummy', jabatan: 'Dummy', no_telepon: 'Dummy', no_ruang: 'Dummy'});
+    function toggleEditForm(id_staff, nama_staf, jabatan, no_telepon, no_ruang, jenis_staf, kodekhusus) {
+        openModal({
+            id_staff: id_staff,
+            nama_staf: nama_staf,
+            jabatan: jabatan,
+            no_telepon: no_telepon,
+            no_ruang: no_ruang,
+            jenis_staf: jenis_staf,
+            kodekhusus: kodekhusus
+        });
     }
 </script>
+
 
 <?php include 'layouts/footer.php'; ?>
